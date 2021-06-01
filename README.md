@@ -1,2 +1,2 @@
-# Minishell
+# minishell
 A simple Shell implementation.
