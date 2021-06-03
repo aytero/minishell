@@ -6,7 +6,7 @@
 /*   By: lpeggy <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/01 17:14:27 by lpeggy            #+#    #+#             */
-/*   Updated: 2021/06/01 22:21:26 by lpeggy           ###   ########.fr       */
+/*   Updated: 2021/06/03 20:52:22 by lpeggy           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,6 +16,8 @@
 #include <signal.h>
 #include <sys/wait.h>
 
+#include "execute.h"
+
 static void		sighandler(int signal)
 {
 	write(1, "sigint recieved\n", 16);
@@ -23,7 +25,8 @@ static void		sighandler(int signal)
 
 int		main(int argc, char **argv, char **envp)
 {
-	char	**args;
+	//char	**args;
+	char	*args[] = {"pwd", "exec_test", "arg", NULL};
 
 	if (signal(SIGINT, sighandler) == SIG_ERR)
 		exit_failure("");
@@ -31,10 +34,12 @@ int		main(int argc, char **argv, char **envp)
 	while (1)
 	{
 		write(1, "assh:> ", 7);
-		args = parse_input();//
+		//args = parse_input();//
 		execute(args, envp);
-		free(args);
+		//args++;
+		//free(args);
 		//free();
+		sleep(3);
 	}
 	return (0);
 	//return (EXIT_SUCCESS);

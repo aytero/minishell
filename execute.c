@@ -6,7 +6,7 @@
 /*   By: lpeggy <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/01 20:49:41 by lpeggy            #+#    #+#             */
-/*   Updated: 2021/06/01 22:22:07 by lpeggy           ###   ########.fr       */
+/*   Updated: 2021/06/03 20:52:56 by lpeggy           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,7 +15,7 @@
 //int	execve(const char *pathname, char *const argv[], char *const envp[]);
 
 
-static void	exit_failure(char *str)
+void	exit_failure(char *str)
 {
 	perror(str);
 	exit(EXIT_FAILURE);
@@ -23,43 +23,41 @@ static void	exit_failure(char *str)
 
 int		builtin_pwd(char **args)
 {
-	char	*cwd;
-	int		size;
+	char	*pwd;
 
-	size = 255;
-	if (getcwd(cwd, size) == NULL)
-		return (EXIT_FAILURE);
+	//error?
+	pwd = getcwd(NULL, 0);
+	//if (!pwd)
+	//	return (EXIT_FAILURE);
 	//write(1, cwd, size);
-	printf("%s\n", cwd);
-	free(cwd);
+	printf("%s\n", pwd);
+	free(pwd);
 	return (EXIT_SUCCESS);
 }
 
-int		builtin_echo(char **args)
+int		exec_piped(char **args, char **envp)
 {
-	write(1, "echo here\n", 10);
-}
-
-/*
-int		exec_piped(char *path, char **args, char **envp)
-{
-	//path is awrgs[0]
-	int	pfd[2];
+	//path is args[0]
+	int	fd[2];
 	pid_t	pid;
 	pid_t	pid1;
 
-	if (pipe(pfd) < 0)
+	char	buf[5] = {0};
+
+	if (pipe(fd) < 0)
 		exit_failure("");
 	pid = fork();
 	if (pid < 0)
 		exit_failure("");
 	else if (pid == 0)
 	{
-		close(pfd[0]);
-		dup2(pfd[1], STDOUT_FILENO);
-		close(pfd[1]);
-		if (execve(args[0], args, envp) < 0)
-		exit_failure("");
+		close(fd[0]);
+		dup2(fd[1], STDOUT_FILENO);
+		write(fd[1], "hey\n", 4);
+		close(fd[1]);
+		exit (0);
+		//if (execve(args[0], args, envp) < 0)
+		//exit_failure("");
 	}
 	else
 	{
@@ -68,26 +66,38 @@ int		exec_piped(char *path, char **args, char **envp)
 			exit_failure("");
 		if (pid1 == 0)
 		{
-			close(pfd[1]);
-			dup2(pfd[0], STDIN_FILENO);
-			close(pfd[0]);
-			if (execve(args[0], args, envp) < 0)
-				exit_failure("");
+			close(fd[1]);
+			dup2(fd[0], STDIN_FILENO);
+			read(fd[0], buf, 4);
+			close(fd[0]);
+			printf("buf: %s", buf);
+			exit (0);
+			//if (execve(args[0], args, envp) < 0)
+			//	exit_failure("");
 		}
 		else
 		{
+			//loop waitpid
 			wait(NULL);
 			wait(NULL);
 		}
 	}
-	//return (0);
+	return (0);
 }
-*/
+
+char	*builtins_array[] = {
+	"echo", "cd", "pwd", "export", "unset", "env", "exit"
+};
 
 int	(*builtins_func[])(char **) = {
+	&builtin_echo,
+	&builtin_cd,
 	&builtin_pwd,
-	&builtin_echo
-}
+	&builtin_export,
+	&builtin_unset,
+	&builtin_env,
+	&builtin_exit
+};
 
 int		exec_extern(char **args, char **envp)
 {
@@ -100,7 +110,7 @@ int		exec_extern(char **args, char **envp)
 	else if (pid == 0)
 	{
 		if (execve(args[0], args, envp) < 0)
-			prerror("");
+			perror("");
 		//exit(EXIT_FAILURE);
 		return (EXIT_FAILURE);
 	}
@@ -120,9 +130,7 @@ int		exec_extern(char **args, char **envp)
 
 int		execute(char **args, char **envp)
 {
-	char	*builtins_array[]
-		= {"echo", "cd", "pwd", "export", "unset", "env", "exit", NULL};
-	int		builtins_number = 7;// or 8
+	int		builtins_number = sizeof(builtins_array) / sizeof(char *);// or 8
 	int		i;
 
 	if (args[0] == NULL)//if empty command
@@ -130,13 +138,55 @@ int		execute(char **args, char **envp)
 
 	//if builtin
 	//else execve
+	
 	i = 0;
 	while (i < builtins_number)
 	{
-		if (ft_strcmp(args[0], builtins_array[i]) == 0)
-			return ((*builtins_func[i](args)));
-			//return (1);
+		if (strcmp(args[0], builtins_array[i]) == 0)// STRCMP => FT_strcmp
+			return ((*builtins_func[i])(args));
 		i++;
 	}
+	//return (exec_piped(args, envp));
 	return (exec_extern(args, envp));
+}
+
+
+
+
+
+///////////
+int		builtin_echo(char **args)
+{
+	write(1, "echo here\n", 10);
+	return (0);
+}
+
+int		builtin_cd(char **args)
+{
+	write(1, "cd here\n", 8);
+	return (0);
+}
+
+int		builtin_export(char **args)
+{
+	write(1, "export here\n", 12);
+	return (0);
+}
+
+int		builtin_unset(char **args)
+{
+	write(1, "unset here\n", 11);
+	return (0);
+}
+
+int		builtin_env(char **args)
+{
+	write(1, "env here\n", 9);
+	return (0);
+}
+
+int		builtin_exit(char **args)
+{
+	write(1, "exit here\n", 10);
+	return (0);
 }
