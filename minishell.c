@@ -18,8 +18,9 @@
 
 #include "execute.h"
 
-static void		sighandler(int signal)
+static void		sig_handler(int signal)
 {
+	write(1, "\n", 1);
 	write(1, "sigint recieved\n", 16);
 }
 
@@ -28,13 +29,14 @@ int		main(int argc, char **argv, char **envp)
 	//char	**args;
 	char	*args[] = {"pwd", "exec_test", "arg", NULL};
 
-	if (signal(SIGINT, sighandler) == SIG_ERR)
+	if (signal(SIGINT, sig_handler) == SIG_ERR)
 		exit_failure("");
-		//exit(EXIT_FAILURE);
+	//if (signal(SIGQUIT, sig_handler) == SIG_ERR)
+	//	exit_failure("");
 	while (1)
 	{
 		write(1, "assh:> ", 7);
-		//args = parse_input();//
+		read_input(&args);//
 		execute(args, envp);
 		//args++;
 		//free(args);

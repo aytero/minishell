@@ -18,27 +18,19 @@ void	*realloc(void **ptr, size_t sizr)
 	return (*ptr);
 }
 
-int	parser()// t_arg *arg or char **args
+void	parse()
+{
+	//
+}
+
+int	read_input()// t_arg *arg or char **args
 {
 	int		ret;
 	char	*line;
 
 	if ((res = get_next_line(0, &line)) > 0)
 	{
-		/*
-		if (parse_func() != -1)
-		{
-			free(line);
-			line = NULL;
-		}
-		else
-		{
-			if (line)
-				free(line);
-			line = NULL;
-		}
-		*/
-		parse_func()
+		parse()
 		if (line)
 			free(line);
 		line = NULL:
@@ -47,6 +39,7 @@ int	parser()// t_arg *arg or char **args
 	{
 		write(1, "\n", 1);
 		exit(0);
+		//exit_minishell();
 		//exit(EXIT_SUCCESS);
 	}
 	//while (get_next_line(0, &line ) > 0)//or read from 0 fd

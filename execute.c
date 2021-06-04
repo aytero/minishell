@@ -41,6 +41,7 @@ int		exec_piped(char **args, char **envp)
 	int	fd[2];
 	pid_t	pid;
 	pid_t	pid1;
+	int		wpid = 0;//pid_t ?
 
 	char	buf[5] = {0};
 
@@ -55,7 +56,7 @@ int		exec_piped(char **args, char **envp)
 		dup2(fd[1], STDOUT_FILENO);
 		close(fd[1]);
 		//check for builtin && exec
-		if (execve(args[0], args, envp) < 0)
+		//if (execve(args[0], args, envp) < 0)
 			//exit_failure("");
 		exit (0);
 	}
@@ -77,7 +78,7 @@ int		exec_piped(char **args, char **envp)
 	//	else
 	//	{
 			//loop waitpid
-			//pid_wait = waitpid(pid, &wstatus, WUNTRACED);
+			wpid = waitpid(pid, &wstatus, WUNTRACED);
 		//	wait(NULL);
 			wait(NULL);
 		}
@@ -99,12 +100,13 @@ int	(*builtins_func[])(char **) = {
 	&builtin_exit
 };
 
-int		exec_extern(char **args, char **envp)
+int		exec_extern(char **args, char **envp)// char *path
 {
 	pid_t	pid;
 	int		wstatus;
 
 	pid = fork();
+	//signal(SIGINT, );
 	if (pid == -1)
 		exit_failure("");
 	else if (pid == 0)
@@ -138,7 +140,6 @@ int		execute(char **args, char **envp)
 
 	//if builtin
 	//else execve
-	
 	i = 0;
 	while (i < builtins_number)
 	{
