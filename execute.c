@@ -53,32 +53,32 @@ int		exec_piped(char **args, char **envp)
 	{
 		close(fd[0]);
 		dup2(fd[1], STDOUT_FILENO);
-		write(fd[1], "hey\n", 4);
 		close(fd[1]);
+		//check for builtin && exec
+		if (execve(args[0], args, envp) < 0)
+			//exit_failure("");
 		exit (0);
-		//if (execve(args[0], args, envp) < 0)
-		//exit_failure("");
 	}
 	else
 	{
-		pid1 = fork();
-		if (pid1 < 0)
-			exit_failure("");
-		if (pid1 == 0)
-		{
+		//pid1 = fork();
+		//if (pid1 < 0)
+		//	exit_failure("");
+		//if (pid1 == 0)
+		//{
 			close(fd[1]);
 			dup2(fd[0], STDIN_FILENO);
-			read(fd[0], buf, 4);
 			close(fd[0]);
-			printf("buf: %s", buf);
-			exit (0);
-			//if (execve(args[0], args, envp) < 0)
+			//check for builtin && exec
+		//	if (execve(args[0], args, envp) < 0)
 			//	exit_failure("");
-		}
-		else
-		{
+		//	exit (0);
+	//	}
+	//	else
+	//	{
 			//loop waitpid
-			wait(NULL);
+			//pid_wait = waitpid(pid, &wstatus, WUNTRACED);
+		//	wait(NULL);
 			wait(NULL);
 		}
 	}
@@ -158,6 +158,11 @@ int		execute(char **args, char **envp)
 int		builtin_echo(char **args)
 {
 	write(1, "echo here\n", 10);
+	// check for -n and set flag
+	// while args
+	// write args & divide with " "
+	// if !flag
+	//write(1, "\n", 1);
 	return (0);
 }
 
