@@ -6,7 +6,7 @@
 /*   By: lpeggy <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/01 17:14:16 by lpeggy            #+#    #+#             */
-/*   Updated: 2021/06/01 20:57:00 by lpeggy           ###   ########.fr       */
+/*   Updated: 2021/06/06 19:14:36 by lpeggy           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,9 +18,12 @@ void	*realloc(void **ptr, size_t sizr)
 	return (*ptr);
 }
 
-void	parse()
+void	parse(char *line)
 {
-	//
+	t_args	*args;
+
+	args->cmd = ft_stdup(line);
+	//return (args);
 }
 
 int	read_input()// t_arg *arg or char **args
@@ -30,7 +33,7 @@ int	read_input()// t_arg *arg or char **args
 
 	if ((res = get_next_line(0, &line)) > 0)
 	{
-		parse()
+		parse(line);
 		if (line)
 			free(line);
 		line = NULL:

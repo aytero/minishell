@@ -6,7 +6,7 @@
 /*   By: lpeggy <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/01 20:49:41 by lpeggy            #+#    #+#             */
-/*   Updated: 2021/06/03 20:52:56 by lpeggy           ###   ########.fr       */
+/*   Updated: 2021/06/06 20:30:08 by lpeggy           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,32 +56,24 @@ int		exec_piped(char **args, char **envp)
 		dup2(fd[1], STDOUT_FILENO);
 		close(fd[1]);
 		//check for builtin && exec
-		//if (execve(args[0], args, envp) < 0)
-			//exit_failure("");
-		exit (0);
+		choose_cmd(args, envp);
+		////execve(args[0], args, envp);
+		exit_failure("");
 	}
 	else
 	{
-		//pid1 = fork();
-		//if (pid1 < 0)
-		//	exit_failure("");
-		//if (pid1 == 0)
-		//{
-			close(fd[1]);
-			dup2(fd[0], STDIN_FILENO);
-			close(fd[0]);
-			//check for builtin && exec
-		//	if (execve(args[0], args, envp) < 0)
-			//	exit_failure("");
-		//	exit (0);
-	//	}
-	//	else
-	//	{
-			//loop waitpid
-			wpid = waitpid(pid, &wstatus, WUNTRACED);
-		//	wait(NULL);
-			wait(NULL);
-		}
+		//loop waitpid
+		wpid = waitpid(pid, &wstatus, WUNTRACED);
+		//wait(NULL);
+		wait(NULL);
+
+		close(fd[1]);
+		dup2(fd[0], STDIN_FILENO);
+		close(fd[0]);
+		//check for builtin && exec
+		choose_cmd(args, envp);
+		////execve(args[0], args, envp);
+		exit_failure("");
 	}
 	return (0);
 }
@@ -111,10 +103,8 @@ int		exec_extern(char **args, char **envp)// char *path
 		exit_failure("");
 	else if (pid == 0)
 	{
-		if (execve(args[0], args, envp) < 0)
-			perror("");
-		//exit(EXIT_FAILURE);
-		return (EXIT_FAILURE);
+		execve(args[0], args, envp);
+		exit_failure("");
 	}
 	else
 	{
