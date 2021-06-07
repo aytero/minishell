@@ -1,29 +1,26 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   parser.h                                           :+:      :+:    :+:   */
+/*   ft_lstadd_back.c                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: lpeggy <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2021/06/01 17:14:48 by lpeggy            #+#    #+#             */
-/*   Updated: 2021/06/07 18:20:57 by lpeggy           ###   ########.fr       */
+/*   Created: 2020/11/05 21:59:11 by lpeggy            #+#    #+#             */
+/*   Updated: 2020/11/05 22:32:45 by lpeggy           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef PARSER_H
-# define PARSER_H
-# include <unistd.h>
-# include <stdio.h>
-# include <stdlib.h>
-# include "libft.h"
+#include "libft.h"
 
-typedef struct s_args
+void	ft_lstadd_back(t_list **lst, t_list *new)
 {
-	char			*cmd;
-	struct t_args	*next;
-}					t_args;
+	t_list	*last;
 
-//void	parse();
-char	**read_input();
-
-#endif
+	if (*lst == NULL)
+	{
+		(*lst) = new;
+		return ;
+	}
+	last = ft_lstlast(*lst);
+	last->next = new;
+}

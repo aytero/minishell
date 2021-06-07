@@ -1,29 +1,24 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   parser.h                                           :+:      :+:    :+:   */
+/*   ft_calloc.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: lpeggy <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2021/06/01 17:14:48 by lpeggy            #+#    #+#             */
-/*   Updated: 2021/06/07 18:20:57 by lpeggy           ###   ########.fr       */
+/*   Created: 2020/11/02 14:54:24 by lpeggy            #+#    #+#             */
+/*   Updated: 2021/04/15 19:23:25 by lpeggy           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef PARSER_H
-# define PARSER_H
-# include <unistd.h>
-# include <stdio.h>
-# include <stdlib.h>
-# include "libft.h"
+#include "libft.h"
 
-typedef struct s_args
+void	*ft_calloc(size_t count, size_t size)
 {
-	char			*cmd;
-	struct t_args	*next;
-}					t_args;
+	void	*ptr;
 
-//void	parse();
-char	**read_input();
-
-#endif
+	ptr = (void *)malloc(size * count);
+	if (!ptr)
+		return (NULL);
+	ft_bzero(ptr, size * count);
+	return (ptr);
+}

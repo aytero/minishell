@@ -1,29 +1,20 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   parser.h                                           :+:      :+:    :+:   */
+/*   ft_lstdelone.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: lpeggy <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2021/06/01 17:14:48 by lpeggy            #+#    #+#             */
-/*   Updated: 2021/06/07 18:20:57 by lpeggy           ###   ########.fr       */
+/*   Created: 2020/11/09 17:53:44 by lpeggy            #+#    #+#             */
+/*   Updated: 2020/11/23 19:55:30 by lpeggy           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef PARSER_H
-# define PARSER_H
-# include <unistd.h>
-# include <stdio.h>
-# include <stdlib.h>
-# include "libft.h"
+#include "libft.h"
 
-typedef struct s_args
+void	ft_lstdelone(t_list *lst, void (*del)(void *))
 {
-	char			*cmd;
-	struct t_args	*next;
-}					t_args;
-
-//void	parse();
-char	**read_input();
-
-#endif
+	if (lst && del)
+		del(lst->content);
+	free(lst);
+}

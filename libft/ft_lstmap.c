@@ -1,29 +1,35 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   parser.h                                           :+:      :+:    :+:   */
+/*   ft_lstmap.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: lpeggy <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2021/06/01 17:14:48 by lpeggy            #+#    #+#             */
-/*   Updated: 2021/06/07 18:20:57 by lpeggy           ###   ########.fr       */
+/*   Created: 2020/11/09 17:54:40 by lpeggy            #+#    #+#             */
+/*   Updated: 2021/04/15 19:40:01 by lpeggy           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef PARSER_H
-# define PARSER_H
-# include <unistd.h>
-# include <stdio.h>
-# include <stdlib.h>
-# include "libft.h"
+#include "libft.h"
 
-typedef struct s_args
+t_list	*ft_lstmap(t_list *lst, void *(*f)(void *), void (*del)(void *))
 {
-	char			*cmd;
-	struct t_args	*next;
-}					t_args;
+	t_list	*lst_new;
+	t_list	*elem_new;
 
-//void	parse();
-char	**read_input();
-
-#endif
+	if (!lst || !f)
+		return (NULL);
+	lst_new = NULL;
+	while (lst)
+	{
+		elem_new = ft_lstnew(f(lst->content));
+		if (!elem_new)
+		{
+			ft_lstclear(&lst_new, del);
+			return (NULL);
+		}
+		ft_lstadd_back(&lst_new, elem_new);
+		lst = lst->next;
+	}
+	return (lst_new);
+}

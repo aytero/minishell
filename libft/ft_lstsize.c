@@ -1,29 +1,29 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   parser.h                                           :+:      :+:    :+:   */
+/*   ft_lstsize.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: lpeggy <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2021/06/01 17:14:48 by lpeggy            #+#    #+#             */
-/*   Updated: 2021/06/07 18:20:57 by lpeggy           ###   ########.fr       */
+/*   Created: 2020/11/05 21:31:44 by lpeggy            #+#    #+#             */
+/*   Updated: 2021/04/15 19:40:17 by lpeggy           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef PARSER_H
-# define PARSER_H
-# include <unistd.h>
-# include <stdio.h>
-# include <stdlib.h>
-# include "libft.h"
+#include "libft.h"
 
-typedef struct s_args
+int	ft_lstsize(t_list *lst)
 {
-	char			*cmd;
-	struct t_args	*next;
-}					t_args;
+	int		size;
 
-//void	parse();
-char	**read_input();
-
-#endif
+	size = 0;
+	if (lst)
+	{
+		while (lst)
+		{
+			size++;
+			lst = lst->next;
+		}
+	}
+	return (size);
+}

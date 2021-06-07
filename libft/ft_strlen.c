@@ -1,29 +1,25 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   parser.h                                           :+:      :+:    :+:   */
+/*   ft_strlen.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: lpeggy <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2021/06/01 17:14:48 by lpeggy            #+#    #+#             */
-/*   Updated: 2021/06/07 18:20:57 by lpeggy           ###   ########.fr       */
+/*   Created: 2020/10/28 14:19:18 by lpeggy            #+#    #+#             */
+/*   Updated: 2021/04/15 19:43:23 by lpeggy           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef PARSER_H
-# define PARSER_H
-# include <unistd.h>
-# include <stdio.h>
-# include <stdlib.h>
-# include "libft.h"
+#include "libft.h"
 
-typedef struct s_args
+size_t	ft_strlen(const char *s)
 {
-	char			*cmd;
-	struct t_args	*next;
-}					t_args;
+	int	len;
 
-//void	parse();
-char	**read_input();
-
-#endif
+	if (!s)
+		return (0);
+	len = 0;
+	while (s[len] != '\0')
+		len++;
+	return (len);
+}

@@ -1,29 +1,33 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   parser.h                                           :+:      :+:    :+:   */
+/*   ft_strdup.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: lpeggy <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2021/06/01 17:14:48 by lpeggy            #+#    #+#             */
-/*   Updated: 2021/06/07 18:20:57 by lpeggy           ###   ########.fr       */
+/*   Created: 2020/11/02 17:29:38 by lpeggy            #+#    #+#             */
+/*   Updated: 2021/04/15 19:42:32 by lpeggy           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef PARSER_H
-# define PARSER_H
-# include <unistd.h>
-# include <stdio.h>
-# include <stdlib.h>
-# include "libft.h"
+#include "libft.h"
 
-typedef struct s_args
+char	*ft_strdup(const char *s1)
 {
-	char			*cmd;
-	struct t_args	*next;
-}					t_args;
+	size_t	len;
+	size_t	i;
+	char	*s2;
 
-//void	parse();
-char	**read_input();
-
-#endif
+	i = 0;
+	len = ft_strlen(s1);
+	s2 = (char *)malloc(sizeof(char) * len + 1);
+	if (!s2)
+		return (NULL);
+	while (i < len)
+	{
+		s2[i] = s1[i];
+		i++;
+	}
+	s2[i] = '\0';
+	return (s2);
+}

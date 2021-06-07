@@ -1,29 +1,29 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   parser.h                                           :+:      :+:    :+:   */
+/*   ft_memset.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: lpeggy <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2021/06/01 17:14:48 by lpeggy            #+#    #+#             */
-/*   Updated: 2021/06/07 18:20:57 by lpeggy           ###   ########.fr       */
+/*   Created: 2020/10/28 15:46:34 by lpeggy            #+#    #+#             */
+/*   Updated: 2020/11/10 14:58:49 by lpeggy           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef PARSER_H
-# define PARSER_H
-# include <unistd.h>
-# include <stdio.h>
-# include <stdlib.h>
-# include "libft.h"
+#include "libft.h"
 
-typedef struct s_args
+void	*ft_memset(void *b, int c, size_t len)
 {
-	char			*cmd;
-	struct t_args	*next;
-}					t_args;
+	unsigned char	*str;
+	size_t			i;
 
-//void	parse();
-char	**read_input();
-
-#endif
+	str = (unsigned char *)b;
+	i = 0;
+	while (len > 0)
+	{
+		str[i] = (unsigned char)c;
+		i++;
+		len--;
+	}
+	return (b);
+}

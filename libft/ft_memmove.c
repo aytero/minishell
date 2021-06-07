@@ -1,29 +1,35 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   parser.h                                           :+:      :+:    :+:   */
+/*   ft_memmove.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: lpeggy <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2021/06/01 17:14:48 by lpeggy            #+#    #+#             */
-/*   Updated: 2021/06/07 18:20:57 by lpeggy           ###   ########.fr       */
+/*   Created: 2020/10/31 15:22:56 by lpeggy            #+#    #+#             */
+/*   Updated: 2020/11/10 15:07:56 by lpeggy           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef PARSER_H
-# define PARSER_H
-# include <unistd.h>
-# include <stdio.h>
-# include <stdlib.h>
-# include "libft.h"
+#include "libft.h"
 
-typedef struct s_args
+void	*ft_memmove(void *dst, const void *src, size_t len)
 {
-	char			*cmd;
-	struct t_args	*next;
-}					t_args;
+	char	*strdst;
+	char	*strsrc;
 
-//void	parse();
-char	**read_input();
-
-#endif
+	if (!dst && !src)
+		return (dst);
+	strdst = (char *)dst;
+	strsrc = (char *)src;
+	if (strsrc < strdst)
+	{
+		while (len)
+		{
+			strdst[len - 1] = strsrc[len - 1];
+			len--;
+		}
+	}
+	else
+		ft_memcpy(dst, src, len);
+	return ((void *)dst);
+}

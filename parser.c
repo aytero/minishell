@@ -6,37 +6,42 @@
 /*   By: lpeggy <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/01 17:14:16 by lpeggy            #+#    #+#             */
-/*   Updated: 2021/06/06 19:14:36 by lpeggy           ###   ########.fr       */
+/*   Updated: 2021/06/07 18:19:13 by lpeggy           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "parser.h"
 
+/*
 void	*realloc(void **ptr, size_t sizr)
 {
-	//*ptr = malloc(size);
+	*ptr = malloc(size);
 	return (*ptr);
 }
+*/
 
-void	parse(char *line)
+/*
+void	parse(char *line, t_args *args)
 {
-	t_args	*args;
 
-	args->cmd = ft_stdup(line);
+	//ft_lstadd_front(args, ft_lstnew(line));//t_lst *args & use struct from libft.h
 	//return (args);
 }
+*/
 
-int	read_input()// t_arg *arg or char **args
+char	**read_input()// t_arg *arg or char **args
 {
 	int		ret;
 	char	*line;
+	char	**args;
 
-	if ((res = get_next_line(0, &line)) > 0)
+	if ((ret = get_next_line(0, &line)) > 0)
 	{
-		parse(line);
+		args = ft_split(line, ' ');
+		//parse(line, args);
 		if (line)
 			free(line);
-		line = NULL:
+		line = NULL;
 	}
 	if (ret == 0)
 	{
@@ -46,4 +51,5 @@ int	read_input()// t_arg *arg or char **args
 		//exit(EXIT_SUCCESS);
 	}
 	//while (get_next_line(0, &line ) > 0)//or read from 0 fd
+	return(args);
 }
