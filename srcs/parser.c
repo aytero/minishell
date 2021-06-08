@@ -6,7 +6,7 @@
 /*   By: lpeggy <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/01 17:14:16 by lpeggy            #+#    #+#             */
-/*   Updated: 2021/06/07 18:19:13 by lpeggy           ###   ########.fr       */
+/*   Updated: 2021/06/08 22:36:54 by lpeggy           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,6 +17,19 @@ void	*realloc(void **ptr, size_t sizr)
 {
 	*ptr = malloc(size);
 	return (*ptr);
+}
+*/
+
+/*
+void	arg_to_lowercase()
+{
+	int		i = 0;
+
+	while (str[i])
+	{
+		str[i] = ft_tolower(str[i]);
+		i++;
+	}
 }
 */
 
@@ -38,6 +51,7 @@ char	**read_input()// t_arg *arg or char **args
 	if ((ret = get_next_line(0, &line)) > 0)
 	{
 		args = ft_split(line, ' ');
+		//args[last] = NULL;
 		//parse(line, args);
 		if (line)
 			free(line);
@@ -46,7 +60,7 @@ char	**read_input()// t_arg *arg or char **args
 	if (ret == 0)
 	{
 		write(1, "\n", 1);
-		exit(0);
+		exit(0);//exits here after pipe ??
 		//exit_minishell();
 		//exit(EXIT_SUCCESS);
 	}

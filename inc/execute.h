@@ -6,7 +6,7 @@
 /*   By: lpeggy <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/01 20:51:06 by lpeggy            #+#    #+#             */
-/*   Updated: 2021/06/07 22:57:31 by lpeggy           ###   ########.fr       */
+/*   Updated: 2021/06/08 20:42:28 by lpeggy           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,12 +17,14 @@
 # include <stdlib.h>
 # include <errno.h>
 # include <sys/wait.h>
-# include "libft.h"
+# include "../libft/libft.h"
 
 /*
 typedef struct	s_env
 {
-	char			*var;
+	char			*key;
+	char			*value;
+	int				visible;//cause key without val exists but is not visible for print
 	struct t_env	*next;
 }					t_env;
 */

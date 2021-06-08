@@ -6,7 +6,7 @@
 /*   By: lpeggy <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/01 17:14:48 by lpeggy            #+#    #+#             */
-/*   Updated: 2021/06/07 18:20:57 by lpeggy           ###   ########.fr       */
+/*   Updated: 2021/06/08 20:42:32 by lpeggy           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,7 +15,7 @@
 # include <unistd.h>
 # include <stdio.h>
 # include <stdlib.h>
-# include "libft.h"
+# include "../libft/libft.h"
 
 typedef struct s_args
 {
