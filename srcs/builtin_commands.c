@@ -6,7 +6,7 @@
 /*   By: lpeggy <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/08 16:42:00 by lpeggy            #+#    #+#             */
-/*   Updated: 2021/06/08 16:42:54 by lpeggy           ###   ########.fr       */
+/*   Updated: 2021/06/09 21:18:51 by lpeggy           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,7 +37,7 @@ int		builtin_echo(char **args, t_list *env)
 		write(1, "\n", 1);
 		return (0);
 	}
-	if (ft_strcmp(args[1], "-n") == 0)//ft_strcmp
+	if (ft_strcmp(args[1], "-n") == 0)
 	{
 		opt_flag = 1;
 		i++;
@@ -63,9 +63,18 @@ int		builtin_cd(char **args, t_list *env)
 	return (0);
 }
 
+/*
+void	add_env(t_env *env, char **args)
+{
+	//kinda lst add back but divide by '=' and use visibility flag
+}
+*/
+
 int		builtin_export(char **args, t_list *env)
 {
-	write(1, "export here\n", 12);
+	//add_env(env, args);
+	//add before back
+	ft_lstadd_back(&env, ft_lstnew(args[1]));
 	return (0);
 }
 
@@ -77,18 +86,6 @@ int		builtin_unset(char **args, t_list *env)
 
 int		builtin_env(char **args, t_list *env)
 {
-	// just prints all envs
-	/*
-	int		i;
-
-	i = 0;
-	while (env[i])
-	{
-		write(1, env[i], ft_strlen(env[i]));
-		write(1, "\n", 1);
-		i++;
-	}
-	*/
 	t_list	*tmp;
 
 	tmp = env;
@@ -96,9 +93,15 @@ int		builtin_env(char **args, t_list *env)
 	{
 		//printf("%s\n", (char *)tmp->content);
 		write(1, (char *)tmp->content, ft_strlen((char *)tmp->content));
-		//write(1, tmp->key, ft_strlen(tmp->key));
-		//write(1, "=", 1);
-		//write(1, tmp->value, ft_strlen(tmp->value));
+		/*
+		if (tmp->visible)
+		{
+			write(1, tmp->key, ft_strlen(tmp->key));
+			write(1, "=", 1);
+			write(1, tmp->value, ft_strlen(tmp->value));
+			write(1, "\n", 1);
+		}
+		*/
 		write(1, "\n", 1);
 		tmp = tmp->next;
 	}
@@ -109,7 +112,7 @@ int		builtin_exit(char **args, t_list *env)
 {
 	//exit with an exit status
 	//if (global_error) ???
-	// exit(EXIT_FAILURE);
+	// exit(global_error);
 	write(1, "bye!\n", 5);
 	exit (EXIT_SUCCESS);
 }

@@ -6,14 +6,14 @@
 /*   By: lpeggy <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/01 17:14:16 by lpeggy            #+#    #+#             */
-/*   Updated: 2021/06/08 22:36:54 by lpeggy           ###   ########.fr       */
+/*   Updated: 2021/06/09 20:55:42 by lpeggy           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "parser.h"
 
 /*
-void	*realloc(void **ptr, size_t sizr)
+void	*realloc(void **ptr, size_t size)
 {
 	*ptr = malloc(size);
 	return (*ptr);

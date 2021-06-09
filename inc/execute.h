@@ -6,7 +6,7 @@
 /*   By: lpeggy <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/01 20:51:06 by lpeggy            #+#    #+#             */
-/*   Updated: 2021/06/08 20:42:28 by lpeggy           ###   ########.fr       */
+/*   Updated: 2021/06/09 18:16:15 by lpeggy           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,9 +37,9 @@ int		builtin_export(char **args, t_list *env);
 int		builtin_unset(char **args, t_list *env);
 int		builtin_env(char **args, t_list *env);
 int		builtin_exit(char **args, t_list *env);
-int		exec_extern(char **args, t_list *env);
-int		exec_piped(char **args, t_list *env);
-int		choose_cmd(char **args, t_list *env);
+int		exec_extern(char *cmd, char **args, t_list *env);
+int		exec_piped(char *cmd, char **args, t_list *env);
+int		choose_cmd(char *cmd, char **args, t_list *env);
 int		execute(char **args, t_list *env);
 
 #endif

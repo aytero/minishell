@@ -26,7 +26,7 @@ lib:
 	@make bonus -C $(LIBFTDIR)
 
 $(NAME): $(OBJSDIR) $(OBJS)
-	$(CC) -L$(LIBFTDIR) -lft $(OBJS) -o $(NAME)
+	$(CC) -L$(LIBFTDIR) -lft $(OBJS) -lreadline -o $(NAME)
 
 $(OBJSDIR):
 	@mkdir -p $(OBJSDIR)

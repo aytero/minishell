@@ -6,7 +6,7 @@
 /*   By: lpeggy <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/01 17:14:27 by lpeggy            #+#    #+#             */
-/*   Updated: 2021/06/08 22:23:59 by lpeggy           ###   ########.fr       */
+/*   Updated: 2021/06/09 21:18:34 by lpeggy           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -82,7 +82,7 @@ int		main(int argc, char **argv, char **envp)
 
 	//char	*arr[] = {"p1", "p2", NULL};
 	env = copy_envp(env, envp);
-	while (1)
+/*	while (1)
 	{
 		write(1, "assh:> ", 7);
 		args = read_input();//
@@ -92,6 +92,18 @@ int		main(int argc, char **argv, char **envp)
 		//free();
 		free_array(args);
 	}
+	*/
+	char	*line;
+
+	while ((line = readline("assh:> ")) != NULL)
+	{
+		args = ft_split(line, ' ');
+		//parse
+		execute(args, env);
+		if (ft_strlen(line) > 0)
+				add_history(line);//clean after?
+	}
+	free(line);
 	return (0);
 	//return (EXIT_SUCCESS);
 }

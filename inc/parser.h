@@ -6,7 +6,7 @@
 /*   By: lpeggy <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/01 17:14:48 by lpeggy            #+#    #+#             */
-/*   Updated: 2021/06/08 20:42:32 by lpeggy           ###   ########.fr       */
+/*   Updated: 2021/06/09 19:22:18 by lpeggy           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,10 +16,13 @@
 # include <stdio.h>
 # include <stdlib.h>
 # include "../libft/libft.h"
+#include <readline/readline.h>
+#include <readline/history.h>
 
 typedef struct s_args
 {
 	char			*cmd;
+	char			**args;
 	struct t_args	*next;
 }					t_args;
 
