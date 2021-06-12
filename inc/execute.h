@@ -6,7 +6,7 @@
 /*   By: lpeggy <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/01 20:51:06 by lpeggy            #+#    #+#             */
-/*   Updated: 2021/06/09 18:16:15 by lpeggy           ###   ########.fr       */
+/*   Updated: 2021/06/12 23:25:56 by lpeggy           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,27 +19,41 @@
 # include <sys/wait.h>
 # include "../libft/libft.h"
 
-/*
-typedef struct	s_env
+typedef struct s_cmds
 {
-	char			*key;
-	char			*value;
-	int				visible;//cause key without val exists but is not visible for print
-	struct t_env	*next;
-}					t_env;
-*/
+	char			*cmd;
+	char			**args;
+//	int				flag_pipe;
+//	int				flag_redirect;
+	struct t_cmds	*next;
+}					t_cmds;
 
+typedef struct s_vars
+{
+	char		**env;
+	char		*path;
+	char		**args;
+	t_cmds		*cmds;
+}				t_vars;
+
+int		g_exit_status;
+
+void	builtin_error(char *cmd, char *arg, char *error_mes);
+void	free_double_array(char **arr);
+char	**realloc_env(char **env, int size);
+int		env_arr_size(char **env);
+char	**copy_envp(char **envp, t_vars *vars);
 void	exit_failure(char *str);
-int		builtin_pwd(char **args, t_list *env);
-int		builtin_echo(char **args, t_list *env);
-int		builtin_cd(char **args, t_list *env);
-int		builtin_export(char **args, t_list *env);
-int		builtin_unset(char **args, t_list *env);
-int		builtin_env(char **args, t_list *env);
-int		builtin_exit(char **args, t_list *env);
-int		exec_extern(char *cmd, char **args, t_list *env);
-int		exec_piped(char *cmd, char **args, t_list *env);
-int		choose_cmd(char *cmd, char **args, t_list *env);
-int		execute(char **args, t_list *env);
+int		builtin_pwd(t_vars *vars);
+int		builtin_echo(t_vars *vars);
+int		builtin_cd(t_vars *vars);
+int		builtin_export(t_vars *vars);
+int		builtin_unset(t_vars *vars);
+int		builtin_env(t_vars *vars);
+int		builtin_exit(t_vars *vars);
+int		exec_extern(char *cmd, t_vars *vars);
+int		exec_piped(char *cmd, t_vars *vars);
+int		choose_cmd(char *cmd, t_vars *vars);
+int		execute(t_vars *vars);
 
 #endif

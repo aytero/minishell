@@ -6,18 +6,23 @@
 /*   By: lpeggy <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/12 17:24:31 by lpeggy            #+#    #+#             */
-/*   Updated: 2021/06/12 17:49:30 by lpeggy           ###   ########.fr       */
+/*   Updated: 2021/06/12 21:08:18 by lpeggy           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include <stdio.h>
-#include <unistd.h>
-#include <string.h>
-#include <stdlib.h>
+#include <execute.h>
 
-char	*ft_strdup(const char *s1);
+void	builtin_error(char *cmd, char *arg, char *error_mes)
+{
+	g_exit_status = 1;
+//	write(1, assh: unset:`, len);
+//	write(1, arg, len);
+//	write(1, "':", 2);
+//	write(1, error_mes, len);
+	printf("assh: %s: `%s': %s\n", cmd, arg, error_mes);
+}
 
-int		env_arr_size(char **env)
+int	env_arr_size(char **env)
 {
 	int		i;
 
@@ -51,8 +56,8 @@ char	**realloc_env(char **env, int size)
 
 	env_new = malloc(sizeof(char *) * (size + 1));// one extra for \0
 	if (!env_new)
-		//return (NULL);
 		exit(1);//
+		//return (NULL);//error
 	//memset(env_new, 0, sizeof(char *) * (size + 1));
 	i = 0;
 	while (i < size && env[i])
@@ -65,13 +70,13 @@ char	**realloc_env(char **env, int size)
 	return (env_new);
 }
 
-char	**copy_envp(char **envp)
+char	**copy_envp(char **envp, t_vars *vars)
 {
 	char	**env;
 	int		i;
 
 	i = env_arr_size(envp);
-	env = malloc(sizeof(char *) * (i + 1));//not sure about + 1
+	env = malloc(sizeof(char *) * (i + 1));
 	if (!env)
 		return(NULL);
 	//memset(env, 0, sizeof(char *) * (i + 1));
@@ -79,6 +84,10 @@ char	**copy_envp(char **envp)
 //	env[i] = 0;
 	i = -1;
 	while (envp[++i])
+	{
+		if (ft_strnstr(envp[i], "PATH", 4))
+			vars->path = ft_strdup(envp[i]);
 		env[i] = ft_strdup(envp[i]);
+	}
 	return(env);
 }
