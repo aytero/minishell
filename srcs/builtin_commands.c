@@ -12,11 +12,20 @@
 
 #include "execute.h"
 
+/*
+void	builtin_error()
+{
+	g_ex_status = 1;
+	//write(1, "", len);
+}
+*/
+
 int		builtin_pwd(char **args, t_list *env)
 {
 	char	*pwd;
 
 	//error?
+	//g_ex_status = 0;
 	pwd = getcwd(NULL, 0);
 	//if (!pwd)
 	//	return (EXIT_FAILURE);
@@ -74,7 +83,6 @@ int		builtin_export(char **args, t_list *env)
 {
 	//add_env(env, args);
 	//add before back
-	ft_lstadd_back(&env, ft_lstnew(args[1]));
 	return (0);
 }
 
@@ -105,6 +113,7 @@ int		builtin_env(char **args, t_list *env)
 		write(1, "\n", 1);
 		tmp = tmp->next;
 	}
+	//g_ex_status = 0;
 	return (0);
 }
 

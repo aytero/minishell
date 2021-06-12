@@ -1,7 +1,10 @@
+# Extra
+.DS_Store
+
 # Prerequisites
 *.d
 
-# Object files
+# Object /files
 *.o
 *.ko
 *.obj
