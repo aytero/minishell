@@ -6,7 +6,7 @@
 /*   By: lpeggy <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/01 20:49:41 by lpeggy            #+#    #+#             */
-/*   Updated: 2021/06/15 23:11:53 by lpeggy           ###   ########.fr       */
+/*   Updated: 2021/06/16 00:01:37 by lpeggy           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -91,6 +91,7 @@ int	check_cur_dir(t_vars *vars, char *cmd)
 	char			*tmp;
 	char			*dirname;
 
+	//add search in "." and ".."
 	dirname = getcwd(NULL, 0);
 	tmp = NULL;	
 	if ((dir = opendir(dirname)) == NULL)
@@ -102,15 +103,18 @@ int	check_cur_dir(t_vars *vars, char *cmd)
 			tmp = ft_strjoin(entry->d_name, "/");
 			tmp = ft_strjoin(tmp, cmd);
 			closedir(dir);
+			free(tmp);
 			free(dirname);
 			return (0);
 		}
 	}
+	closedir(dir);
+	//free(tmp);
 	free(dirname);
 	return (1);
 }
 
-char	*check_in_bin(t_vars *vars, char *cmd)
+char	*check_in_path(t_vars *vars, char *cmd)
 {
 	DIR				*dir;
 	struct dirent	*entry;
@@ -136,6 +140,7 @@ char	*check_in_bin(t_vars *vars, char *cmd)
 				return (tmp);
 			}
 		}
+		closedir(dir);
 	}
 	return (tmp);
 }
@@ -147,7 +152,7 @@ int	exec_extern(char *cmd, t_vars *vars)// char *path
 	char	*path;
 
 	if (check_cur_dir(vars, cmd))
-		path = check_in_bin(vars, cmd);
+		path = check_in_path(vars, cmd);
 	pid = fork();
 	//signal(SIGINT, );
 	if (pid == -1)
@@ -159,7 +164,10 @@ int	exec_extern(char *cmd, t_vars *vars)// char *path
 		exit (0);
 	}
 	else
+	{
 		wait_loop(pid);
+		free(path);
+	}
 	return (0);
 	//return (EXIT_SUCCESS);
 }

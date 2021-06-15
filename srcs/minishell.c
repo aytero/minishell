@@ -6,7 +6,7 @@
 /*   By: lpeggy <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/01 17:14:27 by lpeggy            #+#    #+#             */
-/*   Updated: 2021/06/15 23:12:21 by lpeggy           ###   ########.fr       */
+/*   Updated: 2021/06/15 23:40:02 by lpeggy           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -65,7 +65,14 @@ int	main(int argc, char **argv, char **envp)
 		execute(&vars);
 		if (ft_strlen(line) > 0)
 				add_history(line);//clean after?
+		free(line);
+		free_double_array(vars.args);
 	}
+	free_double_array(vars.env);
+	free_double_array(vars.path_arr);
+	free(vars.path);
+	//write(1, "emm\n", 4);
+	sleep(10);
 	free(line);
 	return (0);
 	//return (EXIT_SUCCESS);
