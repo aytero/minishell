@@ -12,9 +12,6 @@
 
 #include "execute.h"
 
-//int	execve(const char *pathname, char *const argv[], char *const envp[]);
-
-
 void	exit_failure(char *str)
 {
 	perror(str);
@@ -76,20 +73,13 @@ int	exec_piped(char *cmd, t_vars *vars)
 	return (0);
 }
 
-char	*find_path(t_vars *vars, char *cmd)
+char	*find_path(t_vars *vars, char *path, char *cmd)
 {
-//	struct stat	buf;
-
-//	stat("p1", &buf);
-//	printf("")
-
-	char	*path;
 	//cmd = "ls"
 	char	*ptr;
 	char	*path_cut;
 	int		len;
 
-	path = NULL;
 	path_cut = ft_strdup(vars->path);
 	len = ft_strlen(path_cut);
 	while (path_cut[--len])
@@ -115,16 +105,26 @@ int	exec_extern(char *cmd, t_vars *vars)// char *path
 	int		wstatus;
 
 	char	*path;
-	path = find_path(vars, cmd);
+//	path = find_path(vars, cmd);
+	path = ft_strdup(vars->path);
 	pid = fork();
 	//signal(SIGINT, );
 	if (pid == -1)
 		exit_failure("Fork error");
 	if (pid == 0)
 	{
-		if (execve(cmd, vars->args, vars->env) < 0)
-			exit_failure("");
-		exit(0);
+		while (ft_strcmp(path, vars->path) != 0)//exec in a loop of finding path
+		{
+			path = find_path(vars, path, cmd);
+			if (execve(cmd, vars->args, vars->env) < 0)
+				continue ;
+			exit (0);
+
+		}
+		exit_failure("");
+		//if (execve(cmd, vars->args, vars->env) < 0)
+		//	exit_failure("");
+		//exit(0);
 	}
 	else
 	{

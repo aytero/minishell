@@ -47,6 +47,7 @@ int	builtin_export(t_vars *vars)
 	if (!vars->args[1])
 	{
 		//builtin_env(vars);
+		//sort env
 		while (vars->env[++j])
 			printf("%s\n", vars->env[j]);
 		return (0);
