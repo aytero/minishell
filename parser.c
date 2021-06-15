@@ -6,28 +6,19 @@
 /*   By: ssobchak <ssobchak@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/01 17:14:16 by lpeggy            #+#    #+#             */
-/*   Updated: 2021/06/11 22:32:55 by ssobchak         ###   ########.fr       */
+/*   Updated: 2021/06/15 21:07:19 by ssobchak         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "parser.h"
 
-int	*iskey(char c)
-{
-	if (c == '_' || ft_isalnum(c))
-		return (1);
-	return (0);
-}
-
-char	*dollarsign(char *str, int *i, char *env)
+char	*dollarsign(char *str, int *i, char **env)
 {
 	int j;
-	int n;
 	char *key;
 	char *rkey;
 
 	j = *i;
-	n = -1;
 	while (str[++(*i)])
 	{
 		if (!iskey(str[*i]))
@@ -36,16 +27,10 @@ char	*dollarsign(char *str, int *i, char *env)
 	if (*i == j + 1)
 		return (str);
 	key = ft_substr(str, j + 1, *i - j - 1);
-	while (env[++n])
-	{
-		if (strstr(env[n], key))
-		{
-			//rkey = ft_ 39:42 vidosek
-		}
-	}
-	free(str);
+	rkey = rightkey(key, env);
+	str = dollarswap(str, rkey, i, j);
 	free(key);
-	return (bef);
+	return (str);
 }
 
 char	*slash(char *str, int *i)
@@ -80,13 +65,12 @@ char	*quotes(char *str, int *i)
 	aft = ft_strdup(str + *i + 1);
 	bef = ft_strjoin(bef, into);
 	bef = ft_strjoin(bef, aft);
-	free(str);
 	free(into);
 	free(aft);
 	return (bef);
 }
 
-char	*doublequotes(char *str, int *i, char *env)
+char	*doublequotes(char *str, int *i, char **env)
 {
 	int j;
 	char *bef;
@@ -96,8 +80,12 @@ char	*doublequotes(char *str, int *i, char *env)
 	j = *i;
 	while (str[++(*i)])
 	{
-		if (str[*i] == '\\' && str[*i + 1] == '\"' || str[*i + 1] == '$'
-			|| str[*i + 1] == )
+		if (str[*i] == '\\' && (str[*i + 1] == '\"' || str[*i + 1] == '$'
+			|| str[*i + 1] == '\\'))
+			str = slash(str, i);
+		if (str[*i] == '$')
+			dollarsign(str, i, env);
+		if (str[*i] == '\"')
 			break;
 	}
 	bef = ft_substr(str, 0, j);
@@ -105,51 +93,28 @@ char	*doublequotes(char *str, int *i, char *env)
 	aft = ft_strdup(str + *i + 1);
 	bef = ft_strjoin(bef, into);
 	bef = ft_strjoin(bef, aft);
-	free(str);
+	// free(str);
 	free(into);
 	free(aft);
 	return (bef);
 }
 
-void	parser(char *str, char *env)
+void	parser(char *str, char **env)
 {
 	int	i;
 
 	i = -1;
+	printf ("\n\nstr do = %s\n\n", str);
 	while (str[++i])
 	{
 		if (str[i] == '\'')
-			quotes(str, &i);
+			str = quotes(str, &i);
 		if (str[i] == '\\')
-			slash(str, &i);
+			str = slash(str, &i);
 		if (str[i] == '\"')
-			doublequotes(str, &i, env);
+			str = doublequotes(str, &i, env);
 		if (str[i] == '$')
-			dollarsign(str, &i, env);
+			str = dollarsign(str, &i, env);
 	}
+	printf ("\n\nstr = %s\n\n", str);
 }
-
-// char	**read_input()// t_arg *arg or char **args
-// {
-// 	int		ret;
-// 	char	*line;
-// 	char	**args;
-
-// 	if ((ret = get_next_line(0, &line)) > 0)
-// 	{
-// 		args = ft_split(line, ' ');
-// 		parse(line, args);
-// 		if (line)
-// 			free(line);
-// 		line = NULL;
-// 	}
-// 	if (ret == 0)
-// 	{
-// 		write(1, "\n", 1);
-// 		exit(0);
-// 		exit_minishell();
-// 		exit(EXIT_SUCCESS);
-// 	}
-// 	while (get_next_line(0, &line ) > 0)//or read from 0 fd
-// 	return(args);
-// }
