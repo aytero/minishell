@@ -6,7 +6,7 @@
 /*   By: lpeggy <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/08 16:42:00 by lpeggy            #+#    #+#             */
-/*   Updated: 2021/06/12 21:11:53 by lpeggy           ###   ########.fr       */
+/*   Updated: 2021/06/15 21:53:49 by lpeggy           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,12 +56,16 @@ int	builtin_echo(t_vars *vars)
 	}
 	if (!opt_flag)
 		write(1, "\n", 1);
+	g_exit_status = 0;
 	return (0);
 }
 
 int	builtin_cd(t_vars *vars)
 {
 	(void)vars;
+	//oldpwd = pwd
+	//pwd = chdir
+	//chdir
 	write(1, "cd here\n", 8);
 	return (0);
 }

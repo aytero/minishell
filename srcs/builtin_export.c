@@ -6,7 +6,7 @@
 /*   By: lpeggy <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/12 17:52:02 by lpeggy            #+#    #+#             */
-/*   Updated: 2021/06/12 23:32:00 by lpeggy           ###   ########.fr       */
+/*   Updated: 2021/06/15 18:52:47 by lpeggy           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,6 +38,7 @@ int	builtin_export(t_vars *vars)
 	// must be an alpha and not started with digit;
 	// with no args sorts envs and prints them, without _= var
 	// str=value; export str - works as well
+	// cut quotes?? or maybe in parser
 	int		i;
 	char	**env_new;
 	int		size;

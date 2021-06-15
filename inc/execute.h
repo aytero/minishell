@@ -6,7 +6,7 @@
 /*   By: lpeggy <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/01 20:51:06 by lpeggy            #+#    #+#             */
-/*   Updated: 2021/06/12 23:25:56 by lpeggy           ###   ########.fr       */
+/*   Updated: 2021/06/15 21:28:16 by lpeggy           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,6 +17,8 @@
 # include <stdlib.h>
 # include <errno.h>
 # include <sys/wait.h>
+# include <sys/stat.h>
+# include <dirent.h>
 # include "../libft/libft.h"
 
 typedef struct s_cmds
@@ -30,8 +32,11 @@ typedef struct s_cmds
 
 typedef struct s_vars
 {
+	int			flag_pipe;
+	int			flag_redirect;
 	char		**env;
 	char		*path;
+	char		**path_arr;
 	char		**args;
 	t_cmds		*cmds;
 }				t_vars;

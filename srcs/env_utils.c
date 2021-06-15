@@ -6,7 +6,7 @@
 /*   By: lpeggy <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/12 17:24:31 by lpeggy            #+#    #+#             */
-/*   Updated: 2021/06/12 21:08:18 by lpeggy           ###   ########.fr       */
+/*   Updated: 2021/06/15 21:29:06 by lpeggy           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -89,5 +89,6 @@ char	**copy_envp(char **envp, t_vars *vars)
 			vars->path = ft_strdup(envp[i]);
 		env[i] = ft_strdup(envp[i]);
 	}
+	vars->path_arr = ft_split(vars->path, ':');
 	return(env);
 }

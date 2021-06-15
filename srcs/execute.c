@@ -6,7 +6,7 @@
 /*   By: lpeggy <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/01 20:49:41 by lpeggy            #+#    #+#             */
-/*   Updated: 2021/06/12 23:59:22 by lpeggy           ###   ########.fr       */
+/*   Updated: 2021/06/15 23:11:53 by lpeggy           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,6 +16,24 @@ void	exit_failure(char *str)
 {
 	perror(str);
 	exit(EXIT_FAILURE);
+}
+
+void	wait_loop(pid_t pid)
+{		
+	int		status;
+	int		wpid;
+
+	wpid = waitpid(pid, &status, WUNTRACED);
+	while (!WIFEXITED(status) && !WIFSIGNALED(status))
+		wpid = waitpid(pid, &status, WUNTRACED);
+
+	if (WIFEXITED(status))
+	{
+		g_exit_status = WEXITSTATUS(status);
+		//printf("exit status: %d\n", g_exit_status);
+	}
+//	if (waitpid(pid, &status, WUNTRACED | WCONTINUED) == -1)
+//		exit_failure("");
 }
 
 int	exec_piped(char *cmd, t_vars *vars)
@@ -30,15 +48,13 @@ int	exec_piped(char *cmd, t_vars *vars)
 		exit_failure("Pipe error");
 	pid = fork();
 	if (pid < 0)
-		exit_failure("Fork rror");
+		exit_failure("Fork error");
 	if (pid == 0)
 	{
 		close(fd[0]);
 		dup2(fd[1], STDOUT_FILENO);
 		close(fd[1]);
-		//check for builtin && exec
 		choose_cmd(cmd, vars);
-		//exit_failure("Exec error");
 		exit (0);
 	}
 	else
@@ -53,99 +69,97 @@ int	exec_piped(char *cmd, t_vars *vars)
 			close(fd[0]);
 			choose_cmd(vars->args[1], vars);
 			exit (0);
-			//exit_failure("Exec error");
 		}
 		else
 		{
-			//loop waitpid
-			//wpid = waitpid(pid, &status, WUNTRACED);
-			wait(NULL);
-			wait(NULL);
+			wait_loop(pid);
+			wait_loop(pid1);//TODO manage this so loop makes sense
+			//wait(NULL);
+			//wait(NULL);
 			//close(fd[0]);
 			//close(fd[1]);
 		}
-
-		//check for builtin && exec
-		//choose_cmd(args + 1, env);//kostil
-		//printf("args +1 : %s\n", *(args + 1));
-		//exit_failure("");
 	}
 	return (0);
 }
 
-char	*find_path(t_vars *vars, char *path, char *cmd)
+int	check_cur_dir(t_vars *vars, char *cmd)
 {
-	//cmd = "ls"
-	char	*ptr;
-	char	*path_cut;
-	int		len;
+	DIR				*dir;
+	struct dirent	*entry;
+	struct stat		statbuf;
+	char			*tmp;
+	char			*dirname;
 
-	path_cut = ft_strdup(vars->path);
-	len = ft_strlen(path_cut);
-	while (path_cut[--len])
+	dirname = getcwd(NULL, 0);
+	tmp = NULL;	
+	if ((dir = opendir(dirname)) == NULL)
+		return (0);
+	while ((entry = readdir(dir)) != NULL)
 	{
-		if (path_cut[len] == '/')
+		if (ft_strcmp(cmd, entry->d_name) == 0)
 		{
-			//path = ft_strjoin(path_cut + len, path);//remove free from ft_strjoin to fix this
-			path_cut = ft_substr(path_cut, 0, len);//mb add free in ft_substr??
-			//printf("CUT %s\n", path_cut);
-			//printf("NEW %s\n", path);
+			tmp = ft_strjoin(entry->d_name, "/");
+			tmp = ft_strjoin(tmp, cmd);
+			closedir(dir);
+			free(dirname);
+			return (0);
 		}
 	}
-	//search in that dir
-	//if no – cut next piece
-	// use stat/fstat/lstat
-	// opendir/readdir
-	return (path);
+	free(dirname);
+	return (1);
+}
+
+char	*check_in_bin(t_vars *vars, char *cmd)
+{
+	DIR				*dir;
+	struct dirent	*entry;
+	struct stat		statbuf;
+	char			*tmp;
+	char			*tmp2;
+	int				i;
+
+	tmp = NULL;
+	i = -1;
+	while (vars->path_arr[++i])
+	{
+		if ((dir = opendir(vars->path_arr[i])) == NULL)
+			continue ;
+		while ((entry = readdir(dir)) != NULL)
+		{
+			if (ft_strcmp(cmd, entry->d_name) == 0)
+			{
+				tmp2 = ft_strdup(vars->path_arr[i]);
+				tmp = ft_strjoin(tmp2, "/");
+				tmp = ft_strjoin(tmp, cmd);
+				closedir(dir);
+				return (tmp);
+			}
+		}
+	}
+	return (tmp);
 }
 
 int	exec_extern(char *cmd, t_vars *vars)// char *path
 {
 	pid_t	pid;
-	int		wstatus;
 
 	char	*path;
-//	path = find_path(vars, cmd);
-	path = ft_strdup(vars->path);
+
+	if (check_cur_dir(vars, cmd))
+		path = check_in_bin(vars, cmd);
 	pid = fork();
 	//signal(SIGINT, );
 	if (pid == -1)
 		exit_failure("Fork error");
 	if (pid == 0)
 	{
-		while (ft_strcmp(path, vars->path) != 0)//exec in a loop of finding path
-		{
-			path = find_path(vars, path, cmd);
-			if (execve(cmd, vars->args, vars->env) < 0)
-				continue ;
-			exit (0);
-
-		}
-		exit_failure("");
-		//if (execve(cmd, vars->args, vars->env) < 0)
-		//	exit_failure("");
-		//exit(0);
+		if (execve(path, vars->args, vars->env) < 0)
+			exit_failure("execve");
+		exit (0);
 	}
 	else
-	{
-		//wait(NULL);
-		// while waiting loop
-		int		wpid = 0;
-		wpid = waitpid(pid, &wstatus, WUNTRACED);
-		while (!WIFEXITED(wstatus) && !WIFSIGNALED(wstatus))
-			wpid = waitpid(pid, &wstatus, WUNTRACED);
-
-		/*
-		if (WIFEXITED(wstatus))
-		{
-			int		ex_s;
-			ex_s = WEXITSTATUS(wstatus);
-			printf("exit status: %d\n", ex_s);
-		}
-		*/
-//		if (waitpid(pid, &wstatus, WUNTRACED | WCONTINUED) == -1)
-//			exit_failure("");
-	}
+		wait_loop(pid);
 	return (0);
 	//return (EXIT_SUCCESS);
 }
@@ -175,16 +189,20 @@ int	choose_cmd(char *cmd, t_vars *vars)
 
 int	execute(t_vars *vars)
 {
-	int		pipe_flag = 0;
 	int		i;
 
+	vars->flag_pipe = 0;
+	vars->flag_redirect = 0;
 	i = 0;
-//	while (vars->args[i])
+//	while (vars->args[i])//no need couse no ; ? but pipes kinda need this
 //	{
-		if (pipe_flag)
+		if (vars->flag_pipe)
 			exec_piped(vars->args[i], vars);
+		//check in . dir
+		//check if in bins
 		choose_cmd(vars->args[i], vars);
 //		i++;
 //	}
+	printf("exit status: %d\n", g_exit_status);
 	return (0);
 }
