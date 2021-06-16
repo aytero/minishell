@@ -6,11 +6,24 @@
 /*   By: lpeggy <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/12 17:52:02 by lpeggy            #+#    #+#             */
-/*   Updated: 2021/06/15 18:52:47 by lpeggy           ###   ########.fr       */
+/*   Updated: 2021/06/16 22:27:10 by lpeggy           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "execute.h"
+
+void	replace_env(t_vars *vars, int index, char *new_val)
+{
+	char	*new_env;
+	int		k;
+
+	new_env = NULL;
+	k = find_env_val_index(vars, index);
+	new_env = ft_substr(vars->env[index], 0, k + 1);
+	new_env = ft_strjoin(new_env, new_val);
+	free(vars->env[index]);
+	vars->env[index] = new_env;
+}
 
 static int	check_export_arg(char *new_elem)
 {
@@ -44,6 +57,7 @@ int	builtin_export(t_vars *vars)
 	int		size;
 	int		j;
 
+	g_exit_status = 0;
 	j = -1;
 	if (!vars->args[1])
 	{
@@ -59,8 +73,7 @@ int	builtin_export(t_vars *vars)
 	if (check_export_arg(vars->args[j]))
 	{
 		g_exit_status = 1;
-		//exit(1);
-		return (1);//exit with error
+		return (1);
 	}
 
 	env_new = malloc(sizeof(char *) * (size + 1));// one extra for \0

@@ -6,26 +6,11 @@
 /*   By: lpeggy <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/12 17:46:31 by lpeggy            #+#    #+#             */
-/*   Updated: 2021/06/12 19:02:45 by lpeggy           ###   ########.fr       */
+/*   Updated: 2021/06/16 22:02:55 by lpeggy           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "execute.h"
-
-static int	find_env(char **env, char *key)
-{
-	int		i;
-
-	i = 0;
-	while (env[i])
-	{
-		//if (ft_strnstr(env[i]), key)
-		if (ft_strncmp(env[i], key, ft_strlen(key)) == 0)
-			return (i);
-		i++;
-	}
-	return (-1);
-}
 
 static char	**delete_env(char **env, int env_index)
 {
@@ -69,7 +54,7 @@ int	builtin_unset(t_vars *vars)//, char *key)
 		i = -1;
 		while (vars->env[++i])
 		{
-			env_index = find_env(vars->env, vars->args[j]);//args[j] - key
+			env_index = find_env(vars, vars->args[j]);//args[j] - key
 			if (env_index > -1)// manage zero index
 			{
 				vars->env = delete_env(vars->env, env_index);//remove/realloc/all that

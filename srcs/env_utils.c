@@ -6,20 +6,51 @@
 /*   By: lpeggy <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/12 17:24:31 by lpeggy            #+#    #+#             */
-/*   Updated: 2021/06/15 21:29:06 by lpeggy           ###   ########.fr       */
+/*   Updated: 2021/06/16 22:23:12 by lpeggy           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include <execute.h>
 
-void	builtin_error(char *cmd, char *arg, char *error_mes)
+int	find_env_val_index(t_vars *vars, int index)
 {
-	g_exit_status = 1;
-//	write(1, assh: unset:`, len);
-//	write(1, arg, len);
-//	write(1, "':", 2);
-//	write(1, error_mes, len);
-	printf("assh: %s: `%s': %s\n", cmd, arg, error_mes);
+	int		k;
+//	char	*val;
+
+	k = 0;
+	while (vars->env[index])
+	{
+		if (vars->env[index][k] == '=')
+		{
+			//val = ft_substr(vars->env[index][++k]);
+			return (k);
+		}
+		k++;
+	}
+	return (-1);
+}
+
+int	find_env(t_vars *vars, char *key)
+{
+	int		i;
+	char	*full_key;
+
+	//full_key = ft_strjoin(key, "=");//func frees key(commented)
+	//or
+	full_key = ft_strdup(key);
+	full_key = ft_strjoin(full_key, "=");
+	i = 0;
+	while (vars->env[i])
+	{
+		if (ft_strncmp(vars->env[i], full_key, ft_strlen(full_key)) == 0)
+		{
+			free(full_key);
+			return (i);
+		}
+		i++;
+	}
+	free(full_key);
+	return (-1);
 }
 
 int	env_arr_size(char **env)

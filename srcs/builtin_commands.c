@@ -6,23 +6,31 @@
 /*   By: lpeggy <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/08 16:42:00 by lpeggy            #+#    #+#             */
-/*   Updated: 2021/06/15 21:53:49 by lpeggy           ###   ########.fr       */
+/*   Updated: 2021/06/16 20:49:22 by lpeggy           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "execute.h"
+
+void	builtin_error(char *cmd, char *arg, char *error_mes)
+{
+	g_exit_status = 1;
+//	write(1, assh: unset:`, len);
+//	write(1, arg, len);
+//	write(1, "':", 2);
+//	write(1, error_mes, len);
+	printf("assh: %s: `%s': %s\n", cmd, arg, error_mes);
+}
 
 int	builtin_pwd(t_vars *vars)
 {
 	char	*pwd;
 
 	(void)vars;
-
-	//error?
 	pwd = getcwd(NULL, 0);
-	//if (!pwd)
-	//	return (EXIT_FAILURE);
-	//write(1, cwd, size);
+	if (!pwd)
+		g_exit_status = 1;
+	//write(1, pwd, sizeof(pwd) - 1);
 	printf("%s\n", pwd);
 	free(pwd);
 	g_exit_status = 0;
@@ -57,16 +65,6 @@ int	builtin_echo(t_vars *vars)
 	if (!opt_flag)
 		write(1, "\n", 1);
 	g_exit_status = 0;
-	return (0);
-}
-
-int	builtin_cd(t_vars *vars)
-{
-	(void)vars;
-	//oldpwd = pwd
-	//pwd = chdir
-	//chdir
-	write(1, "cd here\n", 8);
 	return (0);
 }
 

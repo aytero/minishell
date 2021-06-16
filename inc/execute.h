@@ -6,7 +6,7 @@
 /*   By: lpeggy <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/01 20:51:06 by lpeggy            #+#    #+#             */
-/*   Updated: 2021/06/15 23:38:15 by lpeggy           ###   ########.fr       */
+/*   Updated: 2021/06/16 21:54:32 by lpeggy           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,6 +45,9 @@ int		g_exit_status;
 
 void	builtin_error(char *cmd, char *arg, char *error_mes);
 void	free_double_array(char **arr);
+void	replace_env(t_vars *vars, int index, char *new_val);
+int		find_env_val_index(t_vars *vars, int index);
+int		find_env(t_vars *vars, char *key);
 char	**realloc_env(char **env, int size);
 int		env_arr_size(char **env);
 char	**copy_envp(char **envp, t_vars *vars);
