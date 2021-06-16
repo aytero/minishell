@@ -83,7 +83,7 @@ int	exec_piped(char *cmd, t_vars *vars)
 	return (0);
 }
 
-int	check_cur_dir(t_vars *vars, char *cmd)
+char	*check_cur_dir(t_vars *vars, char *cmd)
 {
 	DIR				*dir;
 	struct dirent	*entry;
@@ -92,26 +92,32 @@ int	check_cur_dir(t_vars *vars, char *cmd)
 	char			*dirname;
 
 	//add search in "." and ".."
+	if (ft_strncmp(cmd, ".", 1) == 0 || ft_strncmp(cmd, "..", 2) == 0)
+	{
+		tmp = ft_strdup(cmd);
+		return (tmp);
+	}
 	dirname = getcwd(NULL, 0);
 	tmp = NULL;	
 	if ((dir = opendir(dirname)) == NULL)
-		return (0);
+		return (NULL);
 	while ((entry = readdir(dir)) != NULL)
 	{
 		if (ft_strcmp(cmd, entry->d_name) == 0)
 		{
-			tmp = ft_strjoin(entry->d_name, "/");
-			tmp = ft_strjoin(tmp, cmd);
+			//tmp = ft_strjoin(entry->d_name, "/");
+			//tmp = ft_strjoin(tmp, cmd);
 			closedir(dir);
-			free(tmp);
+			//free(tmp);
 			free(dirname);
-			return (0);
+			tmp = ft_strdup(cmd);
+			return (tmp);
 		}
 	}
 	closedir(dir);
 	//free(tmp);
 	free(dirname);
-	return (1);
+	return (NULL);
 }
 
 char	*check_in_path(t_vars *vars, char *cmd)
@@ -151,7 +157,8 @@ int	exec_extern(char *cmd, t_vars *vars)// char *path
 
 	char	*path;
 
-	if (check_cur_dir(vars, cmd))
+	path = check_cur_dir(vars, cmd);
+	if (!path)
 		path = check_in_path(vars, cmd);
 	pid = fork();
 	//signal(SIGINT, );
@@ -174,7 +181,8 @@ int	exec_extern(char *cmd, t_vars *vars)// char *path
 
 int	choose_cmd(char *cmd, t_vars *vars)
 {
-	char	*builtins_array[] = {"echo", "cd", "pwd", "export", "unset", "env", "exit"};
+	char	*builtins_array[] = {"echo", "cd", "pwd", "export", "unset",
+			"env", "exit"};
 	int		(*builtins_func[])(t_vars *) = {&builtin_echo, &builtin_cd,
 			&builtin_pwd, &builtin_export, &builtin_unset, &builtin_env,
 			&builtin_exit};

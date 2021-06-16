@@ -72,7 +72,7 @@ int	main(int argc, char **argv, char **envp)
 	free_double_array(vars.path_arr);
 	free(vars.path);
 	//write(1, "emm\n", 4);
-	sleep(10);
+	//sleep(10);
 	free(line);
 	return (0);
 	//return (EXIT_SUCCESS);
