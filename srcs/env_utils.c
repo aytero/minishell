@@ -15,17 +15,12 @@
 int	find_env_val_index(t_vars *vars, int index)
 {
 	int		k;
-//	char	*val;
 
-	k = 0;
-	while (vars->env[index])
+	k = -1;
+	while (vars->env[index][++k])
 	{
 		if (vars->env[index][k] == '=')
-		{
-			//val = ft_substr(vars->env[index][++k]);
 			return (k);
-		}
-		k++;
 	}
 	return (-1);
 }
@@ -35,21 +30,28 @@ int	find_env(t_vars *vars, char *key)
 	int		i;
 	char	*full_key;
 
-	//full_key = ft_strjoin(key, "=");//func frees key(commented)
-	//or
-	full_key = ft_strdup(key);
-	full_key = ft_strjoin(full_key, "=");
+	full_key = NULL;
 	i = 0;
 	while (vars->env[i])
 	{
-		if (ft_strncmp(vars->env[i], full_key, ft_strlen(full_key)) == 0)
+		if (ft_strchr(vars->env[i], '='))
 		{
-			free(full_key);
-			return (i);
+			full_key = ft_strdup(key);
+			full_key = ft_strjoin(full_key, "=");
+			if (ft_strncmp(vars->env[i], full_key, ft_strlen(full_key)) == 0)
+			//if (ft_strncmp(vars->env[i], key, ft_strlen(key)) == 0)
+			{
+				free(full_key);
+				return (i);
+			}
+		}
+		else
+		{
+			if (ft_strcmp(vars->env[i], key) == 0)
+				return (i);
 		}
 		i++;
-	}
-	free(full_key);
+	}	
 	return (-1);
 }
 
@@ -87,39 +89,42 @@ char	**realloc_env(char **env, int size)
 
 	env_new = malloc(sizeof(char *) * (size + 1));// one extra for \0
 	if (!env_new)
-		exit(1);//
+		exit_failure("Malloc error");
 		//return (NULL);//error
-	//memset(env_new, 0, sizeof(char *) * (size + 1));
+	ft_memset(env_new, 0, sizeof(char *) * (size + 1));
 	i = 0;
 	while (i < size && env[i])
 	{
 		env_new[i] = ft_strdup(env[i]);
 		i++;
 	}
-	env_new[size] = 0;
-	free_double_array(env);
+	//env_new[size] = 0;
+	free_double_array(env);//
 	return (env_new);
 }
 
-char	**copy_envp(char **envp, t_vars *vars)
+char	**copy_env_arr(char **envp, t_vars *vars)
 {
 	char	**env;
 	int		i;
 
+	(void)vars;
+
 	i = env_arr_size(envp);
 	env = malloc(sizeof(char *) * (i + 1));
 	if (!env)
-		return(NULL);
+		exit_failure("Malloc error");
+		//return(NULL);
 	//memset(env, 0, sizeof(char *) * (i + 1));
-	env[i + 1] = 0;
-//	env[i] = 0;
+//	env[i + 1] = 0;
+	env[i] = 0;
 	i = -1;
 	while (envp[++i])
 	{
-		if (ft_strnstr(envp[i], "PATH", 4))
-			vars->path = ft_strdup(envp[i]);
+		//if (ft_strnstr(envp[i], "PATH=", 5))
+		//	vars->path = ft_strdup(envp[i]);
 		env[i] = ft_strdup(envp[i]);
 	}
-	vars->path_arr = ft_split(vars->path, ':');
+	//vars->path_arr = ft_split(vars->path, ':');
 	return(env);
 }

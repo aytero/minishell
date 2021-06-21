@@ -14,10 +14,8 @@
 
 static char	**delete_env(char **env, int env_index)
 {
-	int		size;
 	char	*to_swap;
 
-	size = env_arr_size(env);
 	while (env[env_index + 1])
 	{
 		//swap strings so the last one is empty
@@ -35,7 +33,6 @@ int	builtin_unset(t_vars *vars)//, char *key)
 {
 	int		env_index;//maybe use size_t & ssize_t
 	int		i;
-	int		j;
 //	t_args	tmp;
 
 	// args may be written ony by one
@@ -45,27 +42,16 @@ int	builtin_unset(t_vars *vars)//, char *key)
 //		main loop
 //		tmp = tmp->next
 //	}
-	j = 0;
-	while (vars->args[++j])
+	i = 0;
+	while (vars->args[++i])
 	{
-		env_index = -1;
 		//if (!ft_strchr(vars->args[j], '='))// if '=' and it is last symbol
 		//	return (1);
-		i = -1;
-		while (vars->env[++i])
-		{
-			env_index = find_env(vars, vars->args[j]);//args[j] - key
-			if (env_index > -1)// manage zero index
-			{
-				vars->env = delete_env(vars->env, env_index);//remove/realloc/all that
-				break ;
-			}
-			else
-			{
-				builtin_error("unset", vars->args[j], "not a valid identifier");
-				break;
-			}
-		}
+		env_index = find_env(vars, vars->args[i]);
+		if (env_index > -1)
+			vars->env = delete_env(vars->env, env_index);
+		else//mb just ignore and continue
+			builtin_error("unset", vars->args[i], "not a valid identifier");
 	}
 	return (0);
 }

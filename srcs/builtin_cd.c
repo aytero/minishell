@@ -32,7 +32,8 @@ static char	*find_home_dir(t_vars *vars, char *dir)
 	i = find_env(vars, "HOME");
 	if (i > -1)
 		dir = ft_strdup(vars->env[i] + 5);
-	//error?
+	//else
+		//error
 	return (dir);
 }
 
@@ -43,6 +44,7 @@ int	builtin_cd(t_vars *vars)
 	char	*new_pwd;
 
 	g_exit_status = 0;
+	dir = NULL;
 	if (!vars->args[1])
 		dir = find_home_dir(vars, dir);//check for -1
 	else

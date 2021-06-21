@@ -33,12 +33,15 @@ static void	sigquit_handler(int signal)
 }
 */
 
-/*
-void	free_mem()
+void	free_memory(t_vars *vars)
 {
-	ft_lstclear(args);
+	//ft_lstclear(args);
+	free_double_array(vars->env);
+	free_double_array(vars->path_arr);
+	free(vars->path);
+	//write(1, "emm\n", 4);
+	//sleep(10);
 }
-*/
 
 int	main(int argc, char **argv, char **envp)
 {
@@ -57,9 +60,12 @@ int	main(int argc, char **argv, char **envp)
 //	if (signal(SIGQUIT, sigquit_handler) == SIG_ERR)
 //		exit_failure("");
 
-	vars.env = copy_envp(envp, &vars);
+	vars.env = copy_env_arr(envp, &vars);
+	vars.path = ft_strdup(getenv("PATH"));
+	vars.path_arr = ft_split(vars.path, ':');
 	while ((line = readline("assh:> ")) != NULL)
 	{
+		errno = 0;
 		vars.args = ft_split(line, ' ');
 		//parse(&vars);
 		execute(&vars);
@@ -68,12 +74,8 @@ int	main(int argc, char **argv, char **envp)
 		free(line);
 		free_double_array(vars.args);
 	}
-	free_double_array(vars.env);
-	free_double_array(vars.path_arr);
-	free(vars.path);
-	//write(1, "emm\n", 4);
-	//sleep(10);
 	free(line);
+	free_memory(&vars);
 	return (0);
 	//return (EXIT_SUCCESS);
 }

@@ -21,6 +21,8 @@
 # include <dirent.h>
 # include "../libft/libft.h"
 
+# include <string.h>
+
 typedef struct s_cmds
 {
 	char			*cmd;
@@ -43,6 +45,7 @@ typedef struct s_vars
 
 int		g_exit_status;
 
+void	free_memory(t_vars *vars);
 void	builtin_error(char *cmd, char *arg, char *error_mes);
 void	free_double_array(char **arr);
 void	replace_env(t_vars *vars, int index, char *new_val);
@@ -50,7 +53,7 @@ int		find_env_val_index(t_vars *vars, int index);
 int		find_env(t_vars *vars, char *key);
 char	**realloc_env(char **env, int size);
 int		env_arr_size(char **env);
-char	**copy_envp(char **envp, t_vars *vars);
+char	**copy_env_arr(char **envp, t_vars *vars);
 void	exit_failure(char *str);
 int		builtin_pwd(t_vars *vars);
 int		builtin_echo(t_vars *vars);

@@ -14,7 +14,7 @@ LIBFT = $(LIBFTDIR)libft.a
 
 CC = gcc
 
-FLAGS = #-Wall -Werror -Wextra #-g
+FLAGS = -Wall -Werror -Wextra -g
 
 OBJS = $(addprefix $(OBJSDIR)/,$(SRCS:.c=.o))
 

@@ -12,6 +12,49 @@
 
 #include "execute.h"
 
+static void	print_sorted(char **sorted)
+{
+	int		i;
+
+	i = -1;
+	while (sorted[++i])
+	{
+		if (ft_strchr(sorted[i], '='))
+			printf("declare -x %s\n", sorted[i]);
+	}
+	free_double_array(sorted);	
+}
+
+static void	sort_env(t_vars *vars)
+{
+	int		i;
+	int		j;
+	int		size;
+	char	**sorted;
+	char	*tmp;
+
+	size = env_arr_size(vars->env);
+	//sorted = NULL;
+	sorted = copy_env_arr(vars->env, vars);
+	i = -1;
+	while (++i < size)
+	{
+		j = -1;
+		while (++j < size - 1)
+		{
+			if (ft_strcmp(sorted[j], sorted[j + 1]) > 0)
+			{
+				tmp = ft_strdup(sorted[j]);
+				free(sorted[j]);
+				sorted[j] = ft_strdup(sorted[j + 1]);
+				free(sorted[j + 1]);
+				sorted[j + 1] = ft_strdup(tmp);
+			}
+		}
+	}
+	print_sorted(sorted);
+}
+
 void	replace_env(t_vars *vars, int index, char *new_val)
 {
 	char	*new_env;
@@ -25,72 +68,81 @@ void	replace_env(t_vars *vars, int index, char *new_val)
 	vars->env[index] = new_env;
 }
 
-static int	check_export_arg(char *new_elem)
+static int	env_exists(t_vars *vars, char *val)
 {
 	int		i;
+	int		j;
+	char	*key;
 
-	if (ft_isdigit(new_elem[0]))
-	{
-		builtin_error("export", new_elem, "not a valid identifier");
-		return (1);
-	}
 	i = -1;
-	while (new_elem[++i] && new_elem[i] != '=')
+	if (ft_strchr(val, '='))
 	{
-		if (!ft_isalpha(new_elem[i]) && !ft_isdigit(new_elem[i]))
+		while (val[++i])
 		{
-			builtin_error("export", new_elem, "not a valid identifier");
+			if (val[i] == '=')//manage env without =
+				break ;
+		}
+		key = ft_substr(val, 0, i);
+		j = find_env(vars, key);
+		if (j > -1)//getkey
+		{
+			replace_env(vars, j, val + i + 1);
 			return (1);
 		}
+	}
+	else
+	{
+		i = find_env(vars, val);
+		if (i > -1)
+			return (1);
 	}
 	return (0);
 }
 
+static int	check_export_arg(char *arg)
+{
+	int		i;
+
+	if (ft_isdigit(arg[0]))
+	{
+		builtin_error("export", arg, "not a valid identifier");
+		return (0);
+	}
+	i = -1;
+	while (arg[++i] && arg[i] != '=')
+	{
+		if (!ft_isalpha(arg[i]) && !ft_isdigit(arg[i]) && arg[i] != '_')
+		{
+			builtin_error("export", arg, "not a valid identifier");
+			return (0);
+		}
+	}
+	return (1);
+}
+
 int	builtin_export(t_vars *vars)
 {
-	// must be an alpha and not started with digit;
-	// with no args sorts envs and prints them, without _= var
-	// str=value; export str - works as well
-	// cut quotes?? or maybe in parser
-	int		i;
-	char	**env_new;
+	// cut quotes or maybe in parser
 	int		size;
 	int		j;
 
 	g_exit_status = 0;
-	j = -1;
 	if (!vars->args[1])
 	{
-		//builtin_env(vars);
-		//sort env
-		while (vars->env[++j])
-			printf("%s\n", vars->env[j]);
+		sort_env(vars);
 		return (0);
 	}
-
-	j = 1;
-	size = env_arr_size(vars->env);
-	if (check_export_arg(vars->args[j]))
+	j = 0;
+	while (vars->args[++j])
 	{
-		g_exit_status = 1;
-		return (1);
+		if (!check_export_arg(vars->args[j]))
+			continue ;
+			//g_exit_status = 1;
+		if (env_exists(vars, vars->args[j]))
+			continue ;
+		size = env_arr_size(vars->env);
+		vars->env = realloc_env(vars->env, size + 1);
+		vars->env[size] = ft_strdup(vars->args[j]);
 	}
-
-	env_new = malloc(sizeof(char *) * (size + 1));// one extra for \0
-	if (!env_new)
-		exit(1);
-//	memset(arr_new, 0, sizeof(char *) * (size + 1));
-	env_new[size] = 0;
-
-	i = 0;
-	while (i < size - 2)//kinda realloc mb is not useful
-	{
-		env_new[i] = ft_strdup(vars->env[i]);
-		i++;
-	}
-	env_new[i] = ft_strdup(vars->args[j]);
-	env_new[++i] = ft_strdup(vars->env[size - 2]);
-	free_double_array(vars->env);
-	vars->env = env_new;
 	return (0);
 }

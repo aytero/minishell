@@ -52,12 +52,10 @@ int	builtin_echo(t_vars *vars)
 	{
 		opt_flag = 1;
 		i++;
-		//tmp_args = args->next;
 	}
 	while (vars->args[i])
 	{
 		write(1, vars->args[i], ft_strlen(vars->args[i]));//sizeof(args[i]) - 1);
-		//if (args->next != NULL)
 		if (vars->args[i + 1] != NULL)
 			write(1, " ", 1);
 		i++;
@@ -70,10 +68,13 @@ int	builtin_echo(t_vars *vars)
 
 int	builtin_exit(t_vars *vars)
 {
-	(void)vars;
 	//exit with an exit status
-	//if (global_error) ???
-	// exit(global_error);
+	free_memory(vars);
 	write(1, "bye!\n", 5);
-	exit (EXIT_SUCCESS);
+	if (g_exit_status != 0)
+	{
+		//printf("exit status: %d\n", g_exit_status);
+		exit(g_exit_status);
+	}
+	exit(EXIT_SUCCESS);
 }

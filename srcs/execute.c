@@ -14,7 +14,9 @@
 
 void	exit_failure(char *str)
 {
-	perror(str);
+	printf("%s: %s\n", str, strerror(errno));
+	g_exit_status = 1;
+	//if not in fork free mem (?)
 	exit(EXIT_FAILURE);
 }
 
@@ -23,14 +25,14 @@ void	wait_loop(pid_t pid)
 	int		status;
 	int		wpid;
 
-	wpid = waitpid(pid, &status, WUNTRACED);
-	while (!WIFEXITED(status) && !WIFSIGNALED(status))
-		wpid = waitpid(pid, &status, WUNTRACED);
+	wpid = waitpid(pid, &status, 0);//WUNTRACED);
+//	while (!WIFEXITED(status) && !WIFSIGNALED(status))
+//		wpid = waitpid(pid, &status, WUNTRACED);
 
 	if (WIFEXITED(status))
 	{
 		g_exit_status = WEXITSTATUS(status);
-		//printf("exit status: %d\n", g_exit_status);
+		printf("exit status: %d\n", g_exit_status);
 	}
 //	if (waitpid(pid, &status, WUNTRACED | WCONTINUED) == -1)
 //		exit_failure("");
@@ -41,8 +43,7 @@ int	exec_piped(char *cmd, t_vars *vars)
 	int	fd[2];
 	pid_t	pid;
 	pid_t	pid1;
-	int		wpid = 0;//pid_t ?
-	int		status;
+//	int		wpid = 0;//pid_t ?
 
 	if (pipe(fd) < 0)
 		exit_failure("Pipe error");
@@ -87,11 +88,12 @@ char	*check_cur_dir(t_vars *vars, char *cmd)
 {
 	DIR				*dir;
 	struct dirent	*entry;
-	struct stat		statbuf;
 	char			*tmp;
 	char			*dirname;
 
+	(void)vars;//
 	//add search in "." and ".."
+	//add absolute path support
 	if (ft_strncmp(cmd, ".", 1) == 0 || ft_strncmp(cmd, "..", 2) == 0)
 	{
 		tmp = ft_strdup(cmd);
@@ -124,7 +126,6 @@ char	*check_in_path(t_vars *vars, char *cmd)
 {
 	DIR				*dir;
 	struct dirent	*entry;
-	struct stat		statbuf;
 	char			*tmp;
 	char			*tmp2;
 	int				i;
@@ -214,8 +215,6 @@ int	execute(t_vars *vars)
 //	{
 		if (vars->flag_pipe)
 			exec_piped(vars->args[i], vars);
-		//check in . dir
-		//check if in bins
 		choose_cmd(vars->args[i], vars);
 //		i++;
 //	}
