@@ -15,7 +15,8 @@
 void	exit_failure(char *str)
 {
 	printf("%s: %s\n", str, strerror(errno));
-	g_exit_status = 1;
+	//g_exit_status = 1;
+	g_exit_status = errno;
 	//if not in fork free mem (?)
 	exit(EXIT_FAILURE);
 }
@@ -56,7 +57,7 @@ int	exec_piped(char *cmd, t_vars *vars)
 		dup2(fd[1], STDOUT_FILENO);
 		close(fd[1]);
 		choose_cmd(cmd, vars);
-		exit (0);
+		exit(0);
 	}
 	else
 	{
@@ -69,7 +70,7 @@ int	exec_piped(char *cmd, t_vars *vars)
 			dup2(fd[0], STDIN_FILENO);
 			close(fd[0]);
 			choose_cmd(vars->args[1], vars);
-			exit (0);
+			exit(0);
 		}
 		else
 		{
@@ -77,8 +78,8 @@ int	exec_piped(char *cmd, t_vars *vars)
 			wait_loop(pid1);//TODO manage this so loop makes sense
 			//wait(NULL);
 			//wait(NULL);
-			//close(fd[0]);
-			//close(fd[1]);
+			close(fd[0]);
+			close(fd[1]);
 		}
 	}
 	return (0);
@@ -94,7 +95,7 @@ char	*check_cur_dir(t_vars *vars, char *cmd)
 	(void)vars;//
 	//add search in "." and ".."
 	//add absolute path support
-	if (ft_strncmp(cmd, ".", 1) == 0 || ft_strncmp(cmd, "..", 2) == 0)
+	if (ft_strncmp(cmd, "./", 2) == 0 || ft_strncmp(cmd, "../", 3) == 0)
 	{
 		tmp = ft_strdup(cmd);
 		return (tmp);
@@ -169,7 +170,7 @@ int	exec_extern(char *cmd, t_vars *vars)// char *path
 	{
 		if (execve(path, vars->args, vars->env) < 0)
 			exit_failure("execve");
-		exit (0);
+		exit(0);
 	}
 	else
 	{
