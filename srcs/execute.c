@@ -6,20 +6,11 @@
 /*   By: lpeggy <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/01 20:49:41 by lpeggy            #+#    #+#             */
-/*   Updated: 2021/06/16 00:01:37 by lpeggy           ###   ########.fr       */
+/*   Updated: 2021/06/26 22:24:37 by lpeggy           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "execute.h"
-
-void	exit_failure(char *str)
-{
-	printf("%s: %s\n", str, strerror(errno));
-	//g_exit_status = 1;
-	g_exit_status = errno;
-	//if not in fork free mem (?)
-	exit(EXIT_FAILURE);
-}
 
 void	wait_loop(pid_t pid)
 {		
@@ -33,11 +24,27 @@ void	wait_loop(pid_t pid)
 	if (WIFEXITED(status))
 	{
 		g_exit_status = WEXITSTATUS(status);
-		printf("exit status: %d\n", g_exit_status);
+		//printf("exit status: %d\n", g_exit_status);
 	}
 //	if (waitpid(pid, &status, WUNTRACED | WCONTINUED) == -1)
 //		exit_failure("");
 }
+
+/*
+static int	exec_child_ps(t_vars *vars, pid_t pid, int io_flag)// int *fd, char *cmd)
+{
+	if (pid < 0)
+		exit_failure("Fork error");
+	if (pid == 0)
+	{
+		close(fd[!io_flag]);//0
+		dup2(fd[io_flag], STDOUT_FILENO);//1
+		close(fd[io_flag]);//1
+		choose_cmd(cmd, vars);
+		exit(0);
+	}
+}
+*/
 
 int	exec_piped(char *cmd, t_vars *vars)
 {
@@ -49,6 +56,24 @@ int	exec_piped(char *cmd, t_vars *vars)
 	if (pipe(fd) < 0)
 		exit_failure("Pipe error");
 	pid = fork();
+	/*
+	if (pid <= 0)
+		exec_child_ps(pid, 1);
+	else
+	{
+		pid1 = fork();
+		if (pid1 <= 0)
+			exec_child_ps(pid1, 0);
+		else
+		{
+			wait_loop(pid);
+			wait_loop(pid1);
+			//close(fd[0]);
+			//close(fd[1]);
+		}
+	}
+*/
+
 	if (pid < 0)
 		exit_failure("Fork error");
 	if (pid == 0)
@@ -69,7 +94,7 @@ int	exec_piped(char *cmd, t_vars *vars)
 			close(fd[1]);
 			dup2(fd[0], STDIN_FILENO);
 			close(fd[0]);
-			choose_cmd(vars->args[1], vars);
+			choose_cmd(vars->args[1], vars);//args move is not automized
 			exit(0);
 		}
 		else
@@ -94,8 +119,8 @@ char	*check_cur_dir(t_vars *vars, char *cmd)
 
 	(void)vars;//
 	//add search in "." and ".."
-	//add absolute path support
-	if (ft_strncmp(cmd, "./", 2) == 0 || ft_strncmp(cmd, "../", 3) == 0)
+	//TODO add absolute path support
+	if (ft_strncmp(cmd, "./", 2) == 0 || ft_strncmp(cmd, "../", 3) == 0 || !ft_strncmp(cmd, "~/", 2))
 	{
 		tmp = ft_strdup(cmd);
 		return (tmp);
@@ -183,24 +208,22 @@ int	exec_extern(char *cmd, t_vars *vars)// char *path
 
 int	choose_cmd(char *cmd, t_vars *vars)
 {
-	char	*builtins_array[] = {"echo", "cd", "pwd", "export", "unset",
-			"env", "exit"};
-	int		(*builtins_func[])(t_vars *) = {&builtin_echo, &builtin_cd,
-			&builtin_pwd, &builtin_export, &builtin_unset, &builtin_env,
-			&builtin_exit};
-	int		builtins_number;
-	int		i;
-
 	if (cmd == NULL)//if empty command
 		return (1);
-	builtins_number = sizeof(builtins_array) / sizeof(char *);
-	i = 0;
-	while (i < builtins_number)
-	{
-		if (ft_strcmp(cmd, builtins_array[i]) == 0)
-			return ((*builtins_func[i])(vars));
-		i++;
-	}
+	if (!ft_strcmp(cmd, "echo"))
+		return (builtin_echo(vars));
+	if (!ft_strcmp(cmd, "cd"))
+		return (builtin_cd(vars));
+	if (!ft_strcmp(cmd, "pwd"))
+		return (builtin_pwd(vars));
+	if (!ft_strcmp(cmd, "export"))
+		return (builtin_export(vars));
+	if (!ft_strcmp(cmd, "unset"))
+		return (builtin_unset(vars));
+	if (!ft_strcmp(cmd, "env"))
+		return (builtin_env(vars));
+	if (!ft_strcmp(cmd, "exit"))
+		return (builtin_exit(vars));
 	return (exec_extern(cmd, vars));
 }
 
