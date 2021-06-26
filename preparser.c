@@ -15,13 +15,16 @@ static void flager(t_flags *flag, int numquotes)
 void	splitter(char *str)
 {
 	t_flags flag;
-	t_args *args;
+	struct s_args args;
 	t_list *list;
 	int i;
 
 	i = -1;
 	ft_bzero(&flag, sizeof(t_flags));
-	
+	ft_bzero(&args, sizeof(struct s_args));
+	//args = ft_calloc(sizeof(t_args), 1);
+	list = ft_lstnew(&args);
+	//args.args = ft_strdup("amhere");
 	
 	while (str[++i])
 	{
@@ -32,12 +35,14 @@ void	splitter(char *str)
 			flager(&flag, 2);
 		if (str[i] == ' ' && flag.dq == 0 && flag.q == 0 && flag.cmd == 0)
 		{
-			args->cmd = ft_substr(str, 0, i );
+			args.cmd = ft_substr(str, 0, i);
+			//list->content = malloc(sizeof(t_args));
+			ft_lstadd_back(&list, ft_lstnew(&args));
 			// args->next = ft_lstadd_back();
 			flag.cmd = 1;
-			ft_lstadd_back(&list, ft_lstnew(&args));
 		}
-		
 	}
-	printf("cmd: %s\n", list->content);
+	printf("%s\n", ((struct s_args *)(list->content))->cmd);
+	//printf("%s\n", ((struct s_args *)(list->content))->args);
+	//printf("cmd: %s\n", args.cmd);
 }

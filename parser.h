@@ -6,7 +6,7 @@
 /*   By: ssobchak <ssobchak@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/01 17:14:48 by lpeggy            #+#    #+#             */
-/*   Updated: 2021/06/26 18:52:41 by ssobchak         ###   ########.fr       */
+/*   Updated: 2021/06/26 20:21:18 by lpeggy           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,11 +27,11 @@ typedef struct s_flags
 	int				args;
 }					t_flags;
 
-typedef struct s_args
+struct s_args
 {
 	char			*cmd;
 	char			*args;
-}					t_args;
+};//					t_args;
 
 
 int	iskey(char c);
