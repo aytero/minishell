@@ -22,7 +22,9 @@ int	checker(char *str)
 	{
 		if (str[i] == '\'')
 		{
-			if (secondquot(str, '\'', &i))
+			if (str[i - 1] == '\\')
+				continue;
+			else if (secondquot(str, '\'', &i))
 				return (1);
 			else
 				return (0);
@@ -36,13 +38,18 @@ int main(void)
 {
 	char *str = "str with one 'quot ";
 	char *str2 = "str with two 'quotes'";
+	char *str3 = "str with one \'quot ";
 	if (checker(str) == 0)
-		printf ("\n odna quota");
+		printf ("\n nevalid");
 	else
-		printf ("\n dve quotbl");
+		printf ("\n valid");
 	if (checker(str2) == 0)
-		printf ("\n odna quota");
+		printf ("\n nevalid");
 	else
-		printf ("\n dve quotbl");
+		printf ("\n valid");
+	if (checker(str3) == 0)
+		printf ("\n nevalid");
+	else
+		printf ("\n valid");
 
 }

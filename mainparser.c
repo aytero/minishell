@@ -6,12 +6,13 @@ int main(int argc, char **argv, char **env)
 
 	(void)argc;
 	(void)argv;
+	(void)env;
 	str = readline("sh:> ");
 	while (str  != NULL)
 	{
 		if (ft_strlen(str) > 0)
 			add_history(str);
-		parser(str, env);
+		splitter(str);
 		str = readline("sh:> ");
 	}
 	

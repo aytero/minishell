@@ -6,7 +6,7 @@
 /*   By: ssobchak <ssobchak@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/01 17:14:48 by lpeggy            #+#    #+#             */
-/*   Updated: 2021/06/15 22:31:19 by ssobchak         ###   ########.fr       */
+/*   Updated: 2021/06/26 18:52:41 by ssobchak         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,10 +18,19 @@
 # include <stdio.h>
 # include "libft.h"
 
+typedef struct s_flags
+{
+	int				dq;
+	int				q;
+	int				pipe;
+	int				cmd;
+	int				args;
+}					t_flags;
+
 typedef struct s_args
 {
 	char			*cmd;
-	struct t_args	*next;
+	char			*args;
 }					t_args;
 
 
@@ -33,6 +42,7 @@ char	*doublequotes(char *str, int *i, char **env);
 void	parser(char *str, char **env);
 char	*rightkey(char *key, char **env);
 char	*dollarswap(char *str, char *rkey, int *i, int j);
-int	checker(char *str);
+int		checker(char *str);
+void	splitter(char *str);
 
 #endif
