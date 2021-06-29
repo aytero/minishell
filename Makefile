@@ -2,8 +2,8 @@ NAME = minishell
 
 HEADER = ./inc/
 
-SRCS = minishell.c execute.c parser.c builtin_commands.c env_utils.c\
-	   builtin_env.c builtin_unset.c builtin_export.c builtin_cd.c\
+SRCS = minishell.c execute.c parser.c pathfinder.c builtin_commands.c\
+	   env_utils.c builtin_env.c builtin_unset.c builtin_export.c builtin_cd.c\
 	   exit_shell.c
 
 OBJSDIR = ./objs

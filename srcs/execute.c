@@ -6,7 +6,7 @@
 /*   By: lpeggy <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/01 20:49:41 by lpeggy            #+#    #+#             */
-/*   Updated: 2021/06/26 22:24:37 by lpeggy           ###   ########.fr       */
+/*   Updated: 2021/06/29 20:57:32 by lpeggy           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -110,78 +110,9 @@ int	exec_piped(char *cmd, t_vars *vars)
 	return (0);
 }
 
-char	*check_cur_dir(t_vars *vars, char *cmd)
-{
-	DIR				*dir;
-	struct dirent	*entry;
-	char			*tmp;
-	char			*dirname;
-
-	(void)vars;//
-	//add search in "." and ".."
-	//TODO add absolute path support
-	if (ft_strncmp(cmd, "./", 2) == 0 || ft_strncmp(cmd, "../", 3) == 0 || !ft_strncmp(cmd, "~/", 2))
-	{
-		tmp = ft_strdup(cmd);
-		return (tmp);
-	}
-	dirname = getcwd(NULL, 0);
-	tmp = NULL;	
-	if ((dir = opendir(dirname)) == NULL)
-		return (NULL);
-	while ((entry = readdir(dir)) != NULL)
-	{
-		if (ft_strcmp(cmd, entry->d_name) == 0)
-		{
-			//tmp = ft_strjoin(entry->d_name, "/");
-			//tmp = ft_strjoin(tmp, cmd);
-			closedir(dir);
-			//free(tmp);
-			free(dirname);
-			tmp = ft_strdup(cmd);
-			return (tmp);
-		}
-	}
-	closedir(dir);
-	//free(tmp);
-	free(dirname);
-	return (NULL);
-}
-
-char	*check_in_path(t_vars *vars, char *cmd)
-{
-	DIR				*dir;
-	struct dirent	*entry;
-	char			*tmp;
-	char			*tmp2;
-	int				i;
-
-	tmp = NULL;
-	i = -1;
-	while (vars->path_arr[++i])
-	{
-		if ((dir = opendir(vars->path_arr[i])) == NULL)
-			continue ;
-		while ((entry = readdir(dir)) != NULL)
-		{
-			if (ft_strcmp(cmd, entry->d_name) == 0)
-			{
-				tmp2 = ft_strdup(vars->path_arr[i]);
-				tmp = ft_strjoin(tmp2, "/");
-				tmp = ft_strjoin(tmp, cmd);
-				closedir(dir);
-				return (tmp);
-			}
-		}
-		closedir(dir);
-	}
-	return (tmp);
-}
-
 int	exec_extern(char *cmd, t_vars *vars)// char *path
 {
 	pid_t	pid;
-
 	char	*path;
 
 	path = check_cur_dir(vars, cmd);
@@ -193,8 +124,9 @@ int	exec_extern(char *cmd, t_vars *vars)// char *path
 		exit_failure("Fork error");
 	if (pid == 0)
 	{
-		if (execve(path, vars->args, vars->env) < 0)
-			exit_failure("execve");
+		//if (execve(path, vars->args, vars->env) < 0)
+		//	exit_failure("execve");
+		(execve(path, vars->args, vars->env) >= 0) || exit_failure("execve");
 		exit(0);
 	}
 	else
@@ -206,10 +138,19 @@ int	exec_extern(char *cmd, t_vars *vars)// char *path
 	//return (EXIT_SUCCESS);
 }
 
-int	choose_cmd(char *cmd, t_vars *vars)
+void	choose_cmd(char *cmd, t_vars *vars)
 {
 	if (cmd == NULL)//if empty command
-		return (1);
+		return ;
+	ft_strcmp(cmd, "echo") || builtin_echo(vars);//builtins execute twice
+	ft_strcmp(cmd, "cd") || builtin_cd(vars);
+	ft_strcmp(cmd, "pwd") || builtin_pwd(vars);
+	ft_strcmp(cmd, "export") || builtin_export(vars);
+	ft_strcmp(cmd, "unset") || builtin_unset(vars);
+	ft_strcmp(cmd, "env") || builtin_env(vars);
+	ft_strcmp(cmd, "exit") || builtin_exit(vars);
+	exec_extern(cmd, vars);
+	/*
 	if (!ft_strcmp(cmd, "echo"))
 		return (builtin_echo(vars));
 	if (!ft_strcmp(cmd, "cd"))
@@ -225,6 +166,7 @@ int	choose_cmd(char *cmd, t_vars *vars)
 	if (!ft_strcmp(cmd, "exit"))
 		return (builtin_exit(vars));
 	return (exec_extern(cmd, vars));
+	*/
 }
 
 

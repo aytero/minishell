@@ -6,7 +6,7 @@
 /*   By: lpeggy <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/01 20:51:06 by lpeggy            #+#    #+#             */
-/*   Updated: 2021/06/16 21:54:32 by lpeggy           ###   ########.fr       */
+/*   Updated: 2021/06/29 20:55:27 by lpeggy           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,7 +54,6 @@ int		find_env(t_vars *vars, char *key);
 char	**realloc_env(char **env, int size);
 int		env_arr_size(char **env);
 char	**copy_env_arr(char **envp, t_vars *vars);
-void	exit_failure(char *str);
 int		builtin_pwd(t_vars *vars);
 int		builtin_echo(t_vars *vars);
 int		builtin_cd(t_vars *vars);
@@ -64,7 +63,10 @@ int		builtin_env(t_vars *vars);
 int		builtin_exit(t_vars *vars);
 int		exec_extern(char *cmd, t_vars *vars);
 int		exec_piped(char *cmd, t_vars *vars);
-int		choose_cmd(char *cmd, t_vars *vars);
+char	*check_in_path(t_vars *vars, char *cmd);
+char	*check_cur_dir(t_vars *vars, char *cmd);
+void	choose_cmd(char *cmd, t_vars *vars);
 int		execute(t_vars *vars);
+int		exit_failure(char *str);
 
 #endif
