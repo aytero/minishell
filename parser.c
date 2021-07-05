@@ -6,7 +6,7 @@
 /*   By: ssobchak <ssobchak@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/01 17:14:16 by lpeggy            #+#    #+#             */
-/*   Updated: 2021/06/15 21:07:19 by ssobchak         ###   ########.fr       */
+/*   Updated: 2021/07/05 23:43:19 by lpeggy           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -99,9 +99,10 @@ char	*doublequotes(char *str, int *i, char **env)
 	return (bef);
 }
 
-void	parser(char *str, char **env)
+char	**parser(char *str, char **env)
 {
-	int	i;
+	int		i;
+	char	**tab;
 
 	i = -1;
 	printf ("\n\nstr do = %s\n\n", str);
@@ -116,5 +117,7 @@ void	parser(char *str, char **env)
 		if (str[i] == '$')
 			str = dollarsign(str, &i, env);
 	}
-	printf ("\n\nstr = %s\n\n", str);
+	//divide()//not touching quotes
+	printf("parser >%s<\n", str);
+	return (ft_split(str, ' '));//
 }

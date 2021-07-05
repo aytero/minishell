@@ -12,7 +12,8 @@ int main(int argc, char **argv, char **env)
 	{
 		if (ft_strlen(str) > 0)
 			add_history(str);
-		splitter(str);
+		//splitter(str);
+		pre_parser(str, env);
 		str = readline("sh:> ");
 	}
 	
