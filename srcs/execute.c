@@ -142,15 +142,23 @@ void	choose_cmd(char *cmd, t_vars *vars)
 {
 	if (cmd == NULL)//if empty command
 		return ;
-	ft_strcmp(cmd, "echo") || builtin_echo(vars);//builtins execute twice
+	ft_strcmp(cmd, "echo") || builtin_echo(vars);
 	ft_strcmp(cmd, "cd") || builtin_cd(vars);
 	ft_strcmp(cmd, "pwd") || builtin_pwd(vars);
 	ft_strcmp(cmd, "export") || builtin_export(vars);
 	ft_strcmp(cmd, "unset") || builtin_unset(vars);
 	ft_strcmp(cmd, "env") || builtin_env(vars);
 	ft_strcmp(cmd, "exit") || builtin_exit(vars);
+	//else
 	exec_extern(cmd, vars);
+
 	/*
+	ft_strcmp(cmd, "echo") || return (builtin_echo(vars));
+	ft_strcmp(cmd, "cd") || return (builtin_cd(vars));
+	ft_strcmp(cmd, "pwd") || return (builtin_pwd(vars));
+	ft_strcmp(cmd, "export") || return (builtin_export(vars));
+	ft_strcmp(cmd, "unset") || return (builtin_unset(vars));
+	ft_strcmp(cmd, "env") || return (builtin_env(vars));
 	if (!ft_strcmp(cmd, "echo"))
 		return (builtin_echo(vars));
 	if (!ft_strcmp(cmd, "cd"))
