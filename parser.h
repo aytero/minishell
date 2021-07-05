@@ -6,7 +6,7 @@
 /*   By: ssobchak <ssobchak@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/01 17:14:48 by lpeggy            #+#    #+#             */
-/*   Updated: 2021/06/26 20:21:18 by lpeggy           ###   ########.fr       */
+/*   Updated: 2021/07/05 18:54:56 by lpeggy           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,6 +25,7 @@ typedef struct s_flags
 	int				pipe;
 	int				cmd;
 	int				args;
+	int				space;
 }					t_flags;
 
 struct s_args
@@ -43,6 +44,7 @@ void	parser(char *str, char **env);
 char	*rightkey(char *key, char **env);
 char	*dollarswap(char *str, char *rkey, int *i, int j);
 int		checker(char *str);
-void	splitter(char *str);
+void	cmdsplitter(char *str);
+int		skipspaces(char *str, int i);
 
 #endif

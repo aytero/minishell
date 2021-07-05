@@ -6,7 +6,7 @@
 /*   By: ssobchak <ssobchak@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/10 19:46:26 by ssobchak          #+#    #+#             */
-/*   Updated: 2021/06/15 21:06:14 by ssobchak         ###   ########.fr       */
+/*   Updated: 2021/07/05 18:51:41 by lpeggy           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -66,4 +66,11 @@ char	*dollarswap(char *str, char *rkey, int *i, int j)
 	bef = ft_strjoin(bef, aft);
 	free(aft);
 	return (bef);
+}
+
+void	skipspaces(char *str, int i)
+{
+	while ((str[i] == ' ' || str[i] == '\t') && str[i])
+		i++;
+	return (i);
 }
