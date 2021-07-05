@@ -6,7 +6,7 @@
 /*   By: lpeggy <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/12 17:24:31 by lpeggy            #+#    #+#             */
-/*   Updated: 2021/06/16 22:23:12 by lpeggy           ###   ########.fr       */
+/*   Updated: 2021/07/05 19:34:47 by lpeggy           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,10 +48,14 @@ int	find_env(t_vars *vars, char *key)
 		else
 		{
 			if (ft_strcmp(vars->env[i], key) == 0)
+			{
+				free(full_key);
 				return (i);
+			}
 		}
+		free(full_key);
 		i++;
-	}	
+	}
 	return (-1);
 }
 
@@ -89,7 +93,7 @@ char	**realloc_env(char **env, int size)
 
 	env_new = malloc(sizeof(char *) * (size + 1));// one extra for \0
 	if (!env_new)
-		exit_failure("Malloc error");
+		exit_failure("Malloc error", 0);
 		//return (NULL);//error
 	ft_memset(env_new, 0, sizeof(char *) * (size + 1));
 	i = 0;
@@ -113,7 +117,7 @@ char	**copy_env_arr(char **envp, t_vars *vars)
 	i = env_arr_size(envp);
 	env = malloc(sizeof(char *) * (i + 1));
 	if (!env)
-		exit_failure("Malloc error");
+		exit_failure("Malloc error", 0);
 		//return(NULL);
 	//memset(env, 0, sizeof(char *) * (i + 1));
 //	env[i + 1] = 0;

@@ -6,7 +6,7 @@
 /*   By: lpeggy <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/01 20:49:41 by lpeggy            #+#    #+#             */
-/*   Updated: 2021/06/29 20:57:32 by lpeggy           ###   ########.fr       */
+/*   Updated: 2021/07/05 18:43:52 by lpeggy           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,10 +51,8 @@ int	exec_piped(char *cmd, t_vars *vars)
 	int	fd[2];
 	pid_t	pid;
 	pid_t	pid1;
-//	int		wpid = 0;//pid_t ?
 
-	if (pipe(fd) < 0)
-		exit_failure("Pipe error");
+	(pipe(fd) >= 0) || exit_failure("Pipe", 1);
 	pid = fork();
 	/*
 	if (pid <= 0)
@@ -75,7 +73,7 @@ int	exec_piped(char *cmd, t_vars *vars)
 */
 
 	if (pid < 0)
-		exit_failure("Fork error");
+		exit_failure("Fork error", 1);
 	if (pid == 0)
 	{
 		close(fd[0]);
@@ -88,7 +86,7 @@ int	exec_piped(char *cmd, t_vars *vars)
 	{
 		pid1 = fork();
 		if (pid1 < 0)
-			exit_failure("Fork error");
+			exit_failure("Fork error", 1);
 		if (pid1 == 0)
 		{
 			close(fd[1]);
@@ -101,8 +99,6 @@ int	exec_piped(char *cmd, t_vars *vars)
 		{
 			wait_loop(pid);
 			wait_loop(pid1);//TODO manage this so loop makes sense
-			//wait(NULL);
-			//wait(NULL);
 			close(fd[0]);
 			close(fd[1]);
 		}
@@ -115,18 +111,18 @@ int	exec_extern(char *cmd, t_vars *vars)// char *path
 	pid_t	pid;
 	char	*path;
 
-	path = check_cur_dir(vars, cmd);
-	if (!path)
-		path = check_in_path(vars, cmd);
+	path = pathfinder(vars, cmd);
+	//path || exit_failure("No such file or directory", 0);
+
 	pid = fork();
 	//signal(SIGINT, );
 	if (pid == -1)
-		exit_failure("Fork error");
+		exit_failure("Fork error", 1);
 	if (pid == 0)
 	{
 		//if (execve(path, vars->args, vars->env) < 0)
 		//	exit_failure("execve");
-		(execve(path, vars->args, vars->env) >= 0) || exit_failure("execve");
+		(execve(path, vars->args, vars->env) >= 0) || exit_failure("execve", 1);
 		exit(0);
 	}
 	else
@@ -138,10 +134,11 @@ int	exec_extern(char *cmd, t_vars *vars)// char *path
 	//return (EXIT_SUCCESS);
 }
 
-void	choose_cmd(char *cmd, t_vars *vars)
+int	choose_cmd(char *cmd, t_vars *vars)
 {
 	if (cmd == NULL)//if empty command
-		return ;
+		return (1);
+	/*
 	ft_strcmp(cmd, "echo") || builtin_echo(vars);
 	ft_strcmp(cmd, "cd") || builtin_cd(vars);
 	ft_strcmp(cmd, "pwd") || builtin_pwd(vars);
@@ -151,14 +148,7 @@ void	choose_cmd(char *cmd, t_vars *vars)
 	ft_strcmp(cmd, "exit") || builtin_exit(vars);
 	//else
 	exec_extern(cmd, vars);
-
-	/*
-	ft_strcmp(cmd, "echo") || return (builtin_echo(vars));
-	ft_strcmp(cmd, "cd") || return (builtin_cd(vars));
-	ft_strcmp(cmd, "pwd") || return (builtin_pwd(vars));
-	ft_strcmp(cmd, "export") || return (builtin_export(vars));
-	ft_strcmp(cmd, "unset") || return (builtin_unset(vars));
-	ft_strcmp(cmd, "env") || return (builtin_env(vars));
+	*/
 	if (!ft_strcmp(cmd, "echo"))
 		return (builtin_echo(vars));
 	if (!ft_strcmp(cmd, "cd"))
@@ -174,7 +164,6 @@ void	choose_cmd(char *cmd, t_vars *vars)
 	if (!ft_strcmp(cmd, "exit"))
 		return (builtin_exit(vars));
 	return (exec_extern(cmd, vars));
-	*/
 }
 
 

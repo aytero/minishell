@@ -6,7 +6,7 @@
 /*   By: lpeggy <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/01 17:14:27 by lpeggy            #+#    #+#             */
-/*   Updated: 2021/06/15 23:40:02 by lpeggy           ###   ########.fr       */
+/*   Updated: 2021/07/05 19:08:00 by lpeggy           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,12 +26,13 @@ static void	sig_handler(int signal)
 	write(1, "sigint recieved\n", 16);
 }
 
-/*
 static void	sigquit_handler(int signal)
 {
+	(void)signal;
+	write(1, "\n", 1);
+	write(1, "sigquit recieved\n", 16);
 	exit(0);
 }
-*/
 
 void	free_memory(t_vars *vars)
 {
@@ -43,26 +44,28 @@ void	free_memory(t_vars *vars)
 	//sleep(10);
 }
 
+static void	init_sh(t_vars *vars, char **envp)
+{
+	ft_memset(vars, 0, sizeof(t_vars));
+	g_exit_status = 0;
+	vars->env = copy_env_arr(envp, vars);
+	vars->path = ft_strdup(getenv("PATH"));
+	vars->path_arr = ft_split(vars->path, ':');
+}
+
 int	main(int argc, char **argv, char **envp)
 {
 	t_vars	vars;
 	char	*line;
 
-	g_exit_status = 0;
 	(void)argv;
-	if (argc > 1)
-	{
-		write(1, "Too many arguments\n", 19);
-		return (0);
-	}
+	argc == 1 || exit_failure("Too many arguments", 0);
+	init_sh(&vars, envp);
 	if (signal(SIGINT, sig_handler) == SIG_ERR)
-		exit_failure("Signal failure");
-//	if (signal(SIGQUIT, sigquit_handler) == SIG_ERR)
-//		exit_failure("");
+		exit_failure("Signal failure", 1);
+	if (signal(SIGQUIT, sigquit_handler) == SIG_ERR)
+		exit_failure("Signal failure", 1);
 
-	vars.env = copy_env_arr(envp, &vars);
-	vars.path = ft_strdup(getenv("PATH"));
-	vars.path_arr = ft_split(vars.path, ':');
 	while ((line = readline("assh:> ")) != NULL)
 	{
 		errno = 0;
@@ -77,5 +80,4 @@ int	main(int argc, char **argv, char **envp)
 	free(line);
 	free_memory(&vars);
 	return (0);
-	//return (EXIT_SUCCESS);
 }

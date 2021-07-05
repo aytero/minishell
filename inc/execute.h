@@ -6,7 +6,7 @@
 /*   By: lpeggy <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/01 20:51:06 by lpeggy            #+#    #+#             */
-/*   Updated: 2021/06/29 20:55:27 by lpeggy           ###   ########.fr       */
+/*   Updated: 2021/07/05 18:15:52 by lpeggy           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -63,10 +63,11 @@ int		builtin_env(t_vars *vars);
 int		builtin_exit(t_vars *vars);
 int		exec_extern(char *cmd, t_vars *vars);
 int		exec_piped(char *cmd, t_vars *vars);
-char	*check_in_path(t_vars *vars, char *cmd);
-char	*check_cur_dir(t_vars *vars, char *cmd);
-void	choose_cmd(char *cmd, t_vars *vars);
+//char	*check_in_path(t_vars *vars, char *cmd);
+//char	*check_cur_dir(t_vars *vars, char *cmd);
+char	*pathfinder(t_vars *vars, char *cmd);
+int		choose_cmd(char *cmd, t_vars *vars);
 int		execute(t_vars *vars);
-int		exit_failure(char *str);
+int		exit_failure(char *str, int errtype);
 
 #endif
