@@ -6,7 +6,7 @@
 /*   By: ssobchak <ssobchak@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/01 17:14:48 by lpeggy            #+#    #+#             */
-/*   Updated: 2021/07/05 23:41:02 by lpeggy           ###   ########.fr       */
+/*   Updated: 2021/07/06 22:44:35 by lpeggy           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,6 +17,7 @@
 # include <string.h>
 # include <stdio.h>
 # include "libft.h"
+# include "execute.h"
 
 typedef struct s_flags
 {
@@ -25,18 +26,17 @@ typedef struct s_flags
 	int				pipe;
 	int				cmd;
 	int				args;
-	int				space;
+	int				sp;
 }					t_flags;
 
 typedef struct s_args
 {
-	char			*cmd;
 	char			**args;
 }					t_args;
 
-
+void	arg_splitter(t_args *args, char *str, int cmdnum);
 void	pre_parser(char *str, char **env);
-void	skim(char *str);
+int		skim(char *str);
 int		iskey(char c);
 char	*dollarsign(char *str, int *i, char **env);
 char	*slash(char *str, int *i);

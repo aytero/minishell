@@ -2,10 +2,11 @@
 
 static int	skip_until(char *str, int i, int sym)
 {
-	while (str[++i])
+	while (str[i])
 	{
-		if (str[i] == sym)
-			return ((int)i);
+		if (str[i] == sym && str[i - 1] != '\\')
+			return (i);
+		i++;
 	}
 	return (-1);
 }
@@ -16,6 +17,11 @@ static int	if_quotes(char *str, int i)
 		i = skip_until(str, i + 1, '\'');
 	if (str[i] == '\"')
 		i = skip_until(str, i + 1, '\"');
+	if (str[i] == '\\')
+		i += 2;
+	//printf("str %c    ", str[i]);
+	//printf("i %d\n", i);
+	//	i = skip_until(str, i + 1, '');
 	return (i);
 }
 
@@ -26,25 +32,45 @@ static int	skip_pipe(char *str, int i)
 	return (i);
 }
 
-int	count_pipes(char *str)i//make to count elems
+int	count_pipes(char *str)//make to count elems
 {
-	size_t	i;
+	int		i;
 	int		pipe_cntr;
 	
 	pipe_cntr = 0;
 	i = -1;
 	while (str[++i])
 	{
-
 		i = if_quotes(str, i);
-		if (str[i + 1] == '|')
+		if (str[i] == '|')
 		{
 			pipe_cntr++;
-			i = skip_pipe(str, i + 1);
-			continue ;
+			//i = skipspaces(str, i);
 		}
 	}
 	return (pipe_cntr);
+}
+
+int	count_args(char *str)//make to count elems
+{
+	int		i;
+	int		arg_nbr;
+	
+	arg_nbr = 0;
+	i = -1;
+	while (str[++i])
+	{
+		i = if_quotes(str, i);
+		//i = skip_pipe(str, i);
+		if (str[i] == ' ')
+		{
+			arg_nbr++;
+			i = skipspaces(str, i);
+			i--;
+		}
+	}
+	arg_nbr++;
+	return (arg_nbr);
 }
 
 //void	make_cmd_list(t_list *cmd, int cmd_nbr)
@@ -52,11 +78,15 @@ void	make_cmd_list(char **cmd_line, int cmd_nbr, char **env)
 {
 	t_args	*args;
 	int		i;
-	int		j;
-	int		save = 0;
+	int		arr_nbr = 0;
+	//int		j;
+	//int		save = 0;
 
+	(void)env;
 	args = malloc(sizeof(t_args) * cmd_nbr);
 	i = -1;
+
+
 	while (++i < cmd_nbr)
 	{
 		/*
@@ -74,8 +104,14 @@ void	make_cmd_list(char **cmd_line, int cmd_nbr, char **env)
 
 		}
 		*/
-		args[i].args = parser(cmd_line[i], env);
+		arr_nbr = count_args(cmd_line[i]);
+		printf(" arr nbr %d\n", arr_nbr);
+
+		args[i].args = ft_calloc(sizeof(char *), arr_nbr + 1);//ret check
+		arg_splitter(&args[i], cmd_line[i], i);
+		//args[i].args = ft_split(cmd_line[i], ' ');
 		
+		//args[i].args = parser(cmd_line[i], env);
 
 		int j = -1;
 		while (args[i].args[++j])
@@ -87,7 +123,7 @@ void	make_cmd_list(char **cmd_line, int cmd_nbr, char **env)
 
 void	cut_cmds(char *str, char **env)
 {
-	size_t	i;
+	int		i;
 	int		num;
 	char	*tmp;
 	char	**cmd;
@@ -110,6 +146,7 @@ void	cut_cmds(char *str, char **env)
 	while (str[++i])
 	{
 		i = if_quotes(str, i);
+		//printf("cut i %d\n", i);
 		if (str[i + 1] == '|')
 		{
 			i++;//spaces
@@ -132,34 +169,85 @@ void	cut_cmds(char *str, char **env)
 	make_cmd_list(cmd, pipe_nbr + 1, env);
 }
 
-void	skim(char *str)
+int	skim(char *str)
 {
-	size_t	i;
+	int		i;
 	int		elem_cntr;
 
 	i = -1;
 	elem_cntr = 0;
-	!str || elem_cntr++;
+	!str[0] || elem_cntr++;
 	while (str[++i])
 	{
 		i = if_quotes(str, i);//check exceptions \'
 		if (i == -1)
 		{
 			write(1, "wrong input\n", 12);
-			return ;
+			return (0);
 		}
+		//i = skip_pipe(str, i);
 		if (str[i] == ' ')
+		{
 			elem_cntr++;
+			//i = skipspaces(str, i);
+		}
 	}
+	//printf("elem %d\n", elem_cntr);
+	return (1);
 }
 
 void	pre_parser(char *str, char **env)
 {
-	skim(str);
+	if (!skim(str))
+		return ;
+	//exit(0);
 	cut_cmds(str, env);
 	//make_cmd_list()
 	//main parser and put cmds in lists
 }
+
+//void	argsplitter(char *str, t_args args, t_flags flag, int i)
+void	arg_splitter(t_args *args, char *str, int cmdnum)
+{
+	t_flags	flag;
+	//t_list	*list;
+	int 	i;
+	int 	n;
+	int		k;
+
+	ft_bzero(&flag, sizeof(t_flags));
+
+	i = -1;
+	n = 0;
+	k = 0;
+	while (str[++i])
+	{
+		if (str[i] == '\'' && !(flag.dq % 2) && str[i - 1] != '\\')
+			flag.q++;
+		if (str[i] == '\"' && !(flag.q % 2) && str[i - 1] != '\\')
+			flag.dq++;
+		if ((str[i] == ' ' || str[i] == '\t')
+			&& (flag.q % 2 || flag.dq % 2))
+			continue ;
+		if ((str[i] == ' ' || str[i] == '\t' || str[i] == '\0')
+			&& str[i - 1] != '\\' && (!(flag.q % 2) || !(flag.dq % 2)))
+			flag.sp++;
+		if ((flag.sp % 2 || flag.dq % 2 || flag.q % 2)
+			&& flag.args == 0)
+			continue ;
+		if (!(flag.sp % 2) || !(flag.dq % 2) || !(flag.q % 2))
+		{
+			args[cmdnum].args[k] = ft_substr(str, n, i);
+			flag.args = 1;
+			//skip sp and qt
+			n = i;
+			k++;
+			// if (str[i] == '\0')
+			// 	return;
+		}
+	}
+}
+
 
 /*
 static void flager(t_flags *flag, int numquotes)
@@ -169,9 +257,11 @@ static void flager(t_flags *flag, int numquotes)
 	if (numquotes == 2)
 		flag->dq += 1;
 	if (numquotes == 3)
-		flag->q += 1;
+		flag->sp += 1;
 }
+*/
 
+/*
 void	cmdsplitter(char *str)
 {
 	t_flags flag;
@@ -184,9 +274,9 @@ void	cmdsplitter(char *str)
 	while (str[++i])
 	{
 		if (str[i] == '\'')
-			flager(&flag, 1);
+			flag->q++;
 		if (str[i] == '\"')
-			flager(&flag, 2);
+			flag->dq++;
 		if ((str[i] == ' ' || str[i] == '\0') && flag.dq == 0
 			&& flag.q == 0 && flag.cmd == 0)
 		{
@@ -199,41 +289,5 @@ void	cmdsplitter(char *str)
 		}
 	}
 	// printf("|__%s__|\n", ((struct s_args *)(list->content))->cmd);
-}
-
-void	argsplitter(char *str, t_args args, t_flags flag, int i)
-{
-	int n;
-
-	if (flag.q == 0 && flag.dq == 0 && str[i]
-		&& (str[i] == ' ' || str[i] == '\t'))
-		{
-			i = skipspaces(str, i);
-			flager(&flag, 3);
-		}
-	n = i;
-	while (str[++i])
-	{
-		if (str[i] == '\'' && flag.dq == 0 && str[i - 1] != '\\')
-			flager(&flag, 1);
-		if (str[i] == '\"' && flag.q == 0 && str[i - 1] != '\\')
-			flager(&flag, 2);
-		if ((str[i] == ' ' || str[i] == '\t')
-			&& (flag.q == 1 || flag.dq == 1))
-			continue ;
-		if ((str[i] == ' ' || str[i] == '\t' || str[i] == '\0')
-			&& str[i - 1] != '\\' && (flag.q == 0 || flag.dq == 0))
-			flager(&flag, 3);
-		if ((flag.space == 1 || flag.dq == 1 || flag.q == 1)
-			&& flag.args == 0)
-			continue ;
-		if (flag.space == 2 || flag.dq == 2 || flag.q == 2)
-		{
-			args.args = ft_substr(str, n, i);
-			flag.args = 1;
-			// if (str[i] == '\0')
-			// 	return;
-		}
-	}
 }
 */

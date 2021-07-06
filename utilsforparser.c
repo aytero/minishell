@@ -6,7 +6,7 @@
 /*   By: ssobchak <ssobchak@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/10 19:46:26 by ssobchak          #+#    #+#             */
-/*   Updated: 2021/07/05 20:55:56 by lpeggy           ###   ########.fr       */
+/*   Updated: 2021/07/06 19:26:07 by lpeggy           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,15 +21,17 @@ int	iskey(char c)
 
 char *lowercasing(char *str)
 {
-	char *strl;
+	//char *strl;
 
+	//strl = NULL;
 	while(*str)
 	{
 		if(*str > 64 && *str < 91)
 			*str += 32;
 		str++;
 	}
-	return(strl);
+	return(str);
+	//return(strl);
 }
 
 char	*rightkey(char *key, char **env)

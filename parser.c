@@ -6,7 +6,7 @@
 /*   By: ssobchak <ssobchak@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/01 17:14:16 by lpeggy            #+#    #+#             */
-/*   Updated: 2021/07/05 23:43:19 by lpeggy           ###   ########.fr       */
+/*   Updated: 2021/07/06 22:01:00 by lpeggy           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -102,7 +102,7 @@ char	*doublequotes(char *str, int *i, char **env)
 char	**parser(char *str, char **env)
 {
 	int		i;
-	char	**tab;
+	//char	**tab;
 
 	i = -1;
 	printf ("\n\nstr do = %s\n\n", str);
