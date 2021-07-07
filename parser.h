@@ -6,7 +6,7 @@
 /*   By: ssobchak <ssobchak@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/01 17:14:48 by lpeggy            #+#    #+#             */
-/*   Updated: 2021/07/06 22:44:35 by lpeggy           ###   ########.fr       */
+/*   Updated: 2021/07/07 19:42:14 by ssobchak         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,7 +16,7 @@
 # include <readline/history.h>
 # include <string.h>
 # include <stdio.h>
-# include "libft.h"
+# include "libft/libft.h"
 # include "execute.h"
 
 typedef struct s_flags
@@ -34,6 +34,7 @@ typedef struct s_args
 	char			**args;
 }					t_args;
 
+void	make_cmd_list(char **cmd_line, int cmd_nbr, char **env);
 void	arg_splitter(t_args *args, char *str, int cmdnum);
 void	pre_parser(char *str, char **env);
 int		skim(char *str);
