@@ -6,7 +6,7 @@
 /*   By: ssobchak <ssobchak@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/01 20:51:06 by lpeggy            #+#    #+#             */
-/*   Updated: 2021/07/07 17:54:15 by ssobchak         ###   ########.fr       */
+/*   Updated: 2021/07/08 20:15:24 by lpeggy           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,7 +48,7 @@ int		g_exit_status;
 
 void	free_memory(t_vars *vars);
 void	builtin_error(char *cmd, char *arg, char *error_mes);
-void	free_double_array(char **arr);
+void	free_double_array(void *ptr);
 void	replace_env(t_vars *vars, int index, char *new_val);
 int		find_env_val_index(t_vars *vars, int index);
 int		find_env(t_vars *vars, char *key);

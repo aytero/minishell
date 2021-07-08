@@ -6,7 +6,7 @@
 /*   By: ssobchak <ssobchak@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/01 17:14:16 by lpeggy            #+#    #+#             */
-/*   Updated: 2021/07/06 22:01:00 by lpeggy           ###   ########.fr       */
+/*   Updated: 2021/07/08 23:32:16 by lpeggy           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,15 +14,15 @@
 
 char	*dollarsign(char *str, int *i, char **env)
 {
-	int j;
-	char *key;
-	char *rkey;
+	int		j;
+	char	*key;
+	char	*rkey;
 
 	j = *i;
 	while (str[++(*i)])
 	{
 		if (!iskey(str[*i]))
-			break;
+			break ;
 	}
 	if (*i == j + 1)
 		return (str);
@@ -35,8 +35,8 @@ char	*dollarsign(char *str, int *i, char **env)
 
 char	*slash(char *str, int *i)
 {
-	char *bef;
-	char *aft;
+	char	*bef;
+	char	*aft;
 
 	bef = ft_substr(str, 0, *i);
 	aft = ft_strdup(str + *i + 1);
@@ -49,16 +49,16 @@ char	*slash(char *str, int *i)
 
 char	*quotes(char *str, int *i)
 {
-	int j;
-	char *bef;
-	char *into;
-	char *aft;
+	int		j;
+	char	*bef;
+	char	*into;
+	char	*aft;
 
 	j = *i;
 	while (str[++(*i)])
 	{
 		if (str[*i] == '\'')
-			break;
+			break ;
 	}
 	bef = ft_substr(str, 0, j);
 	into = ft_substr(str, j + 1, *i - j - 1);
@@ -72,21 +72,21 @@ char	*quotes(char *str, int *i)
 
 char	*doublequotes(char *str, int *i, char **env)
 {
-	int j;
-	char *bef;
-	char *into;
-	char *aft;
+	int		j;
+	char	*bef;
+	char	*into;
+	char	*aft;
 
 	j = *i;
 	while (str[++(*i)])
 	{
 		if (str[*i] == '\\' && (str[*i + 1] == '\"' || str[*i + 1] == '$'
-			|| str[*i + 1] == '\\'))
+				|| str[*i + 1] == '\\'))
 			str = slash(str, i);
 		if (str[*i] == '$')
 			dollarsign(str, i, env);
 		if (str[*i] == '\"')
-			break;
+			break ;
 	}
 	bef = ft_substr(str, 0, j);
 	into = ft_substr(str, j + 1, *i - j - 1);
@@ -99,13 +99,12 @@ char	*doublequotes(char *str, int *i, char **env)
 	return (bef);
 }
 
-char	**parser(char *str, char **env)
+char	*parser(char *str, t_vars *vars)
 {
 	int		i;
-	//char	**tab;
 
 	i = -1;
-	printf ("\n\nstr do = %s\n\n", str);
+	//printf ("\n\nstr do = %s\n\n", str);
 	while (str[++i])
 	{
 		if (str[i] == '\'')
@@ -113,11 +112,10 @@ char	**parser(char *str, char **env)
 		if (str[i] == '\\')
 			str = slash(str, &i);
 		if (str[i] == '\"')
-			str = doublequotes(str, &i, env);
+			str = doublequotes(str, &i, vars->env);
 		if (str[i] == '$')
-			str = dollarsign(str, &i, env);
+			str = dollarsign(str, &i, vars->env);
 	}
-	//divide()//not touching quotes
-	printf("parser >%s<\n", str);
-	return (ft_split(str, ' '));//
+	//printf("parser >%s<\n", str);
+	return (str);//
 }

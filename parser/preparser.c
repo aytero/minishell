@@ -1,9 +1,11 @@
 #include "parser.h"
 
-void	free_double_array(char **arr)
+void	free_double_array(void *ptr)
 {
 	int		i;
+	char	**arr;
 
+	arr = ptr;
 	i = -1;
 	if (arr)
 	{
@@ -45,7 +47,7 @@ static int	skip_pipe(char *str, int i)
 	return (i);
 }
 
-int	count_pipes(char *str)//make to count elems
+int	count_pipes(char *str)
 {
 	int		i;
 	int		pipe_cntr;
@@ -56,9 +58,7 @@ int	count_pipes(char *str)//make to count elems
 	{
 		i = if_quotes(str, i);
 		if (str[i] == '|')
-		{
 			pipe_cntr++;
-		}
 	}
 	return (pipe_cntr);
 }
@@ -94,6 +94,8 @@ char	**cut_cmds(char *str, t_vars *vars)
 	char	**cmd_line;
 
 	cmd_line = ft_calloc(sizeof(char *), (vars->cmd_nbr + 1));// null last
+	if (!cmd_line)
+		return (NULL);
 	//cmd_line != NULL || exit(1);
 	num = 0;
 	if (vars->cmd_nbr == 1)
@@ -114,6 +116,7 @@ char	**cut_cmds(char *str, t_vars *vars)
 			tmp = ft_strdup(str + i);
 			free(str);
 			str = tmp;
+			free(tmp);
 			num++;
 			if (num == vars->pipe_nbr)//after last pipe
 				cmd_line[num] = ft_strdup(str);
@@ -121,9 +124,11 @@ char	**cut_cmds(char *str, t_vars *vars)
 		}
 	}
 
+	/*
 	num = -1;
 	while (cmd_line[++num])
 		printf("cmd_line %d  >%s<\n", num, cmd_line[num]);
+	*/
 
 	return (cmd_line);
 }
@@ -148,11 +153,42 @@ int	skim(char *str)
 			return (0);
 		}
 		if (str[i] == ' ')
-		{
 			elem_cntr++;
-		}
 	}
 	return (1);
+}
+
+void	print_list(t_list **head)
+{
+	t_list	*tmp;
+	int		i;
+	int		j;
+
+	j = 0;
+	tmp = *head;
+	while (tmp)
+	{
+		i = 0;
+		while (((char **)(tmp->content))[i])
+		{
+			printf("list[%d]	>%s<\n", j, ((char **)(tmp->content))[i]);
+			i++;
+		}
+		tmp = tmp->next;
+		j++;
+	}
+}
+
+void	deal_spec_symbs(void *ptr, t_vars *vars)
+{
+	int		i;
+	char	**arr;
+
+	//printf("env[0] %s\n", vars->env[0]);
+	arr = ptr;
+	i = -1;
+	while (arr[++i])
+		arr[i] = parser(arr[i], vars);
 }
 
 void	pre_parser(char *str, t_vars *vars)
@@ -162,13 +198,20 @@ void	pre_parser(char *str, t_vars *vars)
 	if (!skim(str))
 		return ;
 	vars->pipe_nbr = count_pipes(str);
+	vars->pipe_nbr > 0 || (vars->flag_pipe = 1);
 	vars->cmd_nbr = vars->pipe_nbr + 1;
 	cmd_line = cut_cmds(str, vars);
-	make_cmd_list(cmd_line, vars);
-	//free_double_array(cmd_line);
+	if (!cmd_line)
+		return ;
+	if (!make_cmd_list(cmd_line, vars))
+		return ;
+	print_list(&vars->cmd_arr);
+	ft_lstiter_param(vars->cmd_arr, &deal_spec_symbs, vars);
+	print_list(&vars->cmd_arr);
+
 }
 
-void	make_cmd_list(char **cmd_line, t_vars *vars)
+int	make_cmd_list(char **cmd_line, t_vars *vars)
 {
 	char	**args;
 	int		i;
@@ -181,26 +224,30 @@ void	make_cmd_list(char **cmd_line, t_vars *vars)
 		arg_nbr = count_args(cmd_line[i]);
 		printf("			arg_nbr %d\n", arg_nbr);
 
-		args = ft_calloc(sizeof(char *), arg_nbr + 1);//ret check
-		if (!args)
-			exit(1);
 
-		args = arg_splitter(args, cmd_line[i], arg_nbr);
+		args = arg_splitter(cmd_line[i], arg_nbr);
+		if (!args)
+			return (0);
 		ft_lstadd_back(&vars->cmd_arr, ft_lstnew((char **)args));
-		free_double_array(args);
+		//free_double_array(args);//so need new arr for every node
 	}
 	free_double_array(cmd_line);
+	return (1);
 }
 
-char	**arg_splitter(char **args, char *str, int arg_nbr)
+char	**arg_splitter(char *str, int arg_nbr)
 {
 	t_flags	flag;
 	int 	i;
 	int 	n;
 	int		k;
 	char	*tmp = NULL;
+	char	**args;
 
 	ft_bzero(&flag, sizeof(t_flags));
+	args = ft_calloc(sizeof(char *), arg_nbr + 1);//ret check
+	if (!args)
+		return (NULL);
 
 	i = -1;
 	n = 0;
@@ -212,7 +259,6 @@ char	**arg_splitter(char **args, char *str, int arg_nbr)
 		if (str[i] == '\"')
 			flag.dq++;
 		//if "\\"
-		//printf("spliter #%d str[%d] = %c\n", cmdnum + 1, i, str[i]);
 		printf("spliter #%d str[%d] = %c\n", k + 1, i, str[i]);
 		if ((str[i] == ' ' || str[i] == '\t' || str[i + 1] == '\0')
 			&& str[i - 1] != '\\' && !(flag.q % 2) && !(flag.dq % 2))
@@ -220,16 +266,14 @@ char	**arg_splitter(char **args, char *str, int arg_nbr)
 			printf("n = %d,   i = %d\n", n, i);
 			printf("k = %d   ", k);
 
-			tmp = ft_substr(str, n, i);
-			//printf("tmp[%d] = >%s<\n", k, tmp);
+			tmp = ft_substr(str, n, i - n + 1);
+			printf("tmp[%d] = >%s<\n", k, tmp);
 			args[k] = ft_strtrim(tmp, " ");
 			free(tmp);
 			tmp = NULL;
-			//args[cmdnum].args[k] = ft_substr(str, n, i);
-			//args[cmdnum].args[k] = ft_strtrim(args[cmdnum].args[k], " ");
-			n = i;
 			printf("args[%d] = >%s<\n", k, args[k]);
 			k++;
+			n = i;
 		}
 	}
 	return (args);
