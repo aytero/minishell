@@ -6,7 +6,7 @@
 /*   By: ssobchak <ssobchak@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/01 17:14:16 by lpeggy            #+#    #+#             */
-/*   Updated: 2021/07/08 23:32:16 by lpeggy           ###   ########.fr       */
+/*   Updated: 2021/07/13 17:27:59 by lpeggy           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,6 +23,7 @@ char	*dollarsign(char *str, int *i, char **env)
 	{
 		if (!iskey(str[*i]))
 			break ;
+		//else
 	}
 	if (*i == j + 1)
 		return (str);
@@ -30,6 +31,7 @@ char	*dollarsign(char *str, int *i, char **env)
 	rkey = rightkey(key, env);
 	str = dollarswap(str, rkey, i, j);
 	free(key);
+	free(rkey);
 	return (str);
 }
 
@@ -67,6 +69,7 @@ char	*quotes(char *str, int *i)
 	bef = ft_strjoin(bef, aft);
 	free(into);
 	free(aft);
+	free(str);
 	return (bef);
 }
 
@@ -93,7 +96,7 @@ char	*doublequotes(char *str, int *i, char **env)
 	aft = ft_strdup(str + *i + 1);
 	bef = ft_strjoin(bef, into);
 	bef = ft_strjoin(bef, aft);
-	// free(str);
+	free(str);
 	free(into);
 	free(aft);
 	return (bef);
@@ -104,7 +107,6 @@ char	*parser(char *str, t_vars *vars)
 	int		i;
 
 	i = -1;
-	//printf ("\n\nstr do = %s\n\n", str);
 	while (str[++i])
 	{
 		if (str[i] == '\'')
@@ -116,6 +118,5 @@ char	*parser(char *str, t_vars *vars)
 		if (str[i] == '$')
 			str = dollarsign(str, &i, vars->env);
 	}
-	//printf("parser >%s<\n", str);
 	return (str);//
 }

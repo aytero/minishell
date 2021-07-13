@@ -116,13 +116,14 @@ char	**cut_cmds(char *str, t_vars *vars)
 			tmp = ft_strdup(str + i);
 			free(str);
 			str = tmp;
-			free(tmp);
+			//free(tmp);
 			num++;
 			if (num == vars->pipe_nbr)//after last pipe
 				cmd_line[num] = ft_strdup(str);
 			i = -1;
 		}
 	}
+	free(str);
 
 	/*
 	num = -1;
