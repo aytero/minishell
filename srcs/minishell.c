@@ -6,15 +6,9 @@
 /*   By: lpeggy <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/01 17:14:27 by lpeggy            #+#    #+#             */
-/*   Updated: 2021/07/05 19:08:00 by lpeggy           ###   ########.fr       */
+/*   Updated: 2021/07/13 23:08:31 by lpeggy           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
-
-#include <unistd.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <signal.h>
-#include <sys/wait.h>
 
 #include "execute.h"
 #include "parser.h"
@@ -34,9 +28,27 @@ static void	sigquit_handler(int signal)
 	exit(0);
 }
 
+void	free_double_array(void *ptr)
+{
+	int		i;
+	char	**arr;
+
+	arr = ptr;
+	i = -1;
+	if (arr)
+	{
+		while (arr[++i])
+		{
+			if (arr[i])
+				free(arr[i]);
+		}
+		free(arr);
+	}
+}
+
 void	free_memory(t_vars *vars)
 {
-	//ft_lstclear(args);
+	//ft_lstclear(vars->cmd_arr);
 	free_double_array(vars->env);
 	free_double_array(vars->path_arr);
 	free(vars->path);
@@ -58,24 +70,24 @@ int	main(int argc, char **argv, char **envp)
 	t_vars	vars;
 	char	*line;
 
-	(void)argv;
+	(void)argv;//
 	argc == 1 || exit_failure("Too many arguments", 0);
 	init_sh(&vars, envp);
 	if (signal(SIGINT, sig_handler) == SIG_ERR)
 		exit_failure("Signal failure", 1);
 	if (signal(SIGQUIT, sigquit_handler) == SIG_ERR)
 		exit_failure("Signal failure", 1);
-
-	while ((line = readline("assh:> ")) != NULL)
+	line = readline("sh:> ");
+	while (line != NULL)
 	{
-		errno = 0;
-		vars.args = ft_split(line, ' ');
-		//parse(&vars);
-		execute(&vars);
 		if (ft_strlen(line) > 0)
 				add_history(line);//clean after?
+		errno = 0;
+		pre_parser(line, &vars);
+		execute(&vars);
 		free(line);
-		free_double_array(vars.args);
+		ft_lstclear(&vars.cmd_arr, free_double_array);
+		line = readline("sh:> ");
 	}
 	free(line);
 	free_memory(&vars);

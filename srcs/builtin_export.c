@@ -6,7 +6,7 @@
 /*   By: lpeggy <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/12 17:52:02 by lpeggy            #+#    #+#             */
-/*   Updated: 2021/06/16 22:27:10 by lpeggy           ###   ########.fr       */
+/*   Updated: 2021/07/13 18:51:17 by lpeggy           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -120,29 +120,29 @@ static int	check_export_arg(char *arg)
 	return (1);
 }
 
-int	builtin_export(t_vars *vars)
+int	builtin_export(char **cmd, t_vars *vars)
 {
 	// cut quotes or maybe in parser
 	int		size;
 	int		j;
 
 	g_exit_status = 0;
-	if (!vars->args[1])
+	if (!cmd[1])
 	{
 		sort_env(vars);
 		return (0);
 	}
 	j = 0;
-	while (vars->args[++j])
+	while (cmd[++j])
 	{
-		if (!check_export_arg(vars->args[j]))
+		if (!check_export_arg(cmd[j]))
 			continue ;
 			//g_exit_status = 1;
-		if (env_exists(vars, vars->args[j]))
+		if (env_exists(vars, cmd[j]))
 			continue ;
 		size = env_arr_size(vars->env);
 		vars->env = realloc_env(vars->env, size + 1);
-		vars->env[size] = ft_strdup(vars->args[j]);
+		vars->env[size] = ft_strdup(cmd[j]);
 	}
 	return (0);
 }

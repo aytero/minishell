@@ -6,7 +6,7 @@
 /*   By: lpeggy <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/08 16:42:00 by lpeggy            #+#    #+#             */
-/*   Updated: 2021/06/26 21:09:43 by lpeggy           ###   ########.fr       */
+/*   Updated: 2021/07/13 20:57:38 by lpeggy           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,7 +19,7 @@ void	builtin_error(char *cmd, char *arg, char *error_mes)
 //	write(1, arg, len);
 //	write(1, "':", 2);
 //	write(1, error_mes, len);
-	printf("assh: %s: `%s': %s\n", cmd, arg, error_mes);
+	printf("sh: %s: `%s': %s\n", cmd, arg, error_mes);
 }
 
 int	builtin_pwd(t_vars *vars)
@@ -37,26 +37,28 @@ int	builtin_pwd(t_vars *vars)
 	return (EXIT_SUCCESS);
 }
 
-int	builtin_echo(t_vars *vars)
+int	builtin_echo(char **cmd, t_vars *vars)
 {
 	int		opt_flag;
 	int		i = 1;
 
+	(void)vars;//
+
 	opt_flag = 0;
-	if (!vars->args[1])
+	if (!cmd[1])
 	{
 		write(1, "\n", 1);
 		return (0);
 	}
-	if (ft_strcmp(vars->args[1], "-n") == 0)
+	if (ft_strcmp(cmd[1], "-n") == 0)
 	{
 		opt_flag = 1;
 		i++;
 	}
-	while (vars->args[i])
+	while (cmd[i])
 	{
-		write(1, vars->args[i], ft_strlen(vars->args[i]));//sizeof(args[i]) - 1);
-		if (vars->args[i + 1] != NULL)
+		write(1, cmd[i], ft_strlen(cmd[i]));//sizeof(args[i]) - 1);
+		if (cmd[i + 1] != NULL)
 			write(1, " ", 1);
 		i++;
 	}

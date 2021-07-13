@@ -6,7 +6,7 @@
 /*   By: lpeggy <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/12 17:24:31 by lpeggy            #+#    #+#             */
-/*   Updated: 2021/07/05 19:34:47 by lpeggy           ###   ########.fr       */
+/*   Updated: 2021/07/13 20:42:29 by lpeggy           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -68,23 +68,6 @@ int	env_arr_size(char **env)
 		;
 	return (i);
 }
-
-void	free_double_array(char **arr)
-{
-	int		i;
-
-	i = -1;
-	if (arr)
-	{
-		while (arr[++i])
-		{
-			if (arr[i])
-				free(arr[i]);
-		}
-		free(arr);
-	}
-}
-
 
 char	**realloc_env(char **env, int size)
 {

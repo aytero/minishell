@@ -6,7 +6,7 @@
 /*   By: lpeggy <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/01 20:51:06 by lpeggy            #+#    #+#             */
-/*   Updated: 2021/07/05 18:15:52 by lpeggy           ###   ########.fr       */
+/*   Updated: 2021/07/13 21:22:19 by lpeggy           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,36 +18,31 @@
 # include <errno.h>
 # include <sys/wait.h>
 # include <sys/stat.h>
+# include <signal.h>
 # include <dirent.h>
 # include "../libft/libft.h"
 
 # include <string.h>
 
-typedef struct s_cmds
-{
-	char			*cmd;
-	char			**args;
-//	int				flag_pipe;
-//	int				flag_redirect;
-	struct t_cmds	*next;
-}					t_cmds;
-
 typedef struct s_vars
 {
 	int			flag_pipe;
 	int			flag_redirect;
+	int			cmd_nbr;
+	int			pipe_nbr;
+	int			**pfd;
 	char		**env;
 	char		*path;
 	char		**path_arr;
 	char		**args;
-	t_cmds		*cmds;
+	t_list		*cmd_arr;
 }				t_vars;
 
 int		g_exit_status;
 
 void	free_memory(t_vars *vars);
 void	builtin_error(char *cmd, char *arg, char *error_mes);
-void	free_double_array(char **arr);
+void	free_double_array(void *ptr);
 void	replace_env(t_vars *vars, int index, char *new_val);
 int		find_env_val_index(t_vars *vars, int index);
 int		find_env(t_vars *vars, char *key);
@@ -55,18 +50,19 @@ char	**realloc_env(char **env, int size);
 int		env_arr_size(char **env);
 char	**copy_env_arr(char **envp, t_vars *vars);
 int		builtin_pwd(t_vars *vars);
-int		builtin_echo(t_vars *vars);
-int		builtin_cd(t_vars *vars);
-int		builtin_export(t_vars *vars);
-int		builtin_unset(t_vars *vars);
+int		builtin_echo(char **cmd, t_vars *vars);
+int		builtin_cd(char **cmd, t_vars *vars);
+int		builtin_export(char **cmd, t_vars *vars);
+int		builtin_unset(char **cmd, t_vars *vars);
 int		builtin_env(t_vars *vars);
 int		builtin_exit(t_vars *vars);
-int		exec_extern(char *cmd, t_vars *vars);
-int		exec_piped(char *cmd, t_vars *vars);
-//char	*check_in_path(t_vars *vars, char *cmd);
-//char	*check_cur_dir(t_vars *vars, char *cmd);
+int		exec_extern(char **cmd, t_vars *vars);
+int		exec_piped(t_vars *vars);
+void	close_pipes(t_vars *vars);
+void	deal_pipes(t_vars *vars, int i);
+void	open_pipes(t_vars *vars);
 char	*pathfinder(t_vars *vars, char *cmd);
-int		choose_cmd(char *cmd, t_vars *vars);
+int		choose_cmd(char **cmd, t_vars *vars);
 int		execute(t_vars *vars);
 int		exit_failure(char *str, int errtype);
 
