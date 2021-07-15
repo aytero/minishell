@@ -12,20 +12,20 @@
 
 #include "execute.h"
 
-int	builtin_env(t_vars *vars)
+int	builtin_env(t_list *env)
 {
-	int		i;
-
-	i = 0;
-	while (vars->env[i])
+	while (env)
 	{
-		if (ft_strchr(vars->env[i], '='))
+		if (((t_env_var *)env->content)->value != NULL)
 		{
-			//write(1, env[i], ft_strlen(env[i]));//sizeof(env[i]) - 1);
-			//write(1, "\n", 1);
-			printf("%s\n", vars->env[i]);
+			write(1, ((t_env_var *)env->content)->key,
+					ft_strlen(((t_env_var *)env->content)->key));
+			write(1, "=", 1);
+			write(1, ((t_env_var *)env->content)->value,
+					ft_strlen(((t_env_var *)env->content)->value));
+			write(1, "\n", 1);
 		}
-		i++;
+		env = env->next;
 	}
 	g_exit_status = 0;
 	return (0);

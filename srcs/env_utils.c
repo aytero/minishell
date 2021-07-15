@@ -12,53 +12,6 @@
 
 #include <execute.h>
 
-int	find_env_val_index(t_vars *vars, int index)
-{
-	int		k;
-
-	k = -1;
-	while (vars->env[index][++k])
-	{
-		if (vars->env[index][k] == '=')
-			return (k);
-	}
-	return (-1);
-}
-
-int	find_env(t_vars *vars, char *key)
-{
-	int		i;
-	char	*full_key;
-
-	full_key = NULL;
-	i = 0;
-	while (vars->env[i])
-	{
-		if (ft_strchr(vars->env[i], '='))
-		{
-			full_key = ft_strdup(key);
-			full_key = ft_strjoin(full_key, "=");
-			if (ft_strncmp(vars->env[i], full_key, ft_strlen(full_key)) == 0)
-			//if (ft_strncmp(vars->env[i], key, ft_strlen(key)) == 0)
-			{
-				free(full_key);
-				return (i);
-			}
-		}
-		else
-		{
-			if (ft_strcmp(vars->env[i], key) == 0)
-			{
-				free(full_key);
-				return (i);
-			}
-		}
-		free(full_key);
-		i++;
-	}
-	return (-1);
-}
-
 int	env_arr_size(char **env)
 {
 	int		i;
@@ -69,49 +22,135 @@ int	env_arr_size(char **env)
 	return (i);
 }
 
-char	**realloc_env(char **env, int size)
+
+t_list	*env_to_list(char **env)
 {
-	char	**env_new;
+	t_list	*head;
 	int		i;
 
-	env_new = malloc(sizeof(char *) * (size + 1));// one extra for \0
-	if (!env_new)
-		exit_failure("Malloc error", 0);
-		//return (NULL);//error
-	ft_memset(env_new, 0, sizeof(char *) * (size + 1));
-	i = 0;
-	while (i < size && env[i])
+	if (!env)
+		return (0);
+	head = NULL;
+	i = -1;
+	while (env[++i])
 	{
-		env_new[i] = ft_strdup(env[i]);
-		i++;
+		if (!set_env_var(&head, env[i]))
+			return (NULL);
 	}
-	//env_new[size] = 0;
-	free_double_array(env);//
-	return (env_new);
+	return (head);
 }
 
-char	**copy_env_arr(char **envp, t_vars *vars)
+char	**env_to_char(t_list *env)//free arr after usage
 {
-	char	**env;
+	char	**arr;
 	int		i;
 
-	(void)vars;
-
-	i = env_arr_size(envp);
-	env = malloc(sizeof(char *) * (i + 1));
-	if (!env)
-		exit_failure("Malloc error", 0);
-		//return(NULL);
-	//memset(env, 0, sizeof(char *) * (i + 1));
-//	env[i + 1] = 0;
-	env[i] = 0;
-	i = -1;
-	while (envp[++i])
+	arr = ft_calloc(sizeof(char *), (ft_lstsize(env) + 1));//creates leak
+	if (!arr)
+		return (NULL);
+	//ft_memset(arr, 0, sizeof(arr));
+	i = 0;
+	while (env)
 	{
-		//if (ft_strnstr(envp[i], "PATH=", 5))
-		//	vars->path = ft_strdup(envp[i]);
-		env[i] = ft_strdup(envp[i]);
+		if (((t_env_var *)env->content)->value != NULL)
+		{
+			arr[i] = ft_strjoin_sep(((t_env_var *)env->content)->key,
+					((t_env_var *)env->content)->value, '=');
+		}
+		env = env->next;
+		i++;
 	}
-	//vars->path_arr = ft_split(vars->path, ':');
-	return(env);
+	return (arr);
+}
+
+char	*get_env_var(t_list *env, char *key)
+{
+	while (env)
+	{
+		if (!ft_strcmp((((t_env_var *)env->content)->key), key))
+			return (((t_env_var *)env->content)->value);
+		env = env->next;
+	}
+	return (NULL);
+}
+
+int	delete_env_var(t_list **head, char *key)
+{
+	//ft_lstiter(*env, del_one);
+//}
+//void	ft_lst_del_node(t_lst **head, char *key)
+//{
+	t_list	*del;
+	t_list	*prev;
+
+	del = *head;
+	prev = NULL;
+	while (del)
+	{
+		if (!ft_strcmp((((t_env_var *)del->content)->key), key))
+		{
+			if (prev)
+				prev->next = del->next;
+			else
+				*head = del->next;
+			free(((t_env_var *)del->content)->key);
+			free(((t_env_var *)del->content)->value);
+			free(del->content);
+			free(del);
+			return (1);
+		}
+		else
+			prev = del;
+		del = del->next;
+	}
+	return (0);//redo to void
+}
+
+int	set_env_var(t_list **env, char *env_line)
+{
+	char	*kv[2];
+	char	*sign;
+	t_list	*tmp;
+
+	sign = ft_strchr(env_line, '=');
+//	if (sign == env_line)
+//		return (0);
+	if (sign)
+	{
+		*sign = '\0';
+		sign++;
+	}
+	kv[0] = ft_strdup(env_line);
+	kv[1] = ft_strdup(sign);
+	
+	tmp = *env;
+	while (tmp)
+	{
+		if (!ft_strcmp(((t_env_var *)tmp->content)->key, kv[0]))
+			return (replace_env_var(tmp, kv));
+		tmp = tmp->next;
+	}
+	return (new_env_var(env, kv));
+}
+
+int	new_env_var(t_list **head, char **kv)
+{
+	t_list	*new;
+
+	new = ft_lstnew(malloc(sizeof(t_env_var)));
+	if (!new)
+		return (0);
+	((t_env_var *)new->content)->key = kv[0];
+	((t_env_var *)new->content)->value = kv[1];
+	ft_lstadd_back(head, new);
+	return (1);
+}
+
+int	replace_env_var(t_list *node, char **kv)
+{
+	free(((t_env_var *)node->content)->key);//why though replace key
+	free(((t_env_var *)node->content)->value);
+	((t_env_var *)node->content)->key = kv[0];
+	((t_env_var *)node->content)->value = kv[1];
+	return (1);
 }

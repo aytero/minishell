@@ -24,6 +24,12 @@
 
 # include <string.h>
 
+typedef struct s_env_var
+{
+	char		*key;
+	char		*value;
+}				t_env_var;
+
 typedef struct s_vars
 {
 	int			flag_pipe;
@@ -31,31 +37,43 @@ typedef struct s_vars
 	int			cmd_nbr;
 	int			pipe_nbr;
 	int			**pfd;
-	char		**env;
 	char		*path;
 	char		**path_arr;
 	char		**args;
+	t_list		*env;
 	t_list		*cmd_arr;
 }				t_vars;
 
 int		g_exit_status;
 
 void	free_memory(t_vars *vars);
-void	builtin_error(char *cmd, char *arg, char *error_mes);
 void	free_double_array(void *ptr);
+
+// old env funcs//
 void	replace_env(t_vars *vars, int index, char *new_val);
 int		find_env_val_index(t_vars *vars, int index);
 int		find_env(t_vars *vars, char *key);
 char	**realloc_env(char **env, int size);
 int		env_arr_size(char **env);
 char	**copy_env_arr(char **envp, t_vars *vars);
+//			//
+t_list	*env_to_list(char **env);
+char	**env_to_char(t_list *env);
+char	*get_env_var(t_list *env, char *key);
+int		delete_env_var(t_list **env, char *key);
+int		set_env_var(t_list **env, char *env_line);
+int		new_env_var(t_list **head, char **kv);
+int		replace_env_var(t_list *node, char **kv);
+
+void	builtin_error(char *cmd, char *arg, char *error_mes);
 int		builtin_pwd(t_vars *vars);
 int		builtin_echo(char **cmd, t_vars *vars);
 int		builtin_cd(char **cmd, t_vars *vars);
 int		builtin_export(char **cmd, t_vars *vars);
 int		builtin_unset(char **cmd, t_vars *vars);
-int		builtin_env(t_vars *vars);
-int		builtin_exit(t_vars *vars);
+int		builtin_env(t_list *env);
+int		builtin_exit(char **cmd, t_vars *vars);
+
 int		exec_extern(char **cmd, t_vars *vars);
 int		exec_piped(t_vars *vars);
 void	close_pipes(t_vars *vars);

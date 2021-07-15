@@ -49,9 +49,9 @@ void	free_double_array(void *ptr)
 void	free_memory(t_vars *vars)
 {
 	//ft_lstclear(vars->cmd_arr);
-	free_double_array(vars->env);
+	//free_double_array(vars->env);
 	free_double_array(vars->path_arr);
-	free(vars->path);
+	//free(vars->path);
 	//write(1, "emm\n", 4);
 	//sleep(10);
 }
@@ -60,8 +60,11 @@ static void	init_sh(t_vars *vars, char **envp)
 {
 	ft_memset(vars, 0, sizeof(t_vars));
 	g_exit_status = 0;
-	vars->env = copy_env_arr(envp, vars);
-	vars->path = ft_strdup(getenv("PATH"));
+	//vars->env = copy_env_arr(envp, vars);
+	vars->env = env_to_list(envp);
+	set_env_var(&vars->env, "OLDPWD");
+	//vars->path = ft_strdup(getenv("PATH"));//mb not useful
+	vars->path = get_env_var(vars->env, "PATH");//mb not useful
 	vars->path_arr = ft_split(vars->path, ':');
 }
 

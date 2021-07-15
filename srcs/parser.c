@@ -43,7 +43,7 @@ char	*slash(char *str, int *i)
 	bef = ft_substr(str, 0, *i);
 	aft = ft_strdup(str + *i + 1);
 	free(str);
-	bef = ft_strjoin(bef, aft);
+	bef = ft_strjoin_free(bef, aft);
 	(*i)++;
 	free(aft);
 	return (bef);
@@ -65,8 +65,8 @@ char	*quotes(char *str, int *i)
 	bef = ft_substr(str, 0, j);
 	into = ft_substr(str, j + 1, *i - j - 1);
 	aft = ft_strdup(str + *i + 1);
-	bef = ft_strjoin(bef, into);
-	bef = ft_strjoin(bef, aft);
+	bef = ft_strjoin_free(bef, into);
+	bef = ft_strjoin_free(bef, aft);
 	free(into);
 	free(aft);
 	free(str);
@@ -94,8 +94,8 @@ char	*doublequotes(char *str, int *i, char **env)
 	bef = ft_substr(str, 0, j);
 	into = ft_substr(str, j + 1, *i - j - 1);
 	aft = ft_strdup(str + *i + 1);
-	bef = ft_strjoin(bef, into);
-	bef = ft_strjoin(bef, aft);
+	bef = ft_strjoin_free(bef, into);
+	bef = ft_strjoin_free(bef, aft);
 	free(str);
 	free(into);
 	free(aft);
@@ -105,7 +105,9 @@ char	*doublequotes(char *str, int *i, char **env)
 char	*parser(char *str, t_vars *vars)
 {
 	int		i;
+	char	**env_arr;
 
+	env_arr = env_to_char(vars->env);
 	i = -1;
 	while (str[++i])
 	{
@@ -114,9 +116,10 @@ char	*parser(char *str, t_vars *vars)
 		if (str[i] == '\\')
 			str = slash(str, &i);
 		if (str[i] == '\"')
-			str = doublequotes(str, &i, vars->env);
+			str = doublequotes(str, &i, env_arr);
 		if (str[i] == '$')
-			str = dollarsign(str, &i, vars->env);
+			str = dollarsign(str, &i, env_arr);
 	}
+	free_double_array(env_arr);//breaks malloc
 	return (str);//
 }

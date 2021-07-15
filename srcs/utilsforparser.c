@@ -69,8 +69,8 @@ char	*dollarswap(char *str, char *rkey, int *i, int j)
 	
 	bef = ft_substr(str, 0, j);
 	aft = ft_strdup(str + *i + 1);
-	bef = ft_strjoin(bef, rkey);
-	bef = ft_strjoin(bef, aft);
+	bef = ft_strjoin_free(bef, rkey);
+	bef = ft_strjoin_free(bef, aft);
 	free(aft);
 	free(str);
 	return (bef);

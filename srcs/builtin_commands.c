@@ -25,16 +25,21 @@ void	builtin_error(char *cmd, char *arg, char *error_mes)
 int	builtin_pwd(t_vars *vars)
 {
 	char	*pwd;
+	int		i;
 
-	(void)vars;
+	i = 0;
 	pwd = getcwd(NULL, 0);
 	if (!pwd)
-		g_exit_status = 1;
-	//write(1, pwd, sizeof(pwd) - 1);
-	printf("%s\n", pwd);
-	free(pwd);
+	{
+		i = 1;
+		pwd = get_env_var(vars->env, "PWD");
+	}
+	write(1, pwd, ft_strlen(pwd));
+	write(1, "\n", 1);
+	if (i == 0)
+		free(pwd);
 	g_exit_status = 0;
-	return (EXIT_SUCCESS);
+	return (0);
 }
 
 int	builtin_echo(char **cmd, t_vars *vars)
@@ -68,15 +73,35 @@ int	builtin_echo(char **cmd, t_vars *vars)
 	return (0);
 }
 
-int	builtin_exit(t_vars *vars)
+int	builtin_exit(char **cmd, t_vars *vars)
 {
-	//exit with an exit status
-	free_memory(vars);
-	write(1, "bye!\n", 5);
-	if (g_exit_status != 0)
+	int		i;
+
+	(void)vars;
+	//free_memory(vars);
+	i = -1;
+	if (cmd[1])
 	{
-		//printf("exit status: %d\n", g_exit_status);
-		exit(g_exit_status);
+		while (cmd[1][++i])
+		{
+			if (!ft_isdigit(cmd[1][i]) && cmd[1][i] != '-')
+			{
+				builtin_error(cmd[0], cmd[1], "numeric argument required");
+				exit(255);
+			}
+		}
+		if (cmd[2])
+			builtin_error(cmd[0], cmd[2], "too many arguments");
+		else
+		{
+			write(1, "bye!\n", 5);
+			if (cmd[1] < 0)
+				exit(256 - ft_atoi(cmd[1]));
+			else
+				exit(ft_atoi(cmd[1]));
+		}
 	}
-	exit(EXIT_SUCCESS);
+	else
+		exit(0);
+	return (0);//
 }

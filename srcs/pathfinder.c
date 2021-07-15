@@ -17,7 +17,6 @@ static char	*search_in_environ(t_vars *vars, char *cmd)
 	DIR				*dir;
 	struct dirent	*entry;
 	char			*tmp;
-	char			*tmp2;
 	int				i;
 
 	tmp = NULL;
@@ -30,9 +29,7 @@ static char	*search_in_environ(t_vars *vars, char *cmd)
 		{
 			if (ft_strcmp(cmd, entry->d_name) == 0)
 			{
-				tmp2 = ft_strdup(vars->path_arr[i]);
-				tmp = ft_strjoin(tmp2, "/");
-				tmp = ft_strjoin(tmp, cmd);
+				tmp = ft_strjoin_sep(vars->path_arr[i], cmd, '/');
 				closedir(dir);
 				return (tmp);
 			}
@@ -44,9 +41,9 @@ static char	*search_in_environ(t_vars *vars, char *cmd)
 
 static char	*get_abs_path(t_vars *vars, char *cmd)
 {
-	char			*abs;
+	char		*abs;
 
-	abs = ft_strdup(vars->env[find_env(vars, "HOME")] + 5);
+	abs = get_env_var(vars->env, "HOME");
 	abs = ft_strjoin(abs, cmd + 1);
 	return (abs);
 }

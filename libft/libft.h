@@ -29,6 +29,8 @@ typedef struct s_lst
 	struct s_lst	*next;
 }					t_lst;
 
+char				*ft_strjoin_free(char *s1, char *s2);
+char				*ft_strjoin_sep(char *s1, char *s2, char sep);
 int					ft_strcmp(const char *s1, const char *s2);
 void				ft_cleanlst_fd(t_lst **head, int fd);
 int					ft_strchr_n(char *s);

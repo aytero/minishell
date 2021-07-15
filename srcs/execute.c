@@ -42,24 +42,23 @@ int	exec_piped(t_vars *vars)
 	while (tmp)
 	{
 		//printf("str		%s\n", ((char **)tmp->content)[0]);
-		write(1, "c\n", 2);
 		pid = fork();
 		pid >= 0 || exit_failure("fork", 1);
 		if (pid == 0)
 		{
 			deal_pipes(vars, i);
+			close_pipes(vars);
 			//(execve(((char **)tmp->content)[0], ((char **)tmp->content), vars->env) >= 0) || exit_failure("execve", 1);
 			choose_cmd((char **)tmp->content, vars);
 			exit(0);
 		}
-		write(1, "p\n", 2);
 		tmp = tmp->next;
 		i++;
 	}
 	//wait_loop(pid);
+	close_pipes(vars);
 	while (waitpid(0, 0, 0) <= 0)
 		;
-	close_pipes(vars);
 	return (0);
 }
 
@@ -77,7 +76,8 @@ int	exec_extern(char **cmd, t_vars *vars)// char *path
 		exit_failure("Fork error", 1);
 	if (pid == 0)
 	{
-		(execve(path, cmd, vars->env) >= 0) || exit_failure("execve", 1);
+		//(execve(path, cmd, vars->env) >= 0) || exit_failure("execve", 1);
+		(execve(path, cmd, env_to_char(vars->env)) >= 0) || exit_failure("execve", 1);
 		exit(0);
 	}
 	else
@@ -91,8 +91,8 @@ int	exec_extern(char **cmd, t_vars *vars)// char *path
 
 int	choose_cmd(char **cmd, t_vars *vars)
 {
-	if (cmd == NULL)//if empty command
-		return (0);
+	//if (!cmd[0])//if empty command
+	//	return (0);
 	if (!ft_strcmp(cmd[0], "echo"))
 		return (builtin_echo(cmd, vars));
 	if (!ft_strcmp(cmd[0], "cd"))
@@ -104,9 +104,9 @@ int	choose_cmd(char **cmd, t_vars *vars)
 	if (!ft_strcmp(cmd[0], "unset"))
 		return (builtin_unset(cmd, vars));
 	if (!ft_strcmp(cmd[0], "env"))
-		return (builtin_env(vars));
+		return (builtin_env(vars->env));
 	if (!ft_strcmp(cmd[0], "exit"))
-		return (builtin_exit(vars));
+		return (builtin_exit(cmd, vars));
 	return (exec_extern(cmd, vars));
 }
 
@@ -114,10 +114,12 @@ int	execute(t_vars *vars)
 {
 	vars->flag_redirect = 0;
 
+	if (((char **)(vars->cmd_arr->content))[0] == NULL)//if empty command
+		return (0);
 	if (vars->flag_pipe)
 		exec_piped(vars);
 	else
-		choose_cmd(vars->cmd_arr->content, vars);
+		choose_cmd((char **)(vars->cmd_arr->content), vars);
 	printf("exit status: %d\n", g_exit_status);
 	return (0);
 }

@@ -129,8 +129,8 @@ int	skim(char *str)
 	elem_cntr = 0;
 	
 	!str[0] || elem_cntr++;
-	if (!str[0])
-		return (0);
+	//if (!str[0])
+	//	return (0);
 	while (str[++i])
 	{
 		i = if_quotes(str, i);
@@ -249,17 +249,28 @@ void	pre_parser(char *str, t_vars *vars)
 {
 	char	**cmd_line;
 
+	cmd_line = NULL;
+
+	//if (!str[0])
+	//	return ;
 	if (!skim(str))
+	{
+		cmd_line = ft_calloc(sizeof(char *), 1);
+		vars->cmd_arr = ft_lstnew((char **)cmd_line);
+		//ft_lstadd_front(&vars->cmd_arr, ft_lstnew((char **)cmd_line));
 		return ;
+	}
 	vars->pipe_nbr = count_pipes(str);
 	vars->pipe_nbr == 0 || (vars->flag_pipe = 1);
 	vars->cmd_nbr = vars->pipe_nbr + 1;
 	cmd_line = cut_cmds(str, vars);
-	if (!cmd_line)
-		return ;
-	if (!make_cmd_list(cmd_line, vars))
-		return ;
+	//if (!cmd_line)
+	//	return ;
+	make_cmd_list(cmd_line, vars);
+	//if (!make_cmd_list(cmd_line, vars))
+	//	return ;
 	//print_list(&vars->cmd_arr);
+	//printf("iemm >%s<\n", ((char**)vars->cmd_arr->content)[0]);
 	ft_lstiter_param(vars->cmd_arr, &deal_spec_symbs, vars);
 	//print_list(&vars->cmd_arr);
 

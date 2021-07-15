@@ -14,27 +14,16 @@
 
 static void	change_pwd_envs(t_vars *vars, char *old_pwd, char *new_pwd)
 {
-	int		i;
+	char	*tmp;
 
-	i = find_env(vars, "OLDPWD");
-	if (i > -1)
-		replace_env(vars, i, old_pwd);
-	i = find_env(vars, "PWD");
-	if (i > -1)
-		replace_env(vars, i, new_pwd);
-	//error?
-}
-
-static char	*find_home_dir(t_vars *vars)
-{
-	int		i;
-	char	*dir;
-
-	dir = NULL;
-	i = find_env(vars, "HOME");
-	if (i > -1)
-		dir = ft_strdup(vars->env[i] + 5);
-	return (dir);
+	tmp = ft_strjoin("OLDPWD=", old_pwd);
+	set_env_var(&vars->env, old_pwd);
+	free(tmp);
+	tmp = NULL;
+	tmp = ft_strjoin("PWD=", new_pwd);
+	set_env_var(&vars->env, new_pwd);
+	free(tmp);
+	tmp = NULL;
 }
 
 int	builtin_cd(char **cmd, t_vars *vars)
@@ -45,7 +34,7 @@ int	builtin_cd(char **cmd, t_vars *vars)
 
 	g_exit_status = 0;
 	if (!cmd[1])
-		dir = find_home_dir(vars);//check for -1
+		dir = get_env_var(vars->env, "HOME");// + no free
 	else
 		dir = cmd[1];
 	// if (!dir)
@@ -53,15 +42,11 @@ int	builtin_cd(char **cmd, t_vars *vars)
 	if (chdir(dir) < 0)
 	{
 		free(old_pwd);
-		if (!cmd[1])
-			free(dir);
 		builtin_error("cd", cmd[1], "No such file or directory");
 		return (1);
 	}
 	new_pwd = getcwd(NULL, 0);
 	change_pwd_envs(vars, old_pwd, new_pwd);
-	if (!cmd[1])
-		free(dir);
 	free(old_pwd);
 	free(new_pwd);
 	return (0);

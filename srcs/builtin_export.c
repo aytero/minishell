@@ -33,9 +33,8 @@ static void	sort_env(t_vars *vars)
 	char	**sorted;
 	char	*tmp;
 
-	size = env_arr_size(vars->env);
-	//sorted = NULL;
-	sorted = copy_env_arr(vars->env, vars);
+	sorted = env_to_char(vars->env);
+	size = env_arr_size(sorted);//
 	i = -1;
 	while (++i < size)
 	{
@@ -53,50 +52,6 @@ static void	sort_env(t_vars *vars)
 		}
 	}
 	print_sorted(sorted);
-}
-
-void	replace_env(t_vars *vars, int index, char *new_val)
-{
-	char	*new_env;
-	int		k;
-
-	new_env = NULL;
-	k = find_env_val_index(vars, index);
-	new_env = ft_substr(vars->env[index], 0, k + 1);
-	new_env = ft_strjoin(new_env, new_val);
-	free(vars->env[index]);
-	vars->env[index] = new_env;
-}
-
-static int	env_exists(t_vars *vars, char *val)
-{
-	int		i;
-	int		j;
-	char	*key;
-
-	i = -1;
-	if (ft_strchr(val, '='))
-	{
-		while (val[++i])
-		{
-			if (val[i] == '=')//manage env without =
-				break ;
-		}
-		key = ft_substr(val, 0, i);
-		j = find_env(vars, key);
-		if (j > -1)//getkey
-		{
-			replace_env(vars, j, val + i + 1);
-			return (1);
-		}
-	}
-	else
-	{
-		i = find_env(vars, val);
-		if (i > -1)
-			return (1);
-	}
-	return (0);
 }
 
 static int	check_export_arg(char *arg)
@@ -123,8 +78,8 @@ static int	check_export_arg(char *arg)
 int	builtin_export(char **cmd, t_vars *vars)
 {
 	// cut quotes or maybe in parser
-	int		size;
-	int		j;
+	//int		size;
+	int		i;
 
 	g_exit_status = 0;
 	if (!cmd[1])
@@ -132,17 +87,20 @@ int	builtin_export(char **cmd, t_vars *vars)
 		sort_env(vars);
 		return (0);
 	}
-	j = 0;
-	while (cmd[++j])
+	i = 0;
+	while (cmd[++i])
 	{
-		if (!check_export_arg(cmd[j]))
+		if (!check_export_arg(cmd[i]))
 			continue ;
 			//g_exit_status = 1;
+		set_env_var(&vars->env, cmd[i]);
+		/*
 		if (env_exists(vars, cmd[j]))
 			continue ;
 		size = env_arr_size(vars->env);
 		vars->env = realloc_env(vars->env, size + 1);
 		vars->env[size] = ft_strdup(cmd[j]);
+		*/
 	}
 	return (0);
 }
