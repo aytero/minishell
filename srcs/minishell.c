@@ -6,7 +6,7 @@
 /*   By: lpeggy <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/01 17:14:27 by lpeggy            #+#    #+#             */
-/*   Updated: 2021/07/13 23:08:31 by lpeggy           ###   ########.fr       */
+/*   Updated: 2021/07/15 17:42:31 by lpeggy           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -62,7 +62,7 @@ static void	init_sh(t_vars *vars, char **envp)
 	g_exit_status = 0;
 	//vars->env = copy_env_arr(envp, vars);
 	vars->env = env_to_list(envp);
-	set_env_var(&vars->env, "OLDPWD");
+	//set_env_var(&vars->env, "OLDPWD");//makes it kinda invisible
 	//vars->path = ft_strdup(getenv("PATH"));//mb not useful
 	vars->path = get_env_var(vars->env, "PATH");//mb not useful
 	vars->path_arr = ft_split(vars->path, ':');

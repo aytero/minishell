@@ -6,7 +6,7 @@
 /*   By: lpeggy <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/01 20:51:06 by lpeggy            #+#    #+#             */
-/*   Updated: 2021/07/13 21:22:19 by lpeggy           ###   ########.fr       */
+/*   Updated: 2021/07/15 21:36:17 by lpeggy           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,14 +49,10 @@ int		g_exit_status;
 void	free_memory(t_vars *vars);
 void	free_double_array(void *ptr);
 
-// old env funcs//
-void	replace_env(t_vars *vars, int index, char *new_val);
-int		find_env_val_index(t_vars *vars, int index);
-int		find_env(t_vars *vars, char *key);
-char	**realloc_env(char **env, int size);
+// env funcs//
+//void	print_list(t_list **head);
 int		env_arr_size(char **env);
-char	**copy_env_arr(char **envp, t_vars *vars);
-//			//
+
 t_list	*env_to_list(char **env);
 char	**env_to_char(t_list *env);
 char	*get_env_var(t_list *env, char *key);
@@ -67,7 +63,7 @@ int		replace_env_var(t_list *node, char **kv);
 
 void	builtin_error(char *cmd, char *arg, char *error_mes);
 int		builtin_pwd(t_vars *vars);
-int		builtin_echo(char **cmd, t_vars *vars);
+int		builtin_echo(char **cmd);
 int		builtin_cd(char **cmd, t_vars *vars);
 int		builtin_export(char **cmd, t_vars *vars);
 int		builtin_unset(char **cmd, t_vars *vars);

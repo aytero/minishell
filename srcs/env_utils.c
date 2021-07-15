@@ -6,13 +6,13 @@
 /*   By: lpeggy <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/12 17:24:31 by lpeggy            #+#    #+#             */
-/*   Updated: 2021/07/13 20:42:29 by lpeggy           ###   ########.fr       */
+/*   Updated: 2021/07/15 17:44:52 by lpeggy           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include <execute.h>
 
-int	env_arr_size(char **env)
+int	env_arr_size(char **env)//needed for export sort
 {
 	int		i;
 
@@ -20,47 +20,6 @@ int	env_arr_size(char **env)
 	while (env[++i])
 		;
 	return (i);
-}
-
-
-t_list	*env_to_list(char **env)
-{
-	t_list	*head;
-	int		i;
-
-	if (!env)
-		return (0);
-	head = NULL;
-	i = -1;
-	while (env[++i])
-	{
-		if (!set_env_var(&head, env[i]))
-			return (NULL);
-	}
-	return (head);
-}
-
-char	**env_to_char(t_list *env)//free arr after usage
-{
-	char	**arr;
-	int		i;
-
-	arr = ft_calloc(sizeof(char *), (ft_lstsize(env) + 1));//creates leak
-	if (!arr)
-		return (NULL);
-	//ft_memset(arr, 0, sizeof(arr));
-	i = 0;
-	while (env)
-	{
-		if (((t_env_var *)env->content)->value != NULL)
-		{
-			arr[i] = ft_strjoin_sep(((t_env_var *)env->content)->key,
-					((t_env_var *)env->content)->value, '=');
-		}
-		env = env->next;
-		i++;
-	}
-	return (arr);
 }
 
 char	*get_env_var(t_list *env, char *key)

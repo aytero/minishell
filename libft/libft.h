@@ -6,7 +6,7 @@
 /*   By: lpeggy <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/10/31 15:28:02 by lpeggy            #+#    #+#             */
-/*   Updated: 2021/07/08 23:34:01 by lpeggy           ###   ########.fr       */
+/*   Updated: 2021/07/15 17:47:48 by lpeggy           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -82,5 +82,6 @@ void				ft_lstiter(t_list *lst, void (*f)(void *));
 void				ft_lstiter_param(t_list *lst, void (*f)(), void *param);
 t_list				*ft_lstmap(t_list *lst, void *(f)(void *), \
 						void (*del)(void *));
+void				ft_lstsort(t_list **head, int (*cmp)());
 
 #endif

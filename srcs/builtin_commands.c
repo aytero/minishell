@@ -6,7 +6,7 @@
 /*   By: lpeggy <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/08 16:42:00 by lpeggy            #+#    #+#             */
-/*   Updated: 2021/07/13 20:57:38 by lpeggy           ###   ########.fr       */
+/*   Updated: 2021/07/15 17:47:44 by lpeggy           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,6 +20,21 @@ void	builtin_error(char *cmd, char *arg, char *error_mes)
 //	write(1, "':", 2);
 //	write(1, error_mes, len);
 	printf("sh: %s: `%s': %s\n", cmd, arg, error_mes);
+}
+
+int	builtin_unset(char **cmd, t_vars *vars)
+{
+	int		i;
+	i = 0;
+	while (cmd[++i])
+	{
+		delete_env_var(&vars->env, cmd[i]);
+		/*
+		else//mb just ignore and continue
+			builtin_error("unset", cmd[i], "not a valid identifier");
+			*/
+	}
+	return (0);
 }
 
 int	builtin_pwd(t_vars *vars)
@@ -42,12 +57,10 @@ int	builtin_pwd(t_vars *vars)
 	return (0);
 }
 
-int	builtin_echo(char **cmd, t_vars *vars)
+int	builtin_echo(char **cmd)
 {
 	int		opt_flag;
 	int		i = 1;
-
-	(void)vars;//
 
 	opt_flag = 0;
 	if (!cmd[1])
@@ -62,7 +75,7 @@ int	builtin_echo(char **cmd, t_vars *vars)
 	}
 	while (cmd[i])
 	{
-		write(1, cmd[i], ft_strlen(cmd[i]));//sizeof(args[i]) - 1);
+		write(1, cmd[i], ft_strlen(cmd[i]));
 		if (cmd[i + 1] != NULL)
 			write(1, " ", 1);
 		i++;

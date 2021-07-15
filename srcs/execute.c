@@ -6,7 +6,7 @@
 /*   By: lpeggy <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/01 20:49:41 by lpeggy            #+#    #+#             */
-/*   Updated: 2021/07/13 22:27:21 by lpeggy           ###   ########.fr       */
+/*   Updated: 2021/07/15 21:37:04 by lpeggy           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,24 +41,32 @@ int	exec_piped(t_vars *vars)
 	tmp = vars->cmd_arr;
 	while (tmp)
 	{
-		//printf("str		%s\n", ((char **)tmp->content)[0]);
 		pid = fork();
 		pid >= 0 || exit_failure("fork", 1);
 		if (pid == 0)
 		{
 			deal_pipes(vars, i);
+			//sleep(10);
 			close_pipes(vars);
-			//(execve(((char **)tmp->content)[0], ((char **)tmp->content), vars->env) >= 0) || exit_failure("execve", 1);
+			//(execve(((char **)tmp->content)[0], ((char **)tmp->content),
+			//		env_to_char(vars->env)) >= 0) || exit_failure("execve", 1);
 			choose_cmd((char **)tmp->content, vars);
 			exit(0);
 		}
 		tmp = tmp->next;
 		i++;
 	}
-	//wait_loop(pid);
 	close_pipes(vars);
-	while (waitpid(0, 0, 0) <= 0)
-		;
+
+	int		status;
+	int		wpid;
+
+	wpid = waitpid(pid, &status, 0);//WUNTRACED);
+	while (!WIFEXITED(status) && !WIFSIGNALED(status))
+		wpid = waitpid(pid, &status, WUNTRACED);
+	if (WIFEXITED(status))
+		g_exit_status = WEXITSTATUS(status);
+	//wait_loop(vars->pid);
 	return (0);
 }
 
@@ -76,7 +84,6 @@ int	exec_extern(char **cmd, t_vars *vars)// char *path
 		exit_failure("Fork error", 1);
 	if (pid == 0)
 	{
-		//(execve(path, cmd, vars->env) >= 0) || exit_failure("execve", 1);
 		(execve(path, cmd, env_to_char(vars->env)) >= 0) || exit_failure("execve", 1);
 		exit(0);
 	}
@@ -86,15 +93,12 @@ int	exec_extern(char **cmd, t_vars *vars)// char *path
 		free(path);
 	}
 	return (0);
-	//return (EXIT_SUCCESS);
 }
 
 int	choose_cmd(char **cmd, t_vars *vars)
 {
-	//if (!cmd[0])//if empty command
-	//	return (0);
 	if (!ft_strcmp(cmd[0], "echo"))
-		return (builtin_echo(cmd, vars));
+		return (builtin_echo(cmd));
 	if (!ft_strcmp(cmd[0], "cd"))
 		return (builtin_cd(cmd, vars));
 	if (!ft_strcmp(cmd[0], "pwd"))

@@ -6,7 +6,7 @@
 /*   By: ssobchak <ssobchak@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/10 19:46:26 by ssobchak          #+#    #+#             */
-/*   Updated: 2021/07/13 17:27:26 by lpeggy           ###   ########.fr       */
+/*   Updated: 2021/07/15 22:51:47 by lpeggy           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,11 +19,8 @@ int	iskey(char c)
 	return (0);
 }
 
-char *lowercasing(char *str)
+char *lowercasing(char *str)//dodelat'
 {
-	//char *strl;
-
-	//strl = NULL;
 	while(*str)
 	{
 		if(*str > 64 && *str < 91)
@@ -31,35 +28,6 @@ char *lowercasing(char *str)
 		str++;
 	}
 	return(str);
-	//return(strl);
-}
-
-char	*rightkey(char *key, char **env)
-{
-	char *rkey;
-	int n;
-	int k;
-	
-	n = -1;
-	k = 0;
-	rkey = NULL;
-	while (env[++n])
-	{
-		if (ft_strnstr(env[n], key, ft_strlen(key)))
-		{
-			while (env[n][k] && env[n][k] != '=')
-				k++;
-			rkey = ft_substr(env[n], 0, k);
-			if (ft_strcmp(key, rkey) == 0)
-			{
-				free(rkey);
-				break ;
-			}
-			free(rkey);
-		}
-	}
-	rkey = ft_substr(env[n], k + 1, ft_strlen(env[n]) - k);
-	return (rkey);
 }
 
 char	*dollarswap(char *str, char *rkey, int *i, int j)

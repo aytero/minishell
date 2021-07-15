@@ -6,11 +6,27 @@
 /*   By: lpeggy <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/07/05 18:24:09 by lpeggy            #+#    #+#             */
-/*   Updated: 2021/07/13 23:08:34 by lpeggy           ###   ########.fr       */
+/*   Updated: 2021/07/15 22:51:26 by lpeggy           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "execute.h"
+
+static void	free_double_int_array(int **arr, int size)
+{
+	int		i;
+
+	i = -1;
+	if (arr)
+	{
+		while (++i < size)
+		{
+			if (arr[i])
+				free(arr[i]);
+		}
+		free(arr);
+	}
+}
 
 void	close_pipes(t_vars *vars)
 {
@@ -22,14 +38,13 @@ void	close_pipes(t_vars *vars)
 		close(vars->pfd[i][0]);
 		close(vars->pfd[i][1]);
 	}
-	//free_double_int_array(vars->pfd);
+	free_double_int_array(vars->pfd, vars->pipe_nbr);
 }
 
 void	open_pipes(t_vars *vars)
 {
 	int		i;
 
-	//malloc_ptr
 	vars->pfd = malloc(sizeof(int *) * vars->pipe_nbr);
 	vars->pfd || exit_failure("malloc", 1);
 	i = -1;
@@ -49,20 +64,4 @@ void	deal_pipes(t_vars *vars, int i)
 		dup2(vars->pfd[i - 1][0], 0) >= 0 || exit_failure("dup2", 1);
 	if (i != vars->pipe_nbr)
 		dup2(vars->pfd[i][1], 1) >= 0 || exit_failure("dup2", 1);
-
-	/*
-	if (i == vars->pipe_nbr)//last cmd
-	{
-		close(vars->pfd[i - 1][1]);
-		dup2(vars->pfd[i - 1][0], 0) >= 0 || exit_failure("dup2", 1);
-		close(vars->pfd[i - 1][0]);
-	}
-	else
-	{
-		//dup2(vars->pfd[i - 1][0], 0);
-		close(vars->pfd[i][0]);
-		dup2(vars->pfd[i][1], 1) >= 0 || exit_failure("dup2", 1);
-		close(vars->pfd[i][1]);
-	}
-	*/
 }

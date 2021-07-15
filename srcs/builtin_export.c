@@ -6,7 +6,7 @@
 /*   By: lpeggy <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/12 17:52:02 by lpeggy            #+#    #+#             */
-/*   Updated: 2021/07/13 18:51:17 by lpeggy           ###   ########.fr       */
+/*   Updated: 2021/07/15 17:47:11 by lpeggy           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,6 +24,28 @@ static void	print_sorted(char **sorted)
 	}
 	free_double_array(sorted);	
 }
+
+/*
+void	print_sorted(t_list **head)
+{
+	t_list	*tmp;
+
+	tmp = *head;
+	while (tmp)
+	{
+		printf("declare -x %s=%s\n", ((t_env_var *)tmp->content)->key, ((t_env_var *)tmp->content)->value);
+		tmp = tmp->next;
+	}
+}
+
+int	cmp_envs(void *ptr, void *ptr1)//put in .h
+{
+	int		ret;
+
+	ret = ft_strcmp(((t_env_var *)ptr)->key, ((t_env_var *)ptr1)->key);
+	return (ret);
+}
+*/
 
 static void	sort_env(t_vars *vars)
 {
@@ -52,12 +74,22 @@ static void	sort_env(t_vars *vars)
 		}
 	}
 	print_sorted(sorted);
+
+	/*
+	t_list	*tmp;
+
+	tmp = vars->env;
+	tmp = ft_lstsort(&tmp, cmp_envs);
+	print_sorted(&tmp);
+	*/
 }
 
 static int	check_export_arg(char *arg)
 {
 	int		i;
 
+	if (!ft_strchr(arg, '='))
+		return (0);
 	if (ft_isdigit(arg[0]))
 	{
 		builtin_error("export", arg, "not a valid identifier");
@@ -78,7 +110,6 @@ static int	check_export_arg(char *arg)
 int	builtin_export(char **cmd, t_vars *vars)
 {
 	// cut quotes or maybe in parser
-	//int		size;
 	int		i;
 
 	g_exit_status = 0;
@@ -92,15 +123,7 @@ int	builtin_export(char **cmd, t_vars *vars)
 	{
 		if (!check_export_arg(cmd[i]))
 			continue ;
-			//g_exit_status = 1;
 		set_env_var(&vars->env, cmd[i]);
-		/*
-		if (env_exists(vars, cmd[j]))
-			continue ;
-		size = env_arr_size(vars->env);
-		vars->env = realloc_env(vars->env, size + 1);
-		vars->env[size] = ft_strdup(cmd[j]);
-		*/
 	}
 	return (0);
 }

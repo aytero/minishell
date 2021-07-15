@@ -6,7 +6,7 @@
 /*   By: lpeggy <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/07/13 18:25:59 by lpeggy            #+#    #+#             */
-/*   Updated: 2021/07/13 21:26:40 by lpeggy           ###   ########.fr       */
+/*   Updated: 2021/07/15 23:01:23 by lpeggy           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -106,6 +106,11 @@ char	**cut_cmds(char *str, t_vars *vars)
 		{
 			cmd_line[num] = ft_substr(str, start, i - start);
 			i = skip_pipe(str, i);
+			if (!str[i])
+			{
+				write(1, "wrong input\n", 12);
+				return (NULL);
+			}
 			num++;
 			start = i;
 			continue ;
@@ -177,6 +182,24 @@ void	deal_spec_symbs(void *ptr, t_vars *vars)
 		arr[i] = parser(arr[i], vars);
 }
 
+char	**parse_redir(char **args)
+{
+	int		i;
+
+	i = -1;
+	//while (args[++i])
+	{
+		//if (!ft_strcmp(args[i], ">") || !ft_strcmp(args[i], ">>")
+		//		|| !ft_strcmp(args[i], "<"))// || !ft_strcmp(args[i], "<<"))
+		{
+			deal_redir(args[i], REDIR_IN);
+			//deal_redir(args[i], DB_REDIR_IN);
+			//delete_from_arr(args[i]);
+			//delete_from_arr(args[i + 1]);
+		}
+	}
+}
+
 int	make_cmd_list(char **cmd_line, t_vars *vars)
 {
 	char	**args;
@@ -225,6 +248,8 @@ char	**arg_splitter(char *str, int arg_nbr)
 		if (str[i] == '\"')
 			flag.dq++;
 		//if "\\"
+
+
 		//printf("spliter #%d str[%d] = %c\n", k + 1, i, str[i]);
 		if ((str[i] == ' ' || str[i] == '\t' || str[i + 1] == '\0')
 			&& str[i - 1] != '\\' && !(flag.q % 2) && !(flag.dq % 2))
@@ -250,26 +275,29 @@ void	pre_parser(char *str, t_vars *vars)
 	char	**cmd_line;
 
 	cmd_line = NULL;
-
 	//if (!str[0])
 	//	return ;
 	if (!skim(str))
 	{
 		cmd_line = ft_calloc(sizeof(char *), 1);
 		vars->cmd_arr = ft_lstnew((char **)cmd_line);
-		//ft_lstadd_front(&vars->cmd_arr, ft_lstnew((char **)cmd_line));
 		return ;
 	}
 	vars->pipe_nbr = count_pipes(str);
 	vars->pipe_nbr == 0 || (vars->flag_pipe = 1);
 	vars->cmd_nbr = vars->pipe_nbr + 1;
 	cmd_line = cut_cmds(str, vars);
-	//if (!cmd_line)
-	//	return ;
+	if (!cmd_line)
+	{
+		cmd_line = ft_calloc(sizeof(char *), 1);
+		vars->cmd_arr = ft_lstnew((char **)cmd_line);
+		return ;
+	}
 	make_cmd_list(cmd_line, vars);
 	//if (!make_cmd_list(cmd_line, vars))
 	//	return ;
-	//print_list(&vars->cmd_arr);
+
+	print_list(&vars->cmd_arr);
 	//printf("iemm >%s<\n", ((char**)vars->cmd_arr->content)[0]);
 	ft_lstiter_param(vars->cmd_arr, &deal_spec_symbs, vars);
 	//print_list(&vars->cmd_arr);

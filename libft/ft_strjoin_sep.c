@@ -5,7 +5,7 @@ char	*ft_strjoin_sep(char *s1, char *s2, char sep)
 	char	*str;
 	size_t	i;
 	size_t	j;
-	
+
 	str = malloc(sizeof(char *) * (ft_strlen(s1) + ft_strlen(s2) + 2));
 	if (!str)
 		return (NULL);
