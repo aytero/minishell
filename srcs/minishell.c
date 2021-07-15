@@ -6,7 +6,7 @@
 /*   By: lpeggy <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/01 17:14:27 by lpeggy            #+#    #+#             */
-/*   Updated: 2021/07/15 17:42:31 by lpeggy           ###   ########.fr       */
+/*   Updated: 2021/07/15 23:32:42 by lpeggy           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -84,7 +84,7 @@ int	main(int argc, char **argv, char **envp)
 	while (line != NULL)
 	{
 		if (ft_strlen(line) > 0)
-				add_history(line);//clean after?
+				add_history(line);
 		errno = 0;
 		pre_parser(line, &vars);
 		execute(&vars);

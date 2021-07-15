@@ -6,7 +6,7 @@
 /*   By: lpeggy <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/26 22:20:19 by lpeggy            #+#    #+#             */
-/*   Updated: 2021/07/05 18:05:08 by lpeggy           ###   ########.fr       */
+/*   Updated: 2021/07/15 23:26:22 by lpeggy           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,5 +26,12 @@ int	exit_failure(char *str, int errtype)
 	}
 	//if not in fork free mem (?)
 	exit(g_exit_status);
-	//exit(EXIT_FAILURE);
+}
+
+int	report_failure(char *str)
+{
+	//free_mem
+	printf("%s: %s\n", str, strerror(errno));
+	g_exit_status = errno;
+	return (1);
 }

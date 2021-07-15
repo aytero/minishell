@@ -6,7 +6,7 @@
 /*   By: lpeggy <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/01 20:49:41 by lpeggy            #+#    #+#             */
-/*   Updated: 2021/07/15 21:37:04 by lpeggy           ###   ########.fr       */
+/*   Updated: 2021/07/15 23:32:34 by lpeggy           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,10 +46,7 @@ int	exec_piped(t_vars *vars)
 		if (pid == 0)
 		{
 			deal_pipes(vars, i);
-			//sleep(10);
 			close_pipes(vars);
-			//(execve(((char **)tmp->content)[0], ((char **)tmp->content),
-			//		env_to_char(vars->env)) >= 0) || exit_failure("execve", 1);
 			choose_cmd((char **)tmp->content, vars);
 			exit(0);
 		}
@@ -81,6 +78,7 @@ int	exec_extern(char **cmd, t_vars *vars)// char *path
 	pid = fork();
 	//signal(SIGINT, );
 	if (pid == -1)
+		//return (report_failure("fork"));//though wouldnt be able to use ||
 		exit_failure("Fork error", 1);
 	if (pid == 0)
 	{
@@ -118,7 +116,7 @@ int	execute(t_vars *vars)
 {
 	vars->flag_redirect = 0;
 
-	if (((char **)(vars->cmd_arr->content))[0] == NULL)//if empty command
+	if (((char **)(vars->cmd_arr->content))[0] == NULL)
 		return (0);
 	if (vars->flag_pipe)
 		exec_piped(vars);
