@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   preparser.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: lpeggy <marvin@42.fr>                      +#+  +:+       +#+        */
+/*   By: ssobchak <ssobchak@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/07/13 18:25:59 by lpeggy            #+#    #+#             */
-/*   Updated: 2021/07/15 23:01:23 by lpeggy           ###   ########.fr       */
+/*   Updated: 2021/07/18 19:33:30 by ssobchak         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -285,7 +285,6 @@ char	**arg_splitter(char *str, int arg_nbr)
 	args = ft_calloc(sizeof(char *), arg_nbr + 1);//ret check
 	if (!args)
 		return (NULL);
-
 	i = 0;
 	k = 0;
 	if (str[i] == ' ')
@@ -298,10 +297,6 @@ char	**arg_splitter(char *str, int arg_nbr)
 			flag.q++;
 		if (str[i] == '\"')
 			flag.dq++;
-		//if "\\"
-
-
-		//printf("spliter #%d str[%d] = %c\n", k + 1, i, str[i]);
 		if ((str[i] == ' ' || str[i] == '\t' || str[i + 1] == '\0')
 			&& str[i - 1] != '\\' && !(flag.q % 2) && !(flag.dq % 2))
 		{
@@ -312,8 +307,6 @@ char	**arg_splitter(char *str, int arg_nbr)
 
 			//tmp = ft_substr(str, n, i - n);
 			tmp = ft_substr(str, n, i - n + 1);
-
-			//printf("tmp[%d] = >%s<\n", k, tmp);
 			printf("tmp |%s|\n", tmp);
 			args[k] = ft_strtrim(tmp, " ");
 			free(tmp);
@@ -325,6 +318,7 @@ char	**arg_splitter(char *str, int arg_nbr)
 		}
 		i++;
 	}
+	args[0] = true_lowercasing(args[0]);
 	return (args);
 }
 
