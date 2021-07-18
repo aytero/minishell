@@ -79,5 +79,6 @@ char	*pathfinder(t_vars *vars, char *cmd);
 int		choose_cmd(char **cmd, t_vars *vars);
 int		execute(t_vars *vars);
 int		exit_failure(char *str, int errtype);
+int		report_failure(char *str, int errtype);
 
 #endif

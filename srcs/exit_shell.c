@@ -28,8 +28,9 @@ int	exit_failure(char *str, int errtype)
 	exit(g_exit_status);
 }
 
-int	report_failure(char *str)
+int	report_failure(char *str, int errtype)
 {
+	(void)errtype;
 	//free_mem
 	printf("%s: %s\n", str, strerror(errno));
 	g_exit_status = errno;

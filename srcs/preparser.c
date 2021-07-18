@@ -182,22 +182,70 @@ void	deal_spec_symbs(void *ptr, t_vars *vars)
 		arr[i] = parser(arr[i], vars);
 }
 
-char	**parse_redir(char **args)
+void	deal_redir(char *file, int type)
+{
+	int		fd;
+
+	fd = -1;
+	if (type == REDIR_OUT)
+		fd = open(file, O_WRONLY | O_TRUNC | O_CREAT, 0644);
+	else if (type == REDIR_IN)
+		fd = open(file, O_RDONLY);
+	else if (type == DB_REDIR_OUT)
+		fd = open(file, O_WRONLY | O_APPEND | O_CREAT, 0644);
+	else if (type == DB_REDIR_IN)//heredoc
+		;
+		
+	(fd >= 0) || report_failure("open failed", 1);
+	(dup2(fd, type % 2) >= 0) || report_failure("dup2", 1);
+	close(fd);
+}
+
+char	*cut_redir(char *cmd_line, int i, int type)
+{
+	int		file_index;
+	char	*file;
+	char	*tmp;
+	char	*tmp1;
+
+	tmp = ft_substr(cmd_line, 0, i);
+	while (cmd_line[i] == '>' || cmd_line[i] == '<' || cmd_line[i] == ' ')
+		i++;
+	file_index = i;
+	while (cmd_line[i] && cmd_line[i] != ' ')
+		i++;
+	file = ft_substr(cmd_line, file_index, i - file_index);
+	tmp1 = ft_strdup(cmd_line + i);
+	free(cmd_line);
+	cmd_line = ft_strjoin(tmp, tmp1);
+	free(tmp);
+	free(tmp1);
+//	printf("flag %d\n", O_RDONLY);
+//	printf("flag %d\n", O_WRONLY | O_TRUNC | O_CREAT);
+//	printf("flag %d\n", O_WRONLY | O_APPEND | O_CREAT);
+	printf("cmd |%s|\n", cmd_line);
+	printf("file |%s|\n", file);
+	deal_redir(file, type);
+	//printf("cmd in rd |%s|\n", cmd_line);
+	return (cmd_line);
+}
+char	*parse_redir(char *cmd_line)
 {
 	int		i;
 
 	i = -1;
-	//while (args[++i])
+	while (cmd_line[++i])
 	{
-		//if (!ft_strcmp(args[i], ">") || !ft_strcmp(args[i], ">>")
-		//		|| !ft_strcmp(args[i], "<"))// || !ft_strcmp(args[i], "<<"))
-		{
-			deal_redir(args[i], REDIR_IN);
-			//deal_redir(args[i], DB_REDIR_IN);
-			//delete_from_arr(args[i]);
-			//delete_from_arr(args[i + 1]);
-		}
+		if (cmd_line[i] == '>' && cmd_line[i + 1] == '>')
+			cmd_line = cut_redir(cmd_line, i, DB_REDIR_OUT);
+		else if (cmd_line[i] == '<' && cmd_line[i + 1] == '<')
+			cmd_line = cut_redir(cmd_line, i, DB_REDIR_IN);
+		else if (cmd_line[i] == '<' && cmd_line[i + 1] != '<')
+			cmd_line = cut_redir(cmd_line, i, REDIR_IN);
+		else if (cmd_line[i] == '>' && cmd_line[i + 1] != '>')
+			cmd_line = cut_redir(cmd_line, i, REDIR_OUT);
 	}
+	return (cmd_line);
 }
 
 int	make_cmd_list(char **cmd_line, t_vars *vars)
@@ -238,10 +286,13 @@ char	**arg_splitter(char *str, int arg_nbr)
 	if (!args)
 		return (NULL);
 
-	i = -1;
-	n = 0;
+	i = 0;
 	k = 0;
-	while (str[++i] && k < arg_nbr)
+	if (str[i] == ' ')
+		i = skipspaces(str, i);
+	n = i;
+	printf("str |%s|\n", str + i);
+	while (str[i] && k < arg_nbr)
 	{
 		if (str[i] == '\'')
 			flag.q++;
@@ -254,18 +305,25 @@ char	**arg_splitter(char *str, int arg_nbr)
 		if ((str[i] == ' ' || str[i] == '\t' || str[i + 1] == '\0')
 			&& str[i - 1] != '\\' && !(flag.q % 2) && !(flag.dq % 2))
 		{
-			//printf("n = %d,   i = %d\n", n, i);
+			//i = skipspaces(str, i);
+
+			printf("n = %d,   i = %d\n", n, i);
 			//printf("k = %d   ", k);
 
+			//tmp = ft_substr(str, n, i - n);
 			tmp = ft_substr(str, n, i - n + 1);
+
 			//printf("tmp[%d] = >%s<\n", k, tmp);
+			printf("tmp |%s|\n", tmp);
 			args[k] = ft_strtrim(tmp, " ");
 			free(tmp);
 			tmp = NULL;
 			//printf("args[%d] = >%s<\n", k, args[k]);
 			k++;
 			n = i;
+			//continue ;
 		}
+		i++;
 	}
 	return (args);
 }
@@ -293,13 +351,20 @@ void	pre_parser(char *str, t_vars *vars)
 		vars->cmd_arr = ft_lstnew((char **)cmd_line);
 		return ;
 	}
+
+	int		i;
+	i = -1;
+	while (cmd_line[++i])
+		cmd_line[i] = parse_redir(cmd_line[i]);
+	//exit(0);
+
 	make_cmd_list(cmd_line, vars);
 	//if (!make_cmd_list(cmd_line, vars))
 	//	return ;
 
-	print_list(&vars->cmd_arr);
+	//print_list(&vars->cmd_arr);
 	//printf("iemm >%s<\n", ((char**)vars->cmd_arr->content)[0]);
 	ft_lstiter_param(vars->cmd_arr, &deal_spec_symbs, vars);
-	//print_list(&vars->cmd_arr);
+	print_list(&vars->cmd_arr);
 
 }

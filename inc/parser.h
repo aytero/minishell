@@ -21,6 +21,11 @@
 # include <readline/history.h>
 # include "execute.h"
 
+# define REDIR_IN 0// <
+# define REDIR_OUT 1// >
+# define DB_REDIR_IN 2// <<
+# define DB_REDIR_OUT 3// >>
+
 typedef struct s_flags
 {
 	int				dq;

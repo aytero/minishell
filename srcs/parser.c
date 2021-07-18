@@ -101,6 +101,7 @@ char	*doublequotes(char *str, int *i, t_vars *vars)
 	return (bef);
 }
 
+/*
 char	*redir_in(char *str, int *i, t_vars *vars)
 {
 	char	*filename;
@@ -123,6 +124,7 @@ char	*redir_in(char *str, int *i, t_vars *vars)
 	close(fd);
 	return (str_new);
 }
+*/
 
 char	*parser(char *str, t_vars *vars)
 {
@@ -139,8 +141,8 @@ char	*parser(char *str, t_vars *vars)
 			str = doublequotes(str, &i, vars);
 		if (str[i] == '$')
 			str = dollarsign(str, &i, vars);
-		if (str[i] == '>')
-			str = redir_in(str, &i, vars);
+	//	if (str[i] == '>')
+	//		str = redir_in(str, &i, vars);
 	}
 	return (str);
 }

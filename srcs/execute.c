@@ -42,7 +42,7 @@ int	exec_piped(t_vars *vars)
 	while (tmp)
 	{
 		pid = fork();
-		pid >= 0 || exit_failure("fork", 1);
+		pid >= 0 || report_failure("fork", 1);
 		if (pid == 0)
 		{
 			deal_pipes(vars, i);
@@ -79,10 +79,10 @@ int	exec_extern(char **cmd, t_vars *vars)// char *path
 	//signal(SIGINT, );
 	if (pid == -1)
 		//return (report_failure("fork"));//though wouldnt be able to use ||
-		exit_failure("Fork error", 1);
+		report_failure("Fork error", 1);
 	if (pid == 0)
 	{
-		(execve(path, cmd, env_to_char(vars->env)) >= 0) || exit_failure("execve", 1);
+		(execve(path, cmd, env_to_char(vars->env)) >= 0) || report_failure("execve", 1);
 		exit(0);
 	}
 	else
