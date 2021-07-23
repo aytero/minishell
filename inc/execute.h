@@ -24,16 +24,26 @@
 
 # include <string.h>
 
+# define FD_IN 0
+# define FD_OUT 1
+
 typedef struct s_env_var
 {
 	char		*key;
 	char		*value;
 }				t_env_var;
 
+typedef struct s_proc
+{
+	int			flag_redir;
+	int			fd[2];
+	char		**args;
+}				t_proc;
+
 typedef struct s_vars
 {
 	int			flag_pipe;
-	int			flag_redirect;
+	int			flag_redirect;//
 	int			cmd_nbr;
 	int			pipe_nbr;
 	int			**pfd;

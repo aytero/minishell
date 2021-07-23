@@ -56,6 +56,11 @@ void	free_memory(t_vars *vars)
 	//sleep(10);
 }
 
+static void	free_proc(void *ptr)
+{
+	free_double_array(((t_proc *)ptr)->args);
+}
+
 static void	init_sh(t_vars *vars, char **envp)
 {
 	ft_memset(vars, 0, sizeof(t_vars));
@@ -89,7 +94,8 @@ int	main(int argc, char **argv, char **envp)
 		pre_parser(line, &vars);
 		execute(&vars);
 		free(line);
-		ft_lstclear(&vars.cmd_arr, free_double_array);
+		//ft_lstclear(&vars.cmd_arr, free_double_array);
+		ft_lstclear(&vars.cmd_arr, free_proc);
 		line = readline("sh:> ");
 	}
 	free(line);

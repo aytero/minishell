@@ -82,6 +82,7 @@ int	exec_extern(char **cmd, t_vars *vars)// char *path
 		report_failure("Fork error", 1);
 	if (pid == 0)
 	{
+	//	dup2(((t_proc *)vars->cmd_arr)->fd[FD_OUT], 1);
 		(execve(path, cmd, env_to_char(vars->env)) >= 0) || report_failure("execve", 1);
 		exit(0);
 	}
@@ -115,13 +116,14 @@ int	choose_cmd(char **cmd, t_vars *vars)
 int	execute(t_vars *vars)
 {
 	vars->flag_redirect = 0;
-
-	if (((char **)(vars->cmd_arr->content))[0] == NULL)
+	//if (((t_cmd *)vars->cmd_arr->content).flag_redir > -1))
+	//	_deal_redir(((t_cmd *)(vars->cmd_arr)).content);
+	if (((t_proc *)vars->cmd_arr->content)->args[0] == NULL)
 		return (0);
 	if (vars->flag_pipe)
 		exec_piped(vars);
 	else
-		choose_cmd((char **)(vars->cmd_arr->content), vars);
+		choose_cmd(((t_proc *)vars->cmd_arr->content)->args, vars);
 	printf("exit status: %d\n", g_exit_status);
 	return (0);
 }

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   preparser.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ssobchak <ssobchak@student.42.fr>          +#+  +:+       +#+        */
+/*   By: lpeggy <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/07/13 18:25:59 by lpeggy            #+#    #+#             */
-/*   Updated: 2021/07/18 19:33:30 by ssobchak         ###   ########.fr       */
+/*   Updated: 2021/07/15 23:01:23 by lpeggy           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -161,11 +161,14 @@ void	print_list(t_list **head)
 	while (tmp)
 	{
 		i = 0;
-		while (((char **)(tmp->content))[i])
+		//while (((char **)(tmp->content))[i])
+		while (((t_proc *)(tmp->content))->args[i])
 		{
-			printf("list[%d]	>%s<\n", j, ((char **)(tmp->content))[i]);
+			//printf("list[%d]	>%s<\n", j, ((char **)(tmp->content))[i]);
+			printf("list[%d]	>%s<\n", j, ((t_proc *)(tmp->content))->args[i]);
 			i++;
 		}
+		printf("flag rd %d\n", ((t_proc *)(tmp->content))->flag_redir);
 		tmp = tmp->next;
 		j++;
 	}
@@ -174,21 +177,24 @@ void	print_list(t_list **head)
 void	deal_spec_symbs(void *ptr, t_vars *vars)
 {
 	int		i;
-	char	**arr;
 
-	arr = ptr;
 	i = -1;
-	while (arr[++i])
-		arr[i] = parser(arr[i], vars);
+	while (((t_proc *)ptr)->args[++i])
+		((t_proc *)ptr)->args[i] = parser(((t_proc *)ptr)->args[i], vars);
 }
 
-void	deal_redir(char *file, int type)
+void	deal_redir(char *file, int type, t_proc *proc)
 {
 	int		fd;
 
+	proc->flag_redir = 1;
+
 	fd = -1;
 	if (type == REDIR_OUT)
+	{
+		printf("here\n");
 		fd = open(file, O_WRONLY | O_TRUNC | O_CREAT, 0644);
+	}
 	else if (type == REDIR_IN)
 		fd = open(file, O_RDONLY);
 	else if (type == DB_REDIR_OUT)
@@ -197,11 +203,11 @@ void	deal_redir(char *file, int type)
 		;
 		
 	(fd >= 0) || report_failure("open failed", 1);
-	(dup2(fd, type % 2) >= 0) || report_failure("dup2", 1);
+	(dup2(fd, proc->fd[type % 2]) >= 0) || report_failure("dup2", 1);
 	close(fd);
 }
 
-char	*cut_redir(char *cmd_line, int i, int type)
+char	*cut_redir(char *cmd_line, int i, int type, t_proc *proc)
 {
 	int		file_index;
 	char	*file;
@@ -223,13 +229,12 @@ char	*cut_redir(char *cmd_line, int i, int type)
 //	printf("flag %d\n", O_RDONLY);
 //	printf("flag %d\n", O_WRONLY | O_TRUNC | O_CREAT);
 //	printf("flag %d\n", O_WRONLY | O_APPEND | O_CREAT);
-	printf("cmd |%s|\n", cmd_line);
-	printf("file |%s|\n", file);
-	deal_redir(file, type);
-	//printf("cmd in rd |%s|\n", cmd_line);
+//	printf("cmd |%s|\n", cmd_line);
+//	printf("file |%s|\n", file);
+	deal_redir(file, type, proc);
 	return (cmd_line);
 }
-char	*parse_redir(char *cmd_line)
+char	*parse_redir(char *cmd_line, t_proc *proc)
 {
 	int		i;
 
@@ -237,35 +242,43 @@ char	*parse_redir(char *cmd_line)
 	while (cmd_line[++i])
 	{
 		if (cmd_line[i] == '>' && cmd_line[i + 1] == '>')
-			cmd_line = cut_redir(cmd_line, i, DB_REDIR_OUT);
+			cmd_line = cut_redir(cmd_line, i, DB_REDIR_OUT, proc);
 		else if (cmd_line[i] == '<' && cmd_line[i + 1] == '<')
-			cmd_line = cut_redir(cmd_line, i, DB_REDIR_IN);
+			cmd_line = cut_redir(cmd_line, i, DB_REDIR_IN, proc);
 		else if (cmd_line[i] == '<' && cmd_line[i + 1] != '<')
-			cmd_line = cut_redir(cmd_line, i, REDIR_IN);
+			cmd_line = cut_redir(cmd_line, i, REDIR_IN, proc);
 		else if (cmd_line[i] == '>' && cmd_line[i + 1] != '>')
-			cmd_line = cut_redir(cmd_line, i, REDIR_OUT);
+			cmd_line = cut_redir(cmd_line, i, REDIR_OUT, proc);
 	}
 	return (cmd_line);
 }
 
 int	make_cmd_list(char **cmd_line, t_vars *vars)
 {
-	char	**args;
+//	char	**args;
 	int		i;
 	int		arg_nbr;
+
+	t_proc	*proc;
 
 	arg_nbr = 0;
 	i = -1;
 	while (++i < vars->cmd_nbr)
 	{
+		proc = malloc(sizeof(t_proc));
+		if (!proc)
+			return (0);
+
+		cmd_line[i] = parse_redir(cmd_line[i], proc);
+
 		arg_nbr = count_args(cmd_line[i]);
 		//printf("			arg_nbr %d\n", arg_nbr);
 
 
-		args = arg_splitter(cmd_line[i], arg_nbr);
-		if (!args)
+		proc->args = arg_splitter(cmd_line[i], arg_nbr);
+		if (!proc->args)
 			return (0);
-		ft_lstadd_back(&vars->cmd_arr, ft_lstnew((char **)args));
+		ft_lstadd_back(&vars->cmd_arr, ft_lstnew((t_proc *)proc));
 		//free_double_array(args);//so need new arr for every node
 	}
 	free_double_array(cmd_line);
@@ -285,6 +298,7 @@ char	**arg_splitter(char *str, int arg_nbr)
 	args = ft_calloc(sizeof(char *), arg_nbr + 1);//ret check
 	if (!args)
 		return (NULL);
+
 	i = 0;
 	k = 0;
 	if (str[i] == ' ')
@@ -297,6 +311,10 @@ char	**arg_splitter(char *str, int arg_nbr)
 			flag.q++;
 		if (str[i] == '\"')
 			flag.dq++;
+		//if "\\"
+
+
+		//printf("spliter #%d str[%d] = %c\n", k + 1, i, str[i]);
 		if ((str[i] == ' ' || str[i] == '\t' || str[i + 1] == '\0')
 			&& str[i - 1] != '\\' && !(flag.q % 2) && !(flag.dq % 2))
 		{
@@ -307,6 +325,8 @@ char	**arg_splitter(char *str, int arg_nbr)
 
 			//tmp = ft_substr(str, n, i - n);
 			tmp = ft_substr(str, n, i - n + 1);
+
+			//printf("tmp[%d] = >%s<\n", k, tmp);
 			printf("tmp |%s|\n", tmp);
 			args[k] = ft_strtrim(tmp, " ");
 			free(tmp);
@@ -318,7 +338,6 @@ char	**arg_splitter(char *str, int arg_nbr)
 		}
 		i++;
 	}
-	args[0] = true_lowercasing(args[0]);
 	return (args);
 }
 
@@ -327,12 +346,10 @@ void	pre_parser(char *str, t_vars *vars)
 	char	**cmd_line;
 
 	cmd_line = NULL;
-	//if (!str[0])
-	//	return ;
 	if (!skim(str))
 	{
 		cmd_line = ft_calloc(sizeof(char *), 1);
-		vars->cmd_arr = ft_lstnew((char **)cmd_line);
+		vars->cmd_arr = ft_lstnew((char **)cmd_line);//inval
 		return ;
 	}
 	vars->pipe_nbr = count_pipes(str);
@@ -346,19 +363,18 @@ void	pre_parser(char *str, t_vars *vars)
 		return ;
 	}
 
+	/*
 	int		i;
 	i = -1;
 	while (cmd_line[++i])
 		cmd_line[i] = parse_redir(cmd_line[i]);
-	//exit(0);
+*/
 
 	make_cmd_list(cmd_line, vars);
 	//if (!make_cmd_list(cmd_line, vars))
 	//	return ;
 
-	//print_list(&vars->cmd_arr);
 	//printf("iemm >%s<\n", ((char**)vars->cmd_arr->content)[0]);
 	ft_lstiter_param(vars->cmd_arr, &deal_spec_symbs, vars);
 	print_list(&vars->cmd_arr);
-
 }

@@ -34,5 +34,6 @@ int	report_failure(char *str, int errtype)
 	//free_mem
 	printf("%s: %s\n", str, strerror(errno));
 	g_exit_status = errno;
+	//return (0);
 	return (1);
 }

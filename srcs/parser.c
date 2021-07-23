@@ -101,31 +101,6 @@ char	*doublequotes(char *str, int *i, t_vars *vars)
 	return (bef);
 }
 
-/*
-char	*redir_in(char *str, int *i, t_vars *vars)
-{
-	char	*filename;
-	char	*str_new;
-	int		fd;
-
-	(void)vars;
-	printf("str %s\n", str);
-	printf("str[%d] = |%c|\n", *i, str[*i]);
-	(*i)++;
-	printf("str[%d] = |%c|\n", *i, str[*i]);
-	*i = skipspaces(str, *i);
-	filename = ft_strdup(str + *i);
-	str_new = ft_substr(str, 0, *i);
-
-	printf("file |%s|\n", filename);
-	fd = open(filename, O_WRONLY | O_TRUNC | O_CREAT, 0644);
-	(fd >= 0) || exit_failure("open", 1);
-	(dup2(fd, 0) >= 1) || exit_failure("dup2", 1);
-	close(fd);
-	return (str_new);
-}
-*/
-
 char	*parser(char *str, t_vars *vars)
 {
 	int		i;
@@ -141,8 +116,6 @@ char	*parser(char *str, t_vars *vars)
 			str = doublequotes(str, &i, vars);
 		if (str[i] == '$')
 			str = dollarsign(str, &i, vars);
-	//	if (str[i] == '>')
-	//		str = redir_in(str, &i, vars);
 	}
 	return (str);
 }

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   parser.h                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ssobchak <ssobchak@student.42.fr>          +#+  +:+       +#+        */
+/*   By: lpeggy <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/01 17:14:48 by lpeggy            #+#    #+#             */
-/*   Updated: 2021/07/18 19:44:56 by ssobchak         ###   ########.fr       */
+/*   Updated: 2021/07/15 21:59:06 by lpeggy           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,14 +30,9 @@ typedef struct s_flags
 {
 	int				dq;
 	int				q;
-	int				rdout;
-	int				rdin;
-	char			*filefd;
 	int				sp;
 }					t_flags;
 
-char 	*true_lowercasing(char *str);
-void 	cut_redirr(char *str);
 int		make_cmd_list(char **cmd_line, t_vars *vars);
 char	**arg_splitter(char *str, int arg_nbr);
 void	pre_parser(char *str, t_vars *vars);
