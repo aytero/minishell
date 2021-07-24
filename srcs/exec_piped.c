@@ -6,7 +6,7 @@
 /*   By: lpeggy <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/07/05 18:24:09 by lpeggy            #+#    #+#             */
-/*   Updated: 2021/07/15 22:51:26 by lpeggy           ###   ########.fr       */
+/*   Updated: 2021/07/24 21:12:43 by lpeggy           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -60,6 +60,8 @@ void	open_pipes(t_vars *vars)
 
 void	deal_pipes(t_vars *vars, int i)
 {
+	//i != 0 && (dup2(vars->pfd[i - 1][0], 0) >= 0 || exit_failure("dup2", 1));
+	//i != vars->pipe_nbr && (dup2(vars->pfd[i][1], 1) >= 0 || exit_failure("dup2", 1));
 	if (i != 0)
 		dup2(vars->pfd[i - 1][0], 0) >= 0 || exit_failure("dup2", 1);
 	if (i != vars->pipe_nbr)

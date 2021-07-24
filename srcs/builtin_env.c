@@ -6,7 +6,7 @@
 /*   By: lpeggy <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/12 17:45:28 by lpeggy            #+#    #+#             */
-/*   Updated: 2021/07/15 16:55:05 by lpeggy           ###   ########.fr       */
+/*   Updated: 2021/07/24 21:24:51 by lpeggy           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,11 +41,9 @@ char	**env_to_char(t_list *env)//free arr after usage
 	i = 0;
 	while (env)
 	{
-		if (((t_env_var *)env->content)->value != NULL)
-		{
-			arr[i] = ft_strjoin_sep(((t_env_var *)env->content)->key,
-					((t_env_var *)env->content)->value, '=');
-		}
+		((t_env_var *)env->content)->value != NULL
+			&& (arr[i] = ft_strjoin_sep(((t_env_var *)env->content)->key,
+			((t_env_var *)env->content)->value, '='));
 		env = env->next;
 		i++;
 	}

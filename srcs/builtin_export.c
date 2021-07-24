@@ -6,7 +6,7 @@
 /*   By: lpeggy <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/12 17:52:02 by lpeggy            #+#    #+#             */
-/*   Updated: 2021/07/15 17:47:11 by lpeggy           ###   ########.fr       */
+/*   Updated: 2021/07/24 21:25:42 by lpeggy           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,10 +18,7 @@ static void	print_sorted(char **sorted)
 
 	i = -1;
 	while (sorted[++i])
-	{
-		if (ft_strchr(sorted[i], '='))
-			printf("declare -x %s\n", sorted[i]);
-	}
+		ft_strchr(sorted[i], '=') && printf("declare -x %s\n", sorted[i]);
 	free_double_array(sorted);	
 }
 
@@ -47,7 +44,7 @@ int	cmp_envs(void *ptr, void *ptr1)//put in .h
 }
 */
 
-static void	sort_env(t_vars *vars)
+static int	sort_env(t_vars *vars)
 {
 	int		i;
 	int		j;
@@ -74,6 +71,7 @@ static void	sort_env(t_vars *vars)
 		}
 	}
 	print_sorted(sorted);
+	return (1);
 
 	/*
 	t_list	*tmp;
@@ -91,18 +89,12 @@ static int	check_export_arg(char *arg)
 	if (!ft_strchr(arg, '='))
 		return (0);
 	if (ft_isdigit(arg[0]))
-	{
-		builtin_error("export", arg, "not a valid identifier");
-		return (0);
-	}
+		return (builtin_error("export", arg, "not a valid identifier"));
 	i = -1;
 	while (arg[++i] && arg[i] != '=')
 	{
 		if (!ft_isalpha(arg[i]) && !ft_isdigit(arg[i]) && arg[i] != '_')
-		{
-			builtin_error("export", arg, "not a valid identifier");
-			return (0);
-		}
+			return (builtin_error("export", arg, "not a valid identifier"));
 	}
 	return (1);
 }
@@ -114,10 +106,7 @@ int	builtin_export(char **cmd, t_vars *vars)
 
 	g_exit_status = 0;
 	if (!cmd[1])
-	{
-		sort_env(vars);
-		return (0);
-	}
+		return (!sort_env(vars));
 	i = 0;
 	while (cmd[++i])
 	{

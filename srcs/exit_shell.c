@@ -6,12 +6,14 @@
 /*   By: lpeggy <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/26 22:20:19 by lpeggy            #+#    #+#             */
-/*   Updated: 2021/07/15 23:26:22 by lpeggy           ###   ########.fr       */
+/*   Updated: 2021/07/24 21:46:25 by lpeggy           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "execute.h"
 
+
+//print errors to fd 2
 int	exit_failure(char *str, int errtype)
 {
 	if (errtype == 1)
@@ -28,11 +30,13 @@ int	exit_failure(char *str, int errtype)
 	exit(g_exit_status);
 }
 
-int	report_failure(char *str, int errtype)
+int	report_failure(char *cmd, char *str, int errtype)
 {
-	(void)errtype;
 	//free_mem
-	printf("%s: %s\n", str, strerror(errno));
-	g_exit_status = errno;
+	errtype && printf("%s: %s\n", str, strerror(errno));
+	errtype && (g_exit_status = errno);
+	!errtype && printf("sh: %s: %s\n", cmd, str);
+	!errtype && (g_exit_status = 1);
+	//return (0);
 	return (1);
 }

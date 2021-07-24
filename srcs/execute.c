@@ -6,7 +6,7 @@
 /*   By: lpeggy <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/01 20:49:41 by lpeggy            #+#    #+#             */
-/*   Updated: 2021/07/15 23:32:34 by lpeggy           ###   ########.fr       */
+/*   Updated: 2021/07/24 23:20:16 by lpeggy           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,18 +36,19 @@ int	exec_piped(t_vars *vars)
 	pid_t	pid;
 	t_list	*tmp;
 
+	DEBUG && printf(GREY"executing piped"RESET);
 	open_pipes(vars);
 	i = 0;
 	tmp = vars->cmd_arr;
 	while (tmp)
 	{
 		pid = fork();
-		pid >= 0 || report_failure("fork", 1);
+		pid >= 0 || report_failure(NULL, "fork", 1);
 		if (pid == 0)
 		{
 			deal_pipes(vars, i);
 			close_pipes(vars);
-			choose_cmd((char **)tmp->content, vars);
+			choose_cmd((t_proc *)tmp->content, vars);
 			exit(0);
 		}
 		tmp = tmp->next;
@@ -67,61 +68,122 @@ int	exec_piped(t_vars *vars)
 	return (0);
 }
 
-int	exec_extern(char **cmd, t_vars *vars)// char *path
+int	_deal_redir(t_proc *proc)
 {
-	pid_t	pid;
-	char	*path;
+	int		fd;
 
-	path = pathfinder(vars, cmd[0]);
-	//path || exit_failure("No such file or directory", 0);
-
-	pid = fork();
-	//signal(SIGINT, );
-	if (pid == -1)
-		//return (report_failure("fork"));//though wouldnt be able to use ||
-		report_failure("Fork error", 1);
-	if (pid == 0)
-	{
-		(execve(path, cmd, env_to_char(vars->env)) >= 0) || report_failure("execve", 1);
-		exit(0);
-	}
-	else
-	{
-		wait_loop(pid);
-		free(path);
-	}
-	return (0);
+	fd = -1;
+	//printf(RED"type redir %d\n"RESET, proc->type_redir);
+	if (proc->type_redir == REDIR_OUT)
+		fd = open(proc->filename, O_WRONLY | O_TRUNC | O_CREAT, 0644);
+	else if (proc->type_redir == REDIR_IN)
+		fd = open(proc->filename, O_RDONLY);
+	else if (proc->type_redir == DB_REDIR_OUT)
+		fd = open(proc->filename, O_WRONLY | O_APPEND | O_CREAT, 0644);
+	else if (proc->type_redir == DB_REDIR_IN)//heredoc
+		;
+		
+	(fd >= 0) || report_failure(NULL, "open failed", 1);
+	//return (report_failure(NULL, "open failed, 1"));
+	(dup2(fd, proc->type_redir % 2)) >= 0 || report_failure(NULL, "dup2", 1);
+	close(fd);
+	return (1);
 }
 
-int	choose_cmd(char **cmd, t_vars *vars)
+int	exec_extern(t_proc *proc, t_vars *vars)
 {
-	if (!ft_strcmp(cmd[0], "echo"))
-		return (builtin_echo(cmd));
-	if (!ft_strcmp(cmd[0], "cd"))
-		return (builtin_cd(cmd, vars));
-	if (!ft_strcmp(cmd[0], "pwd"))
+//	pid_t	pid;
+	char	*path;
+
+	DEBUG && printf(GREY"executing extern prog"RESET);
+	path = pathfinder(vars, proc->args[0]);
+	DEBUG && printf(GREY"path = |%s|"RESET, path);
+	//path || exit_failure("No such file or directory", 0);
+	if (!path)
+		return (report_failure(proc->args[0], "command not found", 0));
+
+//	pid = fork();
+	//signal(SIGINT, );
+//	if (pid == -1)
+		//return (report_failure("fork"));//though wouldnt be able to use ||
+//		return (report_failure(NULL, "Fork error", 1));
+//	if (pid == 0)
+//	{
+		//printf(RED"type redir %d\n"RESET, ((t_proc *)(vars->cmd_arr)->content)->type_redir);
+//		if (proc->flag_redir)
+//			_deal_redir(proc);
+		(execve(path, proc->args, env_to_char(vars->env)) >= 0) || report_failure(NULL, "execve", 1);
+		return (0);
+//		exit(0);
+//	}
+//	else
+//	{
+//		wait_loop(pid);
+//		free(path);
+//	}
+//	return (0);
+}
+
+int	choose_cmd(t_proc *proc, t_vars *vars)
+{
+	pid_t	pid;
+	
+	DEBUG && printf(GREY"choosing cmd"RESET);
+	pid = fork();
+	if (pid == 0)
+	{
+		proc->flag_redir && _deal_redir(proc);
+		//if (!_deal_redir(proc))
+		//	return (1);
+		if (!ft_strcmp(proc->args[0], "echo"))
+			exit(builtin_echo(proc->args));
+		if (!ft_strcmp(proc->args[0], "cd"))
+			exit(builtin_cd(proc->args, vars));
+		if (!ft_strcmp(proc->args[0], "pwd"))
+			exit(builtin_pwd(vars));
+		if (!ft_strcmp(proc->args[0], "export"))
+			exit(builtin_export(proc->args, vars));
+		if (!ft_strcmp(proc->args[0], "unset"))
+			exit(builtin_unset(proc->args, vars));
+		if (!ft_strcmp(proc->args[0], "env"))
+			exit(builtin_env(vars->env));
+		if (!ft_strcmp(proc->args[0], "exit"))
+			exit(builtin_exit(proc->args, vars));
+		exit(exec_extern(proc, vars));
+	}
+	else
+		wait_loop(pid);
+	return (0);
+
+	/*
+	if (!ft_strcmp(proc->args[0], "echo"))
+		return (builtin_echo(proc->args));
+	if (!ft_strcmp(proc->args[0], "cd"))
+		return (builtin_cd(proc->args, vars));
+	if (!ft_strcmp(proc->args[0], "pwd"))
 		return (builtin_pwd(vars));
-	if (!ft_strcmp(cmd[0], "export"))
-		return (builtin_export(cmd, vars));
-	if (!ft_strcmp(cmd[0], "unset"))
-		return (builtin_unset(cmd, vars));
-	if (!ft_strcmp(cmd[0], "env"))
+	if (!ft_strcmp(proc->args[0], "export"))
+		return (builtin_export(proc->args, vars));
+	if (!ft_strcmp(proc->args[0], "unset"))
+		return (builtin_unset(proc->args, vars));
+	if (!ft_strcmp(proc->args[0], "env"))
 		return (builtin_env(vars->env));
-	if (!ft_strcmp(cmd[0], "exit"))
-		return (builtin_exit(cmd, vars));
-	return (exec_extern(cmd, vars));
+	if (!ft_strcmp(proc->args[0], "exit"))
+		return (builtin_exit(proc->args, vars));
+	return (exec_extern(proc, vars));
+	*/
 }
 
 int	execute(t_vars *vars)
 {
-	vars->flag_redirect = 0;
-
-	if (((char **)(vars->cmd_arr->content))[0] == NULL)
+	//vars->flag_redirect = 0;
+	if (((t_proc *)vars->cmd_arr->content)->args[0] == NULL)
 		return (0);
+	DEBUG && printf(GREY"\tstarting execution"RESET);
 	if (vars->flag_pipe)
 		exec_piped(vars);
 	else
-		choose_cmd((char **)(vars->cmd_arr->content), vars);
-	printf("exit status: %d\n", g_exit_status);
+		choose_cmd((t_proc *)vars->cmd_arr->content, vars);
+	printf(GREY"exit status: %d"RESET, g_exit_status);
 	return (0);
 }

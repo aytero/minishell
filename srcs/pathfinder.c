@@ -6,7 +6,7 @@
 /*   By: lpeggy <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/29 20:28:49 by lpeggy            #+#    #+#             */
-/*   Updated: 2021/07/15 22:51:04 by lpeggy           ###   ########.fr       */
+/*   Updated: 2021/07/24 21:09:13 by lpeggy           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,6 +20,7 @@ static char	*search_in_environ(t_vars *vars, char *cmd, DIR *dir)
 
 	tmp = NULL;
 	i = -1;
+	DEBUG && printf(GREY"getting path from bin:"RESET);
 	while (vars->path_arr[++i])
 	{
 		dir = opendir(vars->path_arr[i]);
@@ -47,6 +48,7 @@ static char	*get_abs_path(t_vars *vars, char *cmd)
 
 	abs = get_env_var(vars->env, "HOME");
 	abs = ft_strjoin(abs, cmd + 1);
+	DEBUG && printf(GREY"getting abs path:"RESET);
 	return (abs);
 }
 
@@ -55,6 +57,7 @@ static char	*prep_ret(DIR *dir, char *dirname, char *tmp, char *cmd)
 	closedir(dir);
 	free(dirname);
 	tmp = ft_strdup(cmd);
+	DEBUG && printf(GREY"getting path from current dir:"RESET);
 	return (tmp);
 }
 
@@ -68,7 +71,10 @@ char	*pathfinder(t_vars *vars, char *cmd)
 	if (!ft_strncmp(cmd, "~/", 2))
 		return (get_abs_path(vars, cmd));
 	if (ft_strncmp(cmd, "./", 2) == 0 || ft_strncmp(cmd, "../", 3) == 0)
+	{
+		DEBUG && printf(GREY"getting relatable path:"RESET);
 		return (ft_strdup(cmd));
+	}
 	dirname = getcwd(NULL, 0);
 	tmp = NULL;
 	dir = opendir(dirname);

@@ -6,7 +6,7 @@
 /*   By: ssobchak <ssobchak@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/10 19:46:26 by ssobchak          #+#    #+#             */
-/*   Updated: 2021/07/18 19:43:20 by ssobchak         ###   ########.fr       */
+/*   Updated: 2021/07/24 21:31:04 by lpeggy           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,15 +19,15 @@ int	iskey(char c)
 	return (0);
 }
 
-static char *lowercasing(char *str)
+char *lowercasing(char *str)//dodelat'
 {
-	while(*str)
+	while (*str)
 	{
-		if(*str > 64 && *str < 91)
+		if (*str > 64 && *str < 91)
 			*str += 32;
 		str++;
 	}
-	return(str);
+	return (str);
 }
 
 char	*dollarswap(char *str, char *rkey, int *i, int j)
@@ -49,17 +49,4 @@ int	skipspaces(char *str, int i)
 	while ((str[i] == ' ' || str[i] == '\t') && str[i])
 		i++;
 	return (i);
-}
-
-char *true_lowercasing(char *str)
-{
-	if (str[0] == 'e' && str[1] == 'n' && str[3] == 'v')
-		lowercasing(str);
-	if (str[0] == 'p' && str[1] == 'w' && str[3] == 'd')
-		lowercasing(str);
-	if (str[0] == 'e' && str[1] == 'c' && str[3] == 'h')
-		lowercasing(str);
-	if (str[0] == 'e' && str[1] == 'x' && str[3] == 'i')
-		lowercasing(str);
-	return(str);
 }

@@ -6,7 +6,7 @@
 /*   By: lpeggy <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/12 17:24:31 by lpeggy            #+#    #+#             */
-/*   Updated: 2021/07/15 17:44:52 by lpeggy           ###   ########.fr       */
+/*   Updated: 2021/07/24 21:27:35 by lpeggy           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,6 +48,8 @@ int	delete_env_var(t_list **head, char *key)
 	{
 		if (!ft_strcmp((((t_env_var *)del->content)->key), key))
 		{
+			//prev && (prev->next = del->next);
+			//!prev && (*head = del->next);
 			if (prev)
 				prev->next = del->next;
 			else
@@ -74,6 +76,8 @@ int	set_env_var(t_list **env, char *env_line)
 	sign = ft_strchr(env_line, '=');
 //	if (sign == env_line)
 //		return (0);
+	//sign && (*sign = '\0');
+	//sign && (sign++);
 	if (sign)
 	{
 		*sign = '\0';

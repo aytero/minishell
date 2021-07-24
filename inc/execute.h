@@ -6,7 +6,7 @@
 /*   By: lpeggy <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/01 20:51:06 by lpeggy            #+#    #+#             */
-/*   Updated: 2021/07/15 21:36:17 by lpeggy           ###   ########.fr       */
+/*   Updated: 2021/07/24 22:58:48 by lpeggy           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,16 +24,38 @@
 
 # include <string.h>
 
+# include "colors.h"
+# define DEBUG 1
+# define DEBUG_PARSER 1
+
+# define FD_IN 0
+# define FD_OUT 1
+
+# include <fcntl.h>
+# define REDIR_IN 0// <
+# define REDIR_OUT 1// >
+# define DB_REDIR_IN 2// <<
+# define DB_REDIR_OUT 3// >>
+
 typedef struct s_env_var
 {
 	char		*key;
 	char		*value;
 }				t_env_var;
 
+typedef struct s_proc
+{
+	int			flag_redir;
+	int			type_redir;
+	int			fd[2];
+	char		*filename;
+	char		**args;
+}				t_proc;
+
 typedef struct s_vars
 {
 	int			flag_pipe;
-	int			flag_redirect;
+	int			flag_redirect;//
 	int			cmd_nbr;
 	int			pipe_nbr;
 	int			**pfd;
@@ -61,7 +83,7 @@ int		set_env_var(t_list **env, char *env_line);
 int		new_env_var(t_list **head, char **kv);
 int		replace_env_var(t_list *node, char **kv);
 
-void	builtin_error(char *cmd, char *arg, char *error_mes);
+int		builtin_error(char *cmd, char *arg, char *error_mes);
 int		builtin_pwd(t_vars *vars);
 int		builtin_echo(char **cmd);
 int		builtin_cd(char **cmd, t_vars *vars);
@@ -70,15 +92,15 @@ int		builtin_unset(char **cmd, t_vars *vars);
 int		builtin_env(t_list *env);
 int		builtin_exit(char **cmd, t_vars *vars);
 
-int		exec_extern(char **cmd, t_vars *vars);
+int		exec_extern(t_proc *proc, t_vars *vars);
 int		exec_piped(t_vars *vars);
 void	close_pipes(t_vars *vars);
 void	deal_pipes(t_vars *vars, int i);
 void	open_pipes(t_vars *vars);
 char	*pathfinder(t_vars *vars, char *cmd);
-int		choose_cmd(char **cmd, t_vars *vars);
+int		choose_cmd(t_proc *proc, t_vars *vars);
 int		execute(t_vars *vars);
 int		exit_failure(char *str, int errtype);
-int		report_failure(char *str, int errtype);
+int		report_failure(char *cmd, char *str, int errtype);
 
 #endif

@@ -6,7 +6,7 @@
 /*   By: lpeggy <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/16 20:36:45 by lpeggy            #+#    #+#             */
-/*   Updated: 2021/07/13 21:00:59 by lpeggy           ###   ########.fr       */
+/*   Updated: 2021/07/24 17:46:05 by lpeggy           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,11 +17,11 @@ static void	change_pwd_envs(t_vars *vars, char *old_pwd, char *new_pwd)
 	char	*tmp;
 
 	tmp = ft_strjoin("OLDPWD=", old_pwd);
-	set_env_var(&vars->env, old_pwd);
+	set_env_var(&vars->env, tmp);
 	free(tmp);
 	tmp = NULL;
 	tmp = ft_strjoin("PWD=", new_pwd);
-	set_env_var(&vars->env, new_pwd);
+	set_env_var(&vars->env, tmp);
 	free(tmp);
 	tmp = NULL;
 }
@@ -33,10 +33,8 @@ int	builtin_cd(char **cmd, t_vars *vars)
 	char	*new_pwd;
 
 	g_exit_status = 0;
-	if (!cmd[1])
-		dir = get_env_var(vars->env, "HOME");// + no free
-	else
-		dir = cmd[1];
+	!cmd[1] && (dir = get_env_var(vars->env, "HOME"));// + no free
+	cmd[1] && (dir = cmd[1]);
 	// if (!dir)
 	old_pwd = getcwd(NULL, 0);
 	if (chdir(dir) < 0)

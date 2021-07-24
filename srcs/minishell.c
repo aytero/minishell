@@ -6,7 +6,7 @@
 /*   By: lpeggy <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/01 17:14:27 by lpeggy            #+#    #+#             */
-/*   Updated: 2021/07/15 23:32:42 by lpeggy           ###   ########.fr       */
+/*   Updated: 2021/07/24 23:34:06 by lpeggy           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,6 +56,13 @@ void	free_memory(t_vars *vars)
 	//sleep(10);
 }
 
+static void	free_proc(void *ptr)
+{
+	if (((t_proc *)ptr)->filename)
+		free(((t_proc *)ptr)->filename);
+	free_double_array(((t_proc *)ptr)->args);
+}
+
 static void	init_sh(t_vars *vars, char **envp)
 {
 	ft_memset(vars, 0, sizeof(t_vars));
@@ -83,15 +90,19 @@ int	main(int argc, char **argv, char **envp)
 	line = readline("sh:> ");
 	while (line != NULL)
 	{
-		if (ft_strlen(line) > 0)
-				add_history(line);
-		errno = 0;
-		pre_parser(line, &vars);
-		execute(&vars);
-		free(line);
-		ft_lstclear(&vars.cmd_arr, free_double_array);
+		(ft_strlen(line) > 0) && add_history(line);
+		if (ft_strlen(line) != 0)
+		{
+			errno = 0;
+			pre_parser(line, &vars);
+			execute(&vars);
+			free(line);
+			//ft_lstclear(&vars.cmd_arr, free_double_array);
+			ft_lstclear(&vars.cmd_arr, free_proc);
+		}
 		line = readline("sh:> ");
 	}
+	//rl_clear_history();
 	free(line);
 	free_memory(&vars);
 	return (0);
