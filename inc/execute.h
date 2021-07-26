@@ -49,6 +49,7 @@ typedef struct s_proc
 	int			type_redir;
 	int			fd[2];
 	char		*filename;
+	char		*cmd;
 	char		**args;
 }				t_proc;
 
@@ -56,6 +57,7 @@ typedef struct s_vars
 {
 	int			flag_pipe;
 	int			flag_redirect;//
+	int			parse_err;
 	int			cmd_nbr;
 	int			pipe_nbr;
 	int			**pfd;

@@ -96,7 +96,7 @@ int	exec_extern(t_proc *proc, t_vars *vars)
 	char	*path;
 
 	DEBUG && printf(GREY"executing extern prog"RESET);
-	path = pathfinder(vars, proc->args[0]);
+	path = pathfinder(vars, proc->cmd);
 	DEBUG && printf(GREY"path = |%s|"RESET, path);
 	//path || exit_failure("No such file or directory", 0);
 	if (!path)
@@ -135,19 +135,19 @@ int	choose_cmd(t_proc *proc, t_vars *vars)
 		proc->flag_redir && _deal_redir(proc);
 		//if (!_deal_redir(proc))
 		//	return (1);
-		if (!ft_strcmp(proc->args[0], "echo"))
+		if (!ft_strcmp(proc->cmd, "echo"))
 			exit(builtin_echo(proc->args));
-		if (!ft_strcmp(proc->args[0], "cd"))
+		if (!ft_strcmp(proc->cmd, "cd"))
 			exit(builtin_cd(proc->args, vars));
-		if (!ft_strcmp(proc->args[0], "pwd"))
+		if (!ft_strcmp(proc->cmd, "pwd"))
 			exit(builtin_pwd(vars));
-		if (!ft_strcmp(proc->args[0], "export"))
+		if (!ft_strcmp(proc->cmd, "export"))
 			exit(builtin_export(proc->args, vars));
-		if (!ft_strcmp(proc->args[0], "unset"))
+		if (!ft_strcmp(proc->cmd, "unset"))
 			exit(builtin_unset(proc->args, vars));
-		if (!ft_strcmp(proc->args[0], "env"))
+		if (!ft_strcmp(proc->cmd, "env"))
 			exit(builtin_env(vars->env));
-		if (!ft_strcmp(proc->args[0], "exit"))
+		if (!ft_strcmp(proc->cmd, "exit"))
 			exit(builtin_exit(proc->args, vars));
 		exit(exec_extern(proc, vars));
 	}
@@ -177,10 +177,13 @@ int	choose_cmd(t_proc *proc, t_vars *vars)
 int	execute(t_vars *vars)
 {
 	//vars->flag_redirect = 0;
-	if (((t_proc *)vars->cmd_arr->content)->args[0] == NULL)
+	//if (((t_proc *)vars->cmd_arr->content)->args[0] == NULL)
+	//	return (0);
+	if (vars->parse_err)
 		return (0);
 	DEBUG && printf(GREY"\tstarting execution"RESET);
-	if (vars->flag_pipe)
+//	if (vars->flag_pipe)
+	if (vars->pipe_nbr > 0)
 		exec_piped(vars);
 	else
 		choose_cmd((t_proc *)vars->cmd_arr->content, vars);

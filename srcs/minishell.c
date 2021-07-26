@@ -60,6 +60,8 @@ static void	free_proc(void *ptr)
 {
 	if (((t_proc *)ptr)->filename)
 		free(((t_proc *)ptr)->filename);
+	if (((t_proc *)ptr)->cmd)
+		free(((t_proc *)ptr)->cmd);
 	free_double_array(((t_proc *)ptr)->args);
 }
 
@@ -91,15 +93,13 @@ int	main(int argc, char **argv, char **envp)
 	while (line != NULL)
 	{
 		(ft_strlen(line) > 0) && add_history(line);
-		if (ft_strlen(line) != 0)
-		{
-			errno = 0;
-			pre_parser(line, &vars);
-			execute(&vars);
-			free(line);
-			//ft_lstclear(&vars.cmd_arr, free_double_array);
-			ft_lstclear(&vars.cmd_arr, free_proc);
-		}
+		errno = 0;
+		vars.parse_err = 0;
+		pre_parser(line, &vars);
+		execute(&vars);
+		free(line);
+		//ft_lstclear(&vars.cmd_arr, free_double_array);
+		ft_lstclear(&vars.cmd_arr, free_proc);
 		line = readline("sh:> ");
 	}
 	//rl_clear_history();

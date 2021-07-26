@@ -105,8 +105,12 @@ char	*doublequotes(char *str, int *i, t_vars *vars)
 char	*parser(char *str, t_vars *vars)
 {
 	int		i;
+	char	*tmp;
 
 	i = -1;
+	tmp = ft_strtrim(str, " \n\f\v\r\t");
+	free(str);
+	str = tmp;
 	while (str[++i])
 	{
 		/*
