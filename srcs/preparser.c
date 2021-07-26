@@ -34,48 +34,6 @@ int	if_quotes(char *str, int i)
 	return (i);
 }
 
-/*
-char	**cut_cmds(char *str, t_vars *vars)
-{
-	int		i;
-	int		start;
-	int		num;
-	char	**cmd_line;
-
-	cmd_line = ft_calloc(sizeof(char *), (vars->cmd_nbr + 1));// null last
-	if (!cmd_line)
-		return (NULL);
-	num = 0;
-	if (vars->cmd_nbr == 1)
-	{
-		cmd_line[num] = ft_strdup(str);
-		return (cmd_line);
-	}
-	
-	start = 0;
-	i = 0;
-	while (str[i])
-	{
-		i = if_quotes(str, i);
-		if (str[i] == '|')
-		{
-			cmd_line[num] = ft_substr(str, start, i - start);
-			i = skip_symbs(str, i, " |");// " " ?
-			num++;
-			start = i;
-			continue ;
-		}
-		//if (num == vars->cmd_nbr - 1)
-		if (num == vars->pipe_nbr)//after last pipe
-		{
-			cmd_line[num] = ft_strdup(str + i);
-			break ;
-		}
-		i++;
-	}
-	return (cmd_line);
-}*/
-
 int	cut_args(char **args, char *str, int *i, int k, t_util *util)
 {
 	if (str[*i] == '\'')
@@ -203,6 +161,7 @@ void	pre_parser(char *str, t_vars *vars)
 		return ;
 	//DEBUG_PARSER && printf(GREY"\tbefore dealing spec symbs"RESET);
 	//DEBUG_PARSER && _print_list(&vars->cmd_arr);
+
 	ft_lstiter_param(vars->cmd_arr, &deal_spec_symbs, vars);
 
 	DEBUG_PARSER && printf(GREY"\tafter all parse"RESET);
