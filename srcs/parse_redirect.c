@@ -1,5 +1,29 @@
 #include "parser.h"
 
+int	count_redirs(char *str, char type)
+{
+	int		i;
+	int		nbr;
+	char	div[2];
+
+	nbr = 0;
+	i = 0;
+	while (str[i])
+	{
+		i = if_quotes(str, i);
+		if (str[i] == type)//type
+		{
+			nbr++;
+			div[0] = type;
+			div[1] = '\0';
+			i = skip_symbs(str, i, div);
+			continue ;
+		}
+		i++;
+	}
+	return (nbr);
+}
+
 char	*cut_redir(char *cmd_line, int i, int type, t_proc *proc)
 {
 	int		file_index;
@@ -32,19 +56,28 @@ char	*cut_redir(char *cmd_line, int i, int type, t_proc *proc)
 
 char	*parse_redir(char *cmd_line, t_proc *proc)
 {
-	int		i;
+	//int		i;
 
+	// |< file|	- seg f
 	//count redirects and make arrays with types and filenames
 	// aren't where max 2 redirs? so keep vars for in and out
 	// bash chooses only last redir from its io type
 	// ex. < file grep str < ttt < file – will read from last < file
 	// though mult output rds create files but write only into last
-	//int		rd_in_nbr = 0;
-	//int		rd_out_nbr = 0;
-	//add check for <<< and other
-	//rd_in_nbr = count_elems(cmd_line, "<") - 1;//not suitable for redirs, doesn't detect str[0] == rd
-	//rd_out_nbr = count_elems(cmd_line, ">") - 1;
-	//DEBUG_PARSER && printf(GREY"rd_in_nbr %d\trd_out_nbr %d"RESET, rd_in_nbr, rd_out_nbr);
+//	int		rd_in_nbr = 0;
+//	int		rd_out_nbr = 0;
+	proc->rd_in_nbr = count_redirs(cmd_line, '<');
+	proc->rd_out_nbr = count_redirs(cmd_line, '>');
+	DEBUG_PARSER && printf(GREY"rd_in_nbr %d\trd_out_nbr %d"RESET, proc->rd_in_nbr, proc->rd_out_nbr);
+	(void)proc;
+	/*
+	proc->rd_in_nbr && (proc->infiles = malloc(sizeof(char *) * (proc->rd_in_nbr + 1)));
+	if (!proc->infiles)
+		return (NULL);
+	//maybe get only last OUTfile and all infiles
+	proc->rd_out_nbr && (proc->outfiles = malloc(sizeof(char *) * (proc->rd_out_nbr + 1)));
+	if (!proc->outfiles)
+		return (NULL);
 	i = -1;
 	while (cmd_line[++i])
 	{
@@ -56,6 +89,6 @@ char	*parse_redir(char *cmd_line, t_proc *proc)
 			cmd_line = cut_redir(cmd_line, i, REDIR_IN, proc);
 		else if (cmd_line[i] == '>' && cmd_line[i + 1] != '>')
 			cmd_line = cut_redir(cmd_line, i, REDIR_OUT, proc);
-	}
+	}*/
 	return (cmd_line);
 }

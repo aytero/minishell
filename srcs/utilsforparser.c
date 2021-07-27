@@ -40,13 +40,6 @@ int	_print_list(t_list **head)
 	return (1);
 }
 
-int	iskey(char c)
-{
-	if (c == '_' || ft_isalnum(c))
-		return (1);
-	return (0);
-}
-
 char *lowercasing(char *str)//dodelat'
 {
 	int		i;
@@ -95,8 +88,6 @@ int	count_elems(char *str, char *divider)
 	
 	elems_nbr = 0;
 	i = skip_symbs(str, 0, divider);
-	//if (str[i] == '|')
-	//	return (-1);
 	while (str[i])
 	{
 		i = if_quotes(str, i);

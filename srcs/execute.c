@@ -90,9 +90,9 @@ int	_deal_redir(t_proc *proc)
 	return (1);
 }
 
-int	exec_extern(t_proc *proc, t_vars *vars)
+int		_exec_extern(t_proc *proc, t_vars *vars)
 {
-//	pid_t	pid;
+	pid_t	pid;
 	char	*path;
 
 	DEBUG && printf(GREY"executing extern prog"RESET);
@@ -102,33 +102,49 @@ int	exec_extern(t_proc *proc, t_vars *vars)
 	if (!path)
 		return (report_failure(proc->args[0], "command not found", 0));
 
-//	pid = fork();
+	pid = fork();
 	//signal(SIGINT, );
-//	if (pid == -1)
+	if (pid == -1)
 		//return (report_failure("fork"));//though wouldnt be able to use ||
-//		return (report_failure(NULL, "Fork error", 1));
-//	if (pid == 0)
-//	{
+		return (report_failure(NULL, "Fork error", 1));
+	if (pid == 0)
+	{
 		//printf(RED"type redir %d\n"RESET, ((t_proc *)(vars->cmd_arr)->content)->type_redir);
-//		if (proc->flag_redir)
-//			_deal_redir(proc);
-		(execve(path, proc->args, env_to_char(vars->env)) >= 0) || report_failure(NULL, "execve", 1);
+		if (proc->flag_redir)
+			_deal_redir(proc);
+		(execve(path, proc->args, env_to_char(vars->env)) >= 0) || exit_failure("execve", 1);
+		exit(0);
+	}
+	else
+	{
+		wait_loop(pid);
+		free(path);
+	}
+	return (0);
+}
+
+int	exec_extern(t_proc *proc, t_vars *vars)
+{
+	//signal(SIGINT, );
+	char	*path;
+
+	DEBUG && printf(GREY"executing extern prog"RESET);
+	path = pathfinder(vars, proc->cmd);
+	DEBUG && printf(GREY"path = |%s|"RESET, path);
+	//path || exit_failure("No such file or directory", 0);
+	if (!path)
+		return (report_failure(proc->args[0], "command not found", 0));
+	(execve(path, proc->args, env_to_char(vars->env)) >= 0) || report_failure(NULL, "execve", 1);
 		return (0);
-//		exit(0);
-//	}
-//	else
-//	{
-//		wait_loop(pid);
-//		free(path);
-//	}
-//	return (0);
 }
 
 int	choose_cmd(t_proc *proc, t_vars *vars)
 {
-	pid_t	pid;
+	//pid_t	pid;
 	
 	DEBUG && printf(GREY"choosing cmd"RESET);
+	//this version kills working with env and exit cause it's all in children processes
+	/*
 	pid = fork();
 	if (pid == 0)
 	{
@@ -146,7 +162,7 @@ int	choose_cmd(t_proc *proc, t_vars *vars)
 		if (!ft_strcmp(proc->cmd, "unset"))
 			exit(builtin_unset(proc->args, vars));
 		if (!ft_strcmp(proc->cmd, "env"))
-			exit(builtin_env(vars->env));
+			exit(builtin_env(&vars->env));
 		if (!ft_strcmp(proc->cmd, "exit"))
 			exit(builtin_exit(proc->args, vars));
 		exit(exec_extern(proc, vars));
@@ -154,24 +170,23 @@ int	choose_cmd(t_proc *proc, t_vars *vars)
 	else
 		wait_loop(pid);
 	return (0);
-
-	/*
-	if (!ft_strcmp(proc->args[0], "echo"))
-		return (builtin_echo(proc->args));
-	if (!ft_strcmp(proc->args[0], "cd"))
-		return (builtin_cd(proc->args, vars));
-	if (!ft_strcmp(proc->args[0], "pwd"))
-		return (builtin_pwd(vars));
-	if (!ft_strcmp(proc->args[0], "export"))
-		return (builtin_export(proc->args, vars));
-	if (!ft_strcmp(proc->args[0], "unset"))
-		return (builtin_unset(proc->args, vars));
-	if (!ft_strcmp(proc->args[0], "env"))
-		return (builtin_env(vars->env));
-	if (!ft_strcmp(proc->args[0], "exit"))
-		return (builtin_exit(proc->args, vars));
-	return (exec_extern(proc, vars));
 	*/
+
+	if (!ft_strcmp(proc->cmd, "echo"))
+		return (builtin_echo(proc->args));
+	if (!ft_strcmp(proc->cmd, "cd"))
+		return (builtin_cd(proc->args, vars));
+	if (!ft_strcmp(proc->cmd, "pwd"))
+		return (builtin_pwd(vars));
+	if (!ft_strcmp(proc->cmd, "export"))
+		return (builtin_export(proc->args, vars));
+	if (!ft_strcmp(proc->cmd, "unset"))
+		return (builtin_unset(proc->args, vars));
+	if (!ft_strcmp(proc->cmd, "env"))
+		return (builtin_env(proc, &vars->env));
+	if (!ft_strcmp(proc->cmd, "exit"))
+		return (builtin_exit(proc->args, vars));
+	return (_exec_extern(proc, vars));
 }
 
 int	execute(t_vars *vars)
@@ -187,6 +202,6 @@ int	execute(t_vars *vars)
 		exec_piped(vars);
 	else
 		choose_cmd((t_proc *)vars->cmd_arr->content, vars);
-	printf(GREY"exit status: %d"RESET, g_exit_status);
+	DEBUG && printf(GREY"exit status: %d"RESET, g_exit_status);
 	return (0);
 }

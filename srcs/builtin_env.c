@@ -50,8 +50,14 @@ char	**env_to_char(t_list *env)//free arr after usage
 	return (arr);
 }
 
-int	builtin_env(t_list *env)
+//int	builtin_env(t_list *env)
+int	builtin_env(t_proc *proc, t_list **head)
 {
+	t_list	*env;
+
+	if (proc->args[1])
+		return (!builtin_error(proc->cmd, proc->args[1], "too many arguments"));
+	env = *head;
 	while (env)
 	{
 		if (((t_env_var *)env->content)->value != NULL)

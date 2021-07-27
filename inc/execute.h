@@ -48,6 +48,10 @@ typedef struct s_proc
 	int			flag_redir;
 	int			type_redir;
 	int			fd[2];
+	int			rd_in_nbr;
+	int			rd_out_nbr;
+	char		**infiles;
+	char		**outfiles;
 	char		*filename;
 	char		*cmd;
 	char		**args;
@@ -91,7 +95,7 @@ int		builtin_echo(char **cmd);
 int		builtin_cd(char **cmd, t_vars *vars);
 int		builtin_export(char **cmd, t_vars *vars);
 int		builtin_unset(char **cmd, t_vars *vars);
-int		builtin_env(t_list *env);
+int		builtin_env(t_proc *proc, t_list **head);
 int		builtin_exit(char **cmd, t_vars *vars);
 
 int		exec_extern(t_proc *proc, t_vars *vars);

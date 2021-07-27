@@ -19,16 +19,20 @@ char	*dollarsign(char *str, int *i, t_vars *vars)
 	char	*rkey;
 
 	j = *i;
+	if (!ft_strcmp(str + *i, "$?"))
+		return (str = dollarswap(str, ft_itoa(g_exit_status), i + 2, j));
+				//test libft with tester
 	while (str[++(*i)])
 	{
-		if (!iskey(str[*i]))
+		if (!(str[*i] == '_' || ft_isalnum(str[*i])))
 			break ;
-		//else
 	}
 	if (*i == j + 1)
 		return (str);
 	key = ft_substr(str, j + 1, *i - j - 1);
 	rkey = get_env_var(vars->env, key);
+	if (!rkey)
+		str = dollarswap(str, NULL, i, j);
 	str = dollarswap(str, rkey, i, j);
 	free(key);
 	return (str);
@@ -87,7 +91,7 @@ char	*doublequotes(char *str, int *i, t_vars *vars)
 			str = slash(str, i);
 		//(str[*i] == '$') && (str = dollarsign(str, i, vars));
 		if (str[*i] == '$')
-			dollarsign(str, i, vars);
+			str = dollarsign(str, i, vars);
 		if (str[*i] == '\"')
 			break ;
 	}
@@ -113,12 +117,11 @@ char	*parser(char *str, t_vars *vars)
 	str = tmp;
 	while (str[++i])
 	{
-		/*
 		(str[i] == '\'') && (str = quotes(str, &i));
 		(str[i] == '\\') && (str = slash(str, &i));
 		(str[i] == '\"') && (str = doublequotes(str, &i, vars));
 		(str[i] == '$') && (str = dollarsign(str, &i, vars));
-			*/
+		/*
 		if (str[i] == '\'')
 			str = quotes(str, &i);
 		if (str[i] == '\\')
@@ -127,6 +130,7 @@ char	*parser(char *str, t_vars *vars)
 			str = doublequotes(str, &i, vars);
 		if (str[i] == '$')
 			str = dollarsign(str, &i, vars);
+			*/
 	}
 	return (str);
 }

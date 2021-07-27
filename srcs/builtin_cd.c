@@ -40,8 +40,8 @@ int	builtin_cd(char **cmd, t_vars *vars)
 	if (chdir(dir) < 0)
 	{
 		free(old_pwd);
-		builtin_error("cd", cmd[1], "No such file or directory");
-		return (1);
+		return (!builtin_error("cd", cmd[1], "No such file or directory"));
+		//return (1);
 	}
 	new_pwd = getcwd(NULL, 0);
 	change_pwd_envs(vars, old_pwd, new_pwd);

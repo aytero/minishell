@@ -52,6 +52,7 @@ int	cut_args(char **args, char *str, int *i, int k, t_util *util)
 int	cut_cmds(char **cmd_line, char *str, int *i, int k, t_util *util)
 {
 	*i = if_quotes(str, *i);
+	//if (ft_strchr(">|<", str[*i]))
 	if (str[*i] == '|')
 	{
 		cmd_line[k] = ft_substr(str, util->start, *i - util->start);
@@ -95,15 +96,11 @@ char	**split_arr_if(char *str, int elem_nbr, t_util *util, int (*func)())
 }
 
 
-static int word_after(char *str, int j, char *divider)//if_word_after
+static int word_after(char *str, int i, char *divider)
 {
-	int		i;
-
-	i = j;
-	i++;
 	i = skip_symbs(str, i, divider);
 	i = skip_symbs(str, i, " \n\f\v\r\t");
-	if (!str[i])
+	if (!str[i] || ft_strchr(">|<", str[i]))
 		return (0);
 	return (1);
 }
@@ -116,18 +113,16 @@ int	skim(char *str)
 		return (0);
 	i = skip_symbs(str, 0, " \n\f\v\r\t");
 	if (str[i] == '|')
-	{
-		write(1, "sh: syntax error\n", 17);
-		return (0);
-	}
+		return (!write(1, "sh: syntax error\n", 17));
 	while (str[i])
 	{
 		i = if_quotes(str, i);
-		if (i == -1 || (ft_strchr(">|<", str[i]) && !word_after(str, i, ">|<")))
-		{
-			write(1, "sh: syntax error\n", 17);
-			return (0);
-		}
+		if (i == -1 || (ft_strchr("|", str[i]) && !word_after(str, i, "|")))
+			return (!write(1, "sh: syntax error\n", 17));
+		if (ft_strchr("><", str[i]) && (!word_after(str, i, "><")
+			|| !ft_strncmp(str + i, "<>", 2) || !ft_strncmp(str + i, ">>>", 3)
+			|| !ft_strncmp(str + i, "<<<", 3) || !ft_strncmp(str + i, "><", 2)))
+			return (!write(1, "sh: syntax error\n", 17));
 		i++;
 	}
 	return (1);
@@ -155,7 +150,9 @@ void	pre_parser(char *str, t_vars *vars)
 		return ;
 	DEBUG_PARSER && printf(GREY"cmd_nbr %d"RESET, vars->cmd_nbr);
 	vars->pipe_nbr = vars->cmd_nbr - 1;
+	//vars->pipe_nbr = count_elems(str, "|") - 1;
 	((cmd_line = split_arr_if(str, vars->cmd_nbr, &util, cut_cmds))
+	 //&& (cmd_line = split_arr_if)
 	 && (make_cmd_list(cmd_line, vars, &util))) || (vars->parse_err = 1);
 	if (vars->parse_err)
 		return ;

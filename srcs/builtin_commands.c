@@ -21,6 +21,7 @@ int	builtin_error(char *cmd, char *arg, char *error_mes)
 //	write(1, error_mes, len);
 	printf("sh: %s: `%s': %s\n", cmd, arg, error_mes);
 	return (0);
+	//return (1);
 }
 
 int	builtin_unset(char **cmd, t_vars *vars)

@@ -29,6 +29,7 @@ typedef struct s_lst
 	struct s_lst	*next;
 }					t_lst;
 
+void				*malloc_ptr(void **ptr, size_t size);
 char				*ft_strjoin_free(char *s1, char *s2);
 char				*ft_strjoin_sep(char *s1, char *s2, char sep);
 int					ft_strcmp(const char *s1, const char *s2);

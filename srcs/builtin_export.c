@@ -112,7 +112,9 @@ int	builtin_export(char **cmd, t_vars *vars)
 	{
 		if (!check_export_arg(cmd[i]))
 			continue ;
-		set_env_var(&vars->env, cmd[i]);
+		if (!set_env_var(&vars->env, cmd[i]))
+			return (!builtin_error("export", cmd[i], "malloc error"));
+		//set_env_var(&vars->env, cmd[i]);
 	}
 	return (0);
 }

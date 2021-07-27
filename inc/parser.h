@@ -41,7 +41,6 @@ int				cut_args(char **args, char *str, int *i, int k, t_util *util);
 int				make_cmd_list(char **cmd_line, t_vars *vars, t_util *util);
 void			pre_parser(char *str, t_vars *vars);
 int				skim(char *str);
-int				iskey(char c);
 char			*dollarsign(char *str, int *i, t_vars *vars);
 char			*slash(char *str, int *i);
 char			*quotes(char *str, int *i);

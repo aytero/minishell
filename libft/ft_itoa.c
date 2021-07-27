@@ -32,12 +32,6 @@ static int	findlen(int n)
 	return (len);
 }
 
-static void	*malloc_ptr(void **ptr, size_t size)
-{
-	*ptr = malloc(size);
-	return (*ptr);
-}
-
 char	*ft_itoa(int n)
 {
 	int		i;
