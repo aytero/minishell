@@ -87,7 +87,9 @@ int	count_elems(char *str, char *divider)
 	int		elems_nbr;
 	
 	elems_nbr = 0;
-	i = skip_symbs(str, 0, divider);
+	i = 0;
+	if (!ft_strchr("><", str[i]))// mb change
+		i = skip_symbs(str, 0, divider);
 	while (str[i])
 	{
 		i = if_quotes(str, i);

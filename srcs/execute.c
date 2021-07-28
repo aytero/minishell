@@ -197,7 +197,7 @@ int	execute(t_vars *vars)
 	if (vars->parse_err)
 		return (0);
 	DEBUG && printf(GREY"\tstarting execution"RESET);
-//	if (vars->flag_pipe)
+	//if (vars->flag_pipe)
 	if (vars->pipe_nbr > 0)
 		exec_piped(vars);
 	else

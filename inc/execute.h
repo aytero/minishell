@@ -64,6 +64,7 @@ typedef struct s_vars
 	int			parse_err;
 	int			cmd_nbr;
 	int			pipe_nbr;
+	int			fd[2];
 	int			**pfd;
 	char		*path;
 	char		**path_arr;

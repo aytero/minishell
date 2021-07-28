@@ -30,7 +30,7 @@ int	make_cmd_list(char **cmd_line, t_vars *vars, t_util *util)
 		if (!proc)
 			return (0);
 		//ft_memset(proc, 0, sizeof(t_proc));
-		cmd_line[i] = parse_redir(cmd_line[i], proc);
+		//cmd_line[i] = parse_redir(cmd_line[i], proc);
 		arg_nbr = count_elems(cmd_line[i], " \n\f\v\r\t");
 		DEBUG_PARSER && printf(GREY"arg_nbr %d"RESET, arg_nbr);
 		ft_memset(util, 0, sizeof(t_util));
