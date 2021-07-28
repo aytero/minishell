@@ -85,7 +85,8 @@ int	_deal_redir(t_proc *proc)
 		
 	(fd >= 0) || report_failure(NULL, "open failed", 1);
 	//return (report_failure(NULL, "open failed, 1"));
-	(dup2(fd, proc->type_redir % 2)) >= 0 || report_failure(NULL, "dup2", 1);
+	//(dup2(fd, proc->type_redir % 2)) >= 0 || report_failure(NULL, "dup2", 1);
+	//(dup2(fd, proc->fd[(proc->type_redir % 2)]) >= i) || report_failure(NULL, "dup2", 1);
 	close(fd);
 	return (1);
 }
@@ -189,6 +190,13 @@ int	choose_cmd(t_proc *proc, t_vars *vars)
 	return (_exec_extern(proc, vars));
 }
 
+int	restore_fd(t_vars *vars)
+{
+	dup2(0, vars->fd[FD_IN]);// || report_failure();
+	dup2(1, vars->fd[FD_OUT]);// || report_failure();
+	return (1);
+}
+
 int	execute(t_vars *vars)
 {
 	//vars->flag_redirect = 0;
@@ -202,6 +210,7 @@ int	execute(t_vars *vars)
 		exec_piped(vars);
 	else
 		choose_cmd((t_proc *)vars->cmd_arr->content, vars);
+	//restore_fd(vars);
 	DEBUG && printf(GREY"exit status: %d"RESET, g_exit_status);
 	return (0);
 }

@@ -37,8 +37,8 @@ typedef struct s_util
 
 int				count_elems(char *str, char *divider);
 char			**split_arr_if(char *str, int elem_nbr, t_util *util, int (*func)());
-int				cut_cmds(char **cmd_line, char *str, int *i, int *k, t_util *util);
-int				cut_args(char **args, char *str, int *i, int *k, t_util *util);
+int				cut_cmds(char **cmd_line, char *str, int *i, int k, t_util *util);
+int				cut_args(char **args, char *str, int *i, int k, t_util *util);
 int				make_cmd_list(char **cmd_line, t_vars *vars, t_util *util);
 void			pre_parser(char *str, t_vars *vars);
 int				skim(char *str);
@@ -55,5 +55,6 @@ char			*lowercasing(char *str);
 
 int		checker(char *str);//
 int		_print_list(t_list **head);//
+int		_print_all_rd(t_proc *proc);
 
 #endif

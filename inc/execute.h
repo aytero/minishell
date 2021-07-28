@@ -43,18 +43,32 @@ typedef struct s_env_var
 	char		*value;
 }				t_env_var;
 
+typedef struct s_redir
+{
+	int			rd_in_nbr;
+	int			rd_out_nbr;
+	int			*in_type;
+	int			*out_type;
+	char		**infiles;
+	char		**outfiles;
+}				t_redir;
+
 typedef struct s_proc
 {
+	int			flag_pipe;
 	int			flag_redir;
 	int			type_redir;
 	int			fd[2];
 	int			rd_in_nbr;
 	int			rd_out_nbr;
+	int			*rd_in_type;
+	int			*rd_out_type;
 	char		**infiles;
 	char		**outfiles;
-	char		*filename;
+	char		*filename;//
 	char		*cmd;
 	char		**args;
+	t_redir		*redir;
 }				t_proc;
 
 typedef struct s_vars
