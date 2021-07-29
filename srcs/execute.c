@@ -6,7 +6,7 @@
 /*   By: lpeggy <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/01 20:49:41 by lpeggy            #+#    #+#             */
-/*   Updated: 2021/07/24 23:20:16 by lpeggy           ###   ########.fr       */
+/*   Updated: 2021/07/29 23:27:23 by lpeggy           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,6 +46,8 @@ int	exec_piped(t_vars *vars)
 		pid >= 0 || report_failure(NULL, "fork", 1);
 		if (pid == 0)
 		{
+			if (((t_proc *)tmp->content)->flag_redir)
+				_deal_redir((t_proc *)tmp->content);
 			deal_pipes(vars, i);
 			close_pipes(vars);
 			choose_cmd((t_proc *)tmp->content, vars);
@@ -73,10 +75,10 @@ int	deal_here_doc(t_proc *proc, int i)
 	int		fd;
 	char	*str;
 
-	//proc->flag_heredoc = 1;//to rm tmp buf later
+	fd = -1;
 	fd = open("hd_buf", O_WRONLY | O_TRUNC | O_CREAT, 0644);
-	(fd >= 0) || report_failure(NULL, "open failed", 1);//return
-		//dup2(fd, 1);
+	(fd >= 0) || report_failure(NULL, "open", 1);//return
+
 	str = readline("> ");
 	while (str != NULL && ft_strcmp(str, proc->infiles[i]))
 	{
@@ -86,11 +88,6 @@ int	deal_here_doc(t_proc *proc, int i)
 		str = readline("> ");
 	}
 	free(str);
-
-	close(fd);
-	fd = open("hd_buf", O_RDONLY);
-	(fd >= 0) || report_failure(NULL, "open failed", 1);//return
-	dup2(fd, 0) >= 0 || report_failure(NULL, "dup2", 1);
 	close(fd);
 	return (1);
 }
@@ -107,7 +104,6 @@ int	_deal_redir(t_proc *proc)
 	flags[3] = O_WRONLY | O_APPEND | O_CREAT;
 	fd = -1;
 	i = -1;
-	//printf(RED"type redir %d\n"RESET, proc->type_redir);
 	while (++i < proc->rd_in_nbr)
 	{
 		if (proc->rd_in_type[i] == 2)
@@ -116,38 +112,27 @@ int	_deal_redir(t_proc *proc)
 			continue ;
 		}
 		fd = open(proc->infiles[i], flags[proc->rd_in_type[i]], 0644);
-		(fd >= 0) || report_failure(NULL, "open failed", 1);//return
-		//(dup2(fd, proc->fd[proc->rd_in_type[i] % 2]) >= i) || report_failure(NULL, "dup2", 1);
-			//dup2(proc->fd[FD_OUT], 1);
-		dup2(fd, 0) >= 0 || report_failure(NULL, "dup2", 1);
+		(fd >= 0) || report_failure(NULL, "open", 1);//return
+		dup2(fd, proc->fd[FD_IN]) >= 0 || report_failure(NULL, "dup2", 1);
 		close(fd);
 	}
 	i = -1;
 	while (++i < proc->rd_out_nbr)
 	{
 		fd = open(proc->outfiles[i], flags[proc->rd_out_type[i]], 0644);
-		(fd >= 0) || report_failure(NULL, "open failed", 1);//return
-		//(dup2(fd, proc->fd[proc->rd_out_type[i] % 2]) >= i) || report_failure(NULL, "dup2", 1);
-		dup2(fd, 1) >= 0 || report_failure(NULL, "dup2", 1);
+		(fd >= 0) || report_failure(NULL, "open", 1);//return
+		dup2(fd, proc->fd[FD_OUT]) >= 0 || report_failure(NULL, "dup2", 1);
 		close(fd);
 	}
-
-	/*
-	if (proc->type_redir == REDIR_OUT)
-		fd = open(proc->filename, O_WRONLY | O_TRUNC | O_CREAT, 0644);
-	else if (proc->type_redir == REDIR_IN)
-		fd = open(proc->filename, O_RDONLY);
-	else if (proc->type_redir == DB_REDIR_OUT)
-		fd = open(proc->filename, O_WRONLY | O_APPEND | O_CREAT, 0644);
-	else if (proc->type_redir == DB_REDIR_IN)//heredoc
-		;
-		
-	(fd >= 0) || report_failure(NULL, "open failed", 1);
-	//return (report_failure(NULL, "open failed, 1"));
-	//(dup2(fd, proc->type_redir % 2)) >= 0 || report_failure(NULL, "dup2", 1);
-	//(dup2(fd, proc->fd[(proc->type_redir % 2)]) >= i) || report_failure(NULL, "dup2", 1);
-	close(fd);
-	*/
+	if (proc->flag_heredoc)
+	{
+		fd = open("hd_buf", O_RDONLY);
+		(fd >= 0) || report_failure(NULL, "open", 1);//return
+		dup2(fd, proc->fd[FD_IN]) >= 0 || report_failure(NULL, "dup2", 1);
+		close(fd);
+		//if signal hd_buf remains
+		!unlink("hd_buf") || report_failure(NULL, "unlink", 1);
+	}
 	return (1);
 }
 
@@ -157,33 +142,41 @@ int		_exec_extern(t_proc *proc, t_vars *vars)
 	char	*path;
 
 	DEBUG && printf(GREY"executing extern prog"RESET);
-	path = pathfinder(vars, proc->cmd);
-	DEBUG && printf(GREY"path = |%s|"RESET, path);
-	//path || exit_failure("No such file or directory", 0);
-	if (!path)
-		return (report_failure(proc->args[0], "command not found", 0));
 
 	pid = fork();
 	//signal(SIGINT, );
 	if (pid == -1)
 		//return (report_failure("fork"));//though wouldnt be able to use ||
-		return (report_failure(NULL, "Fork error", 1));
+		return (report_failure(NULL, "fork", 1));
 	if (pid == 0)
 	{
 		//printf(RED"type redir %d\n"RESET, ((t_proc *)(vars->cmd_arr)->content)->type_redir);
-		if (proc->flag_redir)
+
+		//not working with pipes
+		if (proc->flag_redir && !vars->flag_pipe)
 			_deal_redir(proc);
-			//dup2(proc->fd[FD_OUT], 1);
-		//	dup2(proc->fd[FD_IN], 0);
+
+		path = pathfinder(vars, proc->cmd);//if err exit status goes on same line with prompt
+		DEBUG && printf(GREY"path = |%s|"RESET, path);
+		//path || exit_failure("No such file or directory", 0);
+		if (!path)
+			return (report_failure(proc->args[0], "command not found", 0));
+
+		if (proc->rd_in_nbr)
+			dup2(proc->fd[FD_IN], 0) >= 0 || report_failure(NULL, "dup2", 1);
+		if (proc->rd_out_nbr)
+			dup2(proc->fd[FD_OUT], 1) >= 0 || report_failure(NULL, "dup2", 1);
+
+		//printf(RED"emm"RESET);
+
 		(execve(path, proc->args, env_to_char(vars->env)) >= 0) || exit_failure("execve", 1);
+		//free(path);//all mem free
 		exit(0);// ?
 	}
 	else
 	{
 		wait_loop(pid);
-		free(path);
-		if (proc->flag_heredoc)
-			!unlink("hd_buf") || report_failure(NULL, "Unlink error", 1);
+		//free(path);
 	}
 	return (0);
 }
@@ -237,6 +230,11 @@ int	choose_cmd(t_proc *proc, t_vars *vars)
 	return (0);
 	*/
 
+	// builtins && redirects:
+	// func to store and resotre fd
+	// or fork those what write smth to output
+	// ex. export without args
+
 	if (!ft_strcmp(proc->cmd, "echo"))
 		return (builtin_echo(proc->args));
 	if (!ft_strcmp(proc->cmd, "cd"))
@@ -271,8 +269,8 @@ int	execute(t_vars *vars)
 	if (vars->parse_err)
 		return (0);
 	DEBUG && printf(GREY"\tstarting execution"RESET);
-	//if (vars->flag_pipe)
-	if (vars->pipe_nbr > 0)
+	if (vars->flag_pipe)
+	//if (vars->pipe_nbr > 0)
 		exec_piped(vars);
 	else
 		choose_cmd((t_proc *)vars->cmd_arr->content, vars);

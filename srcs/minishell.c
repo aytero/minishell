@@ -6,7 +6,7 @@
 /*   By: lpeggy <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/01 17:14:27 by lpeggy            #+#    #+#             */
-/*   Updated: 2021/07/24 23:34:06 by lpeggy           ###   ########.fr       */
+/*   Updated: 2021/07/29 23:17:07 by lpeggy           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -58,8 +58,9 @@ void	free_memory(t_vars *vars)
 
 static void	free_proc(void *ptr)
 {
-	if (((t_proc *)ptr)->filename)
-		free(((t_proc *)ptr)->filename);
+	//free all redirs stuff
+	//if (((t_proc *)ptr)->filename)
+	//	free(((t_proc *)ptr)->filename);
 	if (((t_proc *)ptr)->cmd)
 		free(((t_proc *)ptr)->cmd);
 	free_double_array(((t_proc *)ptr)->args);

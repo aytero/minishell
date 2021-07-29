@@ -102,6 +102,7 @@ char	*parse_redir(char *cmd_line, t_proc *proc)
 		if (cmd_line[i] == '>' && cmd_line[i + 1] == '>')
 			cmd_line = cut_redir(cmd_line, i, DB_REDIR_OUT, &out, proc);
 		else if (cmd_line[i] == '<' && cmd_line[i + 1] == '<')
+			//(cmd_line = cut_redir(cmd_line, i, DB_REDIR_IN, &in, proc));
 			(cmd_line = cut_redir(cmd_line, i, DB_REDIR_IN, &in, proc)) && (proc->flag_heredoc = 1);
 		else if (cmd_line[i] == '<' && cmd_line[i + 1] != '<')
 			cmd_line = cut_redir(cmd_line, i, REDIR_IN, &in, proc);

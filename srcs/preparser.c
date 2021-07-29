@@ -6,7 +6,7 @@
 /*   By: lpeggy <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/07/13 18:25:59 by lpeggy            #+#    #+#             */
-/*   Updated: 2021/07/24 23:09:12 by lpeggy           ###   ########.fr       */
+/*   Updated: 2021/07/29 23:14:08 by lpeggy           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -184,6 +184,8 @@ void	pre_parser(char *str, t_vars *vars)
 		return ;
 	DEBUG_PARSER && printf(GREY"cmd_nbr %d"RESET, vars->cmd_nbr);
 	vars->pipe_nbr = vars->cmd_nbr - 1;
+	if (vars->pipe_nbr)
+		vars->flag_pipe = 1;
 	//vars->pipe_nbr = count_elems(str, "|") - 1;
 
 	((cmd_line = split_arr_if(str, vars->cmd_nbr, &util, cut_cmds))

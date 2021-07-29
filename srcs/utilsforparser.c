@@ -6,7 +6,7 @@
 /*   By: ssobchak <ssobchak@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/10 19:46:26 by ssobchak          #+#    #+#             */
-/*   Updated: 2021/07/24 21:31:04 by lpeggy           ###   ########.fr       */
+/*   Updated: 2021/07/29 23:04:43 by lpeggy           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,8 +32,8 @@ int	_print_list(t_list **head)
 			i++;
 		}
 		printf(GREY"flag rd %d"RESET, ((t_proc *)(tmp->content))->flag_redir);
-		printf(GREY"type rd %d"RESET, ((t_proc *)(tmp->content))->type_redir);
-		printf(GREY"rd filename |%s|"RESET, ((t_proc *)(tmp->content))->filename);
+		//printf(GREY"type rd %d"RESET, ((t_proc *)(tmp->content))->type_redir);
+		//printf(GREY"rd filename |%s|"RESET, ((t_proc *)(tmp->content))->filename);
 		tmp = tmp->next;
 		j++;
 	}
