@@ -96,7 +96,7 @@ int	main(int argc, char **argv, char **envp)
 		errno = 0;
 		vars.parse_err = 0;
 		pre_parser(line, &vars);
-		//execute(&vars);
+		execute(&vars);
 		free(line);
 		//ft_lstclear(&vars.cmd_arr, free_double_array);
 		ft_lstclear(&vars.cmd_arr, free_proc);

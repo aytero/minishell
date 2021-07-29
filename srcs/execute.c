@@ -68,12 +68,71 @@ int	exec_piped(t_vars *vars)
 	return (0);
 }
 
+int	deal_here_doc(t_proc *proc, int i)
+{
+	int		fd;
+	char	*str;
+
+	//proc->flag_heredoc = 1;//to rm tmp buf later
+	fd = open("hd_buf", O_WRONLY | O_TRUNC | O_CREAT, 0644);
+	(fd >= 0) || report_failure(NULL, "open failed", 1);//return
+		//dup2(fd, 1);
+	str = readline("> ");
+	while (str != NULL && ft_strcmp(str, proc->infiles[i]))
+	{
+		write(fd, str, ft_strlen(str));
+		write(fd, "\n", 1);
+		free(str);
+		str = readline("> ");
+	}
+	free(str);
+
+	close(fd);
+	fd = open("hd_buf", O_RDONLY);
+	(fd >= 0) || report_failure(NULL, "open failed", 1);//return
+	dup2(fd, 0) >= 0 || report_failure(NULL, "dup2", 1);
+	close(fd);
+	return (1);
+}
+
 int	_deal_redir(t_proc *proc)
 {
 	int		fd;
+	int		i;
+	int		flags[4];
 
+	flags[0] = O_RDONLY;
+	flags[1] = O_WRONLY | O_TRUNC | O_CREAT;
+	flags[2] = -1;
+	flags[3] = O_WRONLY | O_APPEND | O_CREAT;
 	fd = -1;
+	i = -1;
 	//printf(RED"type redir %d\n"RESET, proc->type_redir);
+	while (++i < proc->rd_in_nbr)
+	{
+		if (proc->rd_in_type[i] == 2)
+		{
+			deal_here_doc(proc, i);
+			continue ;
+		}
+		fd = open(proc->infiles[i], flags[proc->rd_in_type[i]], 0644);
+		(fd >= 0) || report_failure(NULL, "open failed", 1);//return
+		//(dup2(fd, proc->fd[proc->rd_in_type[i] % 2]) >= i) || report_failure(NULL, "dup2", 1);
+			//dup2(proc->fd[FD_OUT], 1);
+		dup2(fd, 0) >= 0 || report_failure(NULL, "dup2", 1);
+		close(fd);
+	}
+	i = -1;
+	while (++i < proc->rd_out_nbr)
+	{
+		fd = open(proc->outfiles[i], flags[proc->rd_out_type[i]], 0644);
+		(fd >= 0) || report_failure(NULL, "open failed", 1);//return
+		//(dup2(fd, proc->fd[proc->rd_out_type[i] % 2]) >= i) || report_failure(NULL, "dup2", 1);
+		dup2(fd, 1) >= 0 || report_failure(NULL, "dup2", 1);
+		close(fd);
+	}
+
+	/*
 	if (proc->type_redir == REDIR_OUT)
 		fd = open(proc->filename, O_WRONLY | O_TRUNC | O_CREAT, 0644);
 	else if (proc->type_redir == REDIR_IN)
@@ -88,6 +147,7 @@ int	_deal_redir(t_proc *proc)
 	//(dup2(fd, proc->type_redir % 2)) >= 0 || report_failure(NULL, "dup2", 1);
 	//(dup2(fd, proc->fd[(proc->type_redir % 2)]) >= i) || report_failure(NULL, "dup2", 1);
 	close(fd);
+	*/
 	return (1);
 }
 
@@ -113,13 +173,17 @@ int		_exec_extern(t_proc *proc, t_vars *vars)
 		//printf(RED"type redir %d\n"RESET, ((t_proc *)(vars->cmd_arr)->content)->type_redir);
 		if (proc->flag_redir)
 			_deal_redir(proc);
+			//dup2(proc->fd[FD_OUT], 1);
+		//	dup2(proc->fd[FD_IN], 0);
 		(execve(path, proc->args, env_to_char(vars->env)) >= 0) || exit_failure("execve", 1);
-		exit(0);
+		exit(0);// ?
 	}
 	else
 	{
 		wait_loop(pid);
 		free(path);
+		if (proc->flag_heredoc)
+			!unlink("hd_buf") || report_failure(NULL, "Unlink error", 1);
 	}
 	return (0);
 }
@@ -190,12 +254,14 @@ int	choose_cmd(t_proc *proc, t_vars *vars)
 	return (_exec_extern(proc, vars));
 }
 
+/*
 int	restore_fd(t_vars *vars)
 {
 	dup2(0, vars->fd[FD_IN]);// || report_failure();
 	dup2(1, vars->fd[FD_OUT]);// || report_failure();
 	return (1);
 }
+*/
 
 int	execute(t_vars *vars)
 {

@@ -23,6 +23,8 @@
 # include "../libft/libft.h"
 
 # include <string.h>
+# include <readline/readline.h>
+# include <readline/history.h>
 
 # include "colors.h"
 # define DEBUG 1
@@ -55,6 +57,7 @@ typedef struct s_redir
 
 typedef struct s_proc
 {
+	int			flag_heredoc;
 	int			flag_pipe;
 	int			flag_redir;
 	int			type_redir;
