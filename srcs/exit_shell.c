@@ -6,7 +6,7 @@
 /*   By: lpeggy <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/26 22:20:19 by lpeggy            #+#    #+#             */
-/*   Updated: 2021/07/24 21:46:25 by lpeggy           ###   ########.fr       */
+/*   Updated: 2021/07/30 20:48:45 by lpeggy           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,5 +38,6 @@ int	report_failure(char *cmd, char *str, int errtype)
 	!errtype && printf("sh: %s: %s\n", cmd, str);
 	!errtype && (g_exit_status = 1);
 	//return (0);
+	//return (g_exit_status);
 	return (1);
 }

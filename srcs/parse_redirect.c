@@ -1,24 +1,6 @@
 #include "parser.h"
 
-int	_print_all_rd(t_proc *proc)
-{
-	int		i;
 
-	i = -1;
-	while (++i < proc->rd_in_nbr)
-	{
-		printf(GREY"infile[%d] = |%s|"RESET, i, proc->infiles[i]);
-		printf(GREY"infile[%d] type = %d"RESET, i, proc->rd_in_type[i]);
-	}
-	i = -1;
-	while (++i < proc->rd_out_nbr)
-	{
-		printf(GREY"outfile[%d] = |%s|"RESET, i, proc->outfiles[i]);
-		printf(GREY"outfile[%d] type = %d"RESET, i, proc->rd_out_type[i]);
-	}
-	//printf(GREY""RESET);
-	return (1);
-}
 
 char	*cut_redir(char *cmd_line, int i, int type, int *io, t_proc *proc)
 {
@@ -95,7 +77,9 @@ char	*parse_redir(char *cmd_line, t_proc *proc)
 	//printf(GRN"%s"RESET, cmd_line);
 	//(void)proc;
 
-	!(out = 0) && (in = 0);// && (i = -1);
+	//(out = 0) || (in = 0);// && (i = -1);
+	out = (in = 0) || 0;
+	//printf(GRN"in rd %d"RESET, in);
 	i = -1;
 	while (cmd_line[++i])
 	{

@@ -16,6 +16,9 @@ LIBFT = $(LIBFTDIR)libft.a
 
 CC = gcc
 
+
+RLFLAGS = -lreadline -L/Users/$(USER)/.brew/Cellar/readline/8.1/lib\
+		  -I/Users/$(USER)/.brew/Cellar/readline/8.1/include
 FLAGS = -Wall -Werror -Wextra -g
 
 OBJS = $(addprefix $(OBJSDIR)/,$(SRCS:.c=.o))
@@ -29,7 +32,7 @@ lib:
 	@make bonus -C $(LIBFTDIR)
 
 $(NAME): $(OBJSDIR) $(OBJS)
-	$(CC) -L$(LIBFTDIR) -lft $(OBJS) -lreadline -o $(NAME)
+	$(CC) -L$(LIBFTDIR) -lft $(OBJS) $(RLFLAGS) -o $(NAME)
 
 $(OBJSDIR):
 	@mkdir -p $(OBJSDIR)

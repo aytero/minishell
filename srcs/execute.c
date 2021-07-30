@@ -6,7 +6,7 @@
 /*   By: lpeggy <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/01 20:49:41 by lpeggy            #+#    #+#             */
-/*   Updated: 2021/07/30 19:49:38 by lpeggy           ###   ########.fr       */
+/*   Updated: 2021/07/30 23:03:29 by lpeggy           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -136,6 +136,18 @@ int	_deal_redir(t_proc *proc)
 	return (1);
 }
 
+void	child_sig_handler(int signal)
+{
+	// if child
+	//if (!kill(pid, signal))
+	//{
+		if (signal == SIGINT)
+			write(2, "\n", 1);
+		if (signal == SIGQUIT)
+			write(2, "Quit: 3\n", 8);
+	//}
+}
+
 int		_exec_extern(t_proc *proc, t_vars *vars)
 {
 	pid_t	pid;
@@ -144,23 +156,27 @@ int		_exec_extern(t_proc *proc, t_vars *vars)
 	DEBUG && printf(GREY"executing extern prog"RESET);
 
 	pid = fork();
-	//signal(SIGINT, );
+	//signal(SIGINT, child_sig_handler);
+	//signal(SIGQUIT, child_sig_handler);
 	if (pid == -1)
-		//return (report_failure("fork"));//though wouldnt be able to use ||
 		return (report_failure(NULL, "fork", 1));
 	if (pid == 0)
 	{
-		//printf(RED"type redir %d\n"RESET, ((t_proc *)(vars->cmd_arr)->content)->type_redir);
-
-		//not working with pipes
+		//signal(SIGINT, child_sig_handler);
+		//signal(SIGQUIT, child_sig_handler);
 		if (proc->flag_redir && !vars->flag_pipe)
 			_deal_redir(proc);
-
+		if (!proc->cmd)
+			exit (0);
 		path = pathfinder(vars, proc->cmd);//if err exit status goes on same line with prompt
 		DEBUG && printf(GREY"path = |%s|"RESET, path);
 		//path || exit_failure("No such file or directory", 0);
 		if (!path)
-			return (report_failure(proc->args[0], "command not found", 0));
+		{
+			//return (report_failure(proc->args[0], "command not found", 0));
+			report_failure(proc->args[0], "command not found", 0);
+			exit(g_exit_status);
+		}
 
 		if (proc->rd_in_nbr)
 			dup2(proc->fd[FD_IN], 0) >= 0 || report_failure(NULL, "dup2", 1);
@@ -288,6 +304,13 @@ int	execute(t_vars *vars)
 	//	return (0);
 	if (vars->parse_err)
 		return (0);
+	if (!((t_proc *)vars->cmd_arr->content)->cmd)
+	{
+		_deal_redir((t_proc *)vars->cmd_arr->content);
+		dup2(fd_holder[FD_IN], 0);// || report_failure();
+		dup2(fd_holder[FD_OUT], 1);// || report_failure();
+		return (0);
+	}
 	DEBUG && printf(GREY"\tstarting execution"RESET);
 	if (vars->flag_pipe)
 	//if (vars->pipe_nbr > 0)

@@ -6,11 +6,31 @@
 /*   By: ssobchak <ssobchak@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/10 19:46:26 by ssobchak          #+#    #+#             */
-/*   Updated: 2021/07/29 23:04:43 by lpeggy           ###   ########.fr       */
+/*   Updated: 2021/07/30 21:46:42 by lpeggy           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "parser.h"
+
+int	_print_all_rd(t_proc *proc)
+{
+	int		i;
+
+	i = -1;
+	while (++i < proc->rd_in_nbr)
+	{
+		printf(GREY"infile[%d] = |%s|"RESET, i, proc->infiles[i]);
+		printf(GREY"infile[%d] type = %d"RESET, i, proc->rd_in_type[i]);
+	}
+	i = -1;
+	while (++i < proc->rd_out_nbr)
+	{
+		printf(GREY"outfile[%d] = |%s|"RESET, i, proc->outfiles[i]);
+		printf(GREY"outfile[%d] type = %d"RESET, i, proc->rd_out_type[i]);
+	}
+	//printf(GREY""RESET);
+	return (1);
+}
 
 int	_print_list(t_list **head)
 {
@@ -24,23 +44,42 @@ int	_print_list(t_list **head)
 	{
 		printf(GREY"node %d  cmd      >%s<"RESET, j, ((t_proc *)(tmp->content))->cmd);
 		i = 0;
-		//while (((char **)(tmp->content))[i])
 		while (((t_proc *)(tmp->content))->args[i])
 		{
-			//printf("list[%d]	>%s<\n", j, ((char **)(tmp->content))[i]);
 			printf(GREY"node %d  arg[%d]   >%s<"RESET, j, i, ((t_proc *)(tmp->content))->args[i]);
 			i++;
 		}
 		printf(GREY"flag rd %d"RESET, ((t_proc *)(tmp->content))->flag_redir);
-		//printf(GREY"type rd %d"RESET, ((t_proc *)(tmp->content))->type_redir);
-		//printf(GREY"rd filename |%s|"RESET, ((t_proc *)(tmp->content))->filename);
+		_print_all_rd((t_proc *)tmp->content);
 		tmp = tmp->next;
 		j++;
 	}
 	return (1);
 }
 
-char *lowercasing(char *str)//dodelat'
+static int	skip_until(char *str, int i, int sym)// replace with skip symbs cause no slash
+{
+	while (str[i])
+	{
+		if (str[i] == sym && str[i - 1] != '\\')
+			return (i);
+		i++;
+	}
+	return (-1);
+}
+
+int	if_quotes(char *str, int i)
+{
+	if (str[i] == '\'')
+		i = skip_until(str, i + 1, '\'');
+	if (str[i] == '\"')
+		i = skip_until(str, i + 1, '\"');
+	if (str[i] == '\\')
+		i += 2;
+	return (i);
+}
+
+char *lowercasing(char *str)
 {
 	int		i;
 
@@ -67,9 +106,6 @@ char	*dollarswap(char *str, char *rkey, int *i, int j)
 	return (bef);
 }
 
-// instead of skipspaces && skip_pipe
-// i = skip_symbs(str, i, " \n\t\f\v\r");
-// i = skip_symbs(str, i, " |");
 int	skip_symbs(char *str, int i, char *set)
 {
 	while (str[i] && ft_strchr(set, str[i]))
@@ -77,10 +113,6 @@ int	skip_symbs(char *str, int i, char *set)
 	return (i);
 }
 
-//ignores quotes
-// divider = " \n\t\f\v\r" for args cntr
-// divider = "|" for pipe (cmd_nbr) cntr
-// divider = "><" for redir  cntr
 int	count_elems(char *str, char *divider)
 {
 	int		i;
@@ -88,8 +120,7 @@ int	count_elems(char *str, char *divider)
 	
 	elems_nbr = 0;
 	i = 0;
-	if (!ft_strchr("><", str[i]))// mb change
-		i = skip_symbs(str, 0, divider);
+	!ft_strchr("><", str[i]) && (i = skip_symbs(str, 0, divider));
 	while (str[i])
 	{
 		i = if_quotes(str, i);
@@ -99,8 +130,7 @@ int	count_elems(char *str, char *divider)
 			i = skip_symbs(str, i, divider);
 			continue ;
 		}
-		if (str[i + 1] == '\0')
-			elems_nbr++;
+		(str[i + 1] == '\0') && (elems_nbr++);
 		i++;
 	}
 	return (elems_nbr);

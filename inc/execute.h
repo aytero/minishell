@@ -6,7 +6,7 @@
 /*   By: lpeggy <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/01 20:51:06 by lpeggy            #+#    #+#             */
-/*   Updated: 2021/07/30 19:57:16 by lpeggy           ###   ########.fr       */
+/*   Updated: 2021/07/30 21:46:37 by lpeggy           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,7 +28,7 @@
 
 # include "colors.h"
 # define DEBUG 1
-# define DEBUG_PARSER 0
+# define DEBUG_PARSER 1
 
 # define FD_IN 0
 # define FD_OUT 1
@@ -94,6 +94,8 @@ int		g_exit_status;
 
 void	free_memory(t_vars *vars);
 void	free_double_array(void *ptr);
+
+void	rl_replace_line();
 
 // env funcs//
 //void	print_list(t_list **head);

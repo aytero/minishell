@@ -6,7 +6,7 @@
 /*   By: lpeggy <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/01 17:14:27 by lpeggy            #+#    #+#             */
-/*   Updated: 2021/07/29 23:17:07 by lpeggy           ###   ########.fr       */
+/*   Updated: 2021/07/30 23:11:13 by lpeggy           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,18 +15,26 @@
 
 static void	sig_handler(int signal)
 {
-	(void)signal;
-	write(1, "\n", 1);
-	write(1, "sigint recieved\n", 16);
+	if (signal == SIGINT)
+	{
+		write(2, "\n", 1);
+		g_exit_status = 1;
+		rl_on_new_line();
+		rl_replace_line("", 0);
+		rl_redisplay();
+	}
+	else if (signal == SIGQUIT)
+	{
+		write(2, "\r", 1);
+		rl_on_new_line();
+		rl_redisplay();
+		exit(0);
+	}
 }
 
-static void	sigquit_handler(int signal)
-{
-	(void)signal;
-	write(1, "\n", 1);
-	write(1, "sigquit recieved\n", 16);
-	exit(0);
-}
+//if ctrl-D - exit shell and write "exit"
+//rl_replace_line("exit", 0);
+//but only when line is empty so maybe not use replace func
 
 void	free_double_array(void *ptr)
 {
@@ -88,9 +96,14 @@ int	main(int argc, char **argv, char **envp)
 	init_sh(&vars, envp);
 	if (signal(SIGINT, sig_handler) == SIG_ERR)
 		exit_failure("Signal failure", 1);
-	if (signal(SIGQUIT, sigquit_handler) == SIG_ERR)
+	if (signal(SIGQUIT, sig_handler) == SIG_ERR)
 		exit_failure("Signal failure", 1);
 	line = readline("sh:> ");
+	if (!line)
+	{
+		write(2, "exit\n", 5);
+		exit(0);
+	}
 	while (line != NULL)
 	{
 		(ft_strlen(line) > 0) && add_history(line);
@@ -102,6 +115,13 @@ int	main(int argc, char **argv, char **envp)
 		//ft_lstclear(&vars.cmd_arr, free_double_array);
 		ft_lstclear(&vars.cmd_arr, free_proc);
 		line = readline("sh:> ");
+		if (!line)
+		{
+			//free mem
+			write(2, "exit\n", 5);
+			break ;
+			//exit(0);
+		}
 	}
 	//rl_clear_history();
 	free(line);
