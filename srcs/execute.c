@@ -6,7 +6,7 @@
 /*   By: lpeggy <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/01 20:49:41 by lpeggy            #+#    #+#             */
-/*   Updated: 2021/07/29 23:27:23 by lpeggy           ###   ########.fr       */
+/*   Updated: 2021/07/30 19:49:38 by lpeggy           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -196,45 +196,60 @@ int	exec_extern(t_proc *proc, t_vars *vars)
 		return (0);
 }
 
+int	if_builtin(char *cmd)
+{
+	if (!ft_strcmp(cmd, "echo"))
+		return (1);
+	if (!ft_strcmp(cmd, "cd"))
+		return (2);
+	if (!ft_strcmp(cmd, "pwd"))
+		return (3);
+	if (!ft_strcmp(cmd, "export"))
+		return (4);
+	if (!ft_strcmp(cmd, "unset"))
+		return (5);
+	if (!ft_strcmp(cmd, "env"))
+		return (6);
+	if (!ft_strcmp(cmd, "exit"))
+		return (7);
+	return (0);
+}
+
 int	choose_cmd(t_proc *proc, t_vars *vars)
 {
-	//pid_t	pid;
-	
+	//i - builtin type; 0 - extern
+	int		i;
+
 	DEBUG && printf(GREY"choosing cmd"RESET);
-	//this version kills working with env and exit cause it's all in children processes
-	/*
-	pid = fork();
-	if (pid == 0)
+	i = if_builtin(proc->cmd);
+	if (i)
 	{
-		proc->flag_redir && _deal_redir(proc);
-		//if (!_deal_redir(proc))
-		//	return (1);
-		if (!ft_strcmp(proc->cmd, "echo"))
-			exit(builtin_echo(proc->args));
-		if (!ft_strcmp(proc->cmd, "cd"))
-			exit(builtin_cd(proc->args, vars));
-		if (!ft_strcmp(proc->cmd, "pwd"))
-			exit(builtin_pwd(vars));
-		if (!ft_strcmp(proc->cmd, "export"))
-			exit(builtin_export(proc->args, vars));
-		if (!ft_strcmp(proc->cmd, "unset"))
-			exit(builtin_unset(proc->args, vars));
-		if (!ft_strcmp(proc->cmd, "env"))
-			exit(builtin_env(&vars->env));
-		if (!ft_strcmp(proc->cmd, "exit"))
-			exit(builtin_exit(proc->args, vars));
-		exit(exec_extern(proc, vars));
+		DEBUG && printf(GREY"executing builtin cmd"RESET);
+		if (proc->flag_redir && !vars->flag_pipe)
+			_deal_redir(proc);
+		if (proc->rd_in_nbr)
+			dup2(proc->fd[FD_IN], 0) >= 0 || report_failure(NULL, "dup2", 1);
+		if (proc->rd_out_nbr)
+			dup2(proc->fd[FD_OUT], 1) >= 0 || report_failure(NULL, "dup2", 1);
+		//return (exec_builtin(proc, vars, i));
+		if (i == 1)
+			return (builtin_echo(proc->args));
+		if (i == 2)
+			return (builtin_cd(proc->args, vars));
+		if (i == 3)
+			return (builtin_pwd(vars));
+		if (i == 4)
+			return (builtin_export(proc->args, vars));
+		if (i == 5)
+			return (builtin_unset(proc->args, vars));
+		if (i == 6)
+			return (builtin_env(proc, &vars->env));
+		if (i == 7)
+			return (builtin_exit(proc->args, vars));
 	}
-	else
-		wait_loop(pid);
-	return (0);
-	*/
+	return (_exec_extern(proc, vars));
 
-	// builtins && redirects:
-	// func to store and resotre fd
-	// or fork those what write smth to output
-	// ex. export without args
-
+	/*
 	if (!ft_strcmp(proc->cmd, "echo"))
 		return (builtin_echo(proc->args));
 	if (!ft_strcmp(proc->cmd, "cd"))
@@ -250,19 +265,24 @@ int	choose_cmd(t_proc *proc, t_vars *vars)
 	if (!ft_strcmp(proc->cmd, "exit"))
 		return (builtin_exit(proc->args, vars));
 	return (_exec_extern(proc, vars));
+	*/
 }
 
 /*
-int	restore_fd(t_vars *vars)
+int	restore_stdio(t_vars *vars)
 {
-	dup2(0, vars->fd[FD_IN]);// || report_failure();
-	dup2(1, vars->fd[FD_OUT]);// || report_failure();
+	dup2(fd_holder[FD_IN], 0);// || report_failure();
+	dup2(fd_holder[FD_OUT], 1);// || report_failure();
 	return (1);
 }
 */
 
 int	execute(t_vars *vars)
 {
+	int		fd_holder[2];	
+
+	fd_holder[FD_IN] = dup(0);
+	fd_holder[FD_OUT] = dup(1);
 	//vars->flag_redirect = 0;
 	//if (((t_proc *)vars->cmd_arr->content)->args[0] == NULL)
 	//	return (0);
@@ -275,6 +295,8 @@ int	execute(t_vars *vars)
 	else
 		choose_cmd((t_proc *)vars->cmd_arr->content, vars);
 	//restore_fd(vars);
+	dup2(fd_holder[FD_IN], 0);// || report_failure();
+	dup2(fd_holder[FD_OUT], 1);// || report_failure();
 	DEBUG && printf(GREY"exit status: %d"RESET, g_exit_status);
 	return (0);
 }

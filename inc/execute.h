@@ -6,7 +6,7 @@
 /*   By: lpeggy <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/01 20:51:06 by lpeggy            #+#    #+#             */
-/*   Updated: 2021/07/29 23:14:47 by lpeggy           ###   ########.fr       */
+/*   Updated: 2021/07/30 19:57:16 by lpeggy           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,7 +28,7 @@
 
 # include "colors.h"
 # define DEBUG 1
-# define DEBUG_PARSER 1
+# define DEBUG_PARSER 0
 
 # define FD_IN 0
 # define FD_OUT 1

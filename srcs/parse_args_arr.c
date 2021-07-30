@@ -9,7 +9,7 @@ void	get_cmd_name(t_proc *proc)
 	if (!ft_strcmp(tmp, "export") || !ft_strcmp(tmp, "unset")
 		|| !ft_strcmp(tmp, "exit"))
 	{
-		proc->cmd = ft_strdup(proc->args[0]);
+		proc->cmd = ft_strtrim(proc->args[0], " \n\f\v\r\t");
 		free(tmp);
 	}
 	else

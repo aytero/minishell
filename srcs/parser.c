@@ -6,7 +6,7 @@
 /*   By: ssobchak <ssobchak@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/01 17:14:16 by lpeggy            #+#    #+#             */
-/*   Updated: 2021/07/24 22:53:41 by lpeggy           ###   ########.fr       */
+/*   Updated: 2021/07/30 20:02:19 by lpeggy           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,6 +31,7 @@ char	*dollarsign(char *str, int *i, t_vars *vars)
 		return (str);
 	key = ft_substr(str, j + 1, *i - j - 1);
 	rkey = get_env_var(vars->env, key);
+	//!rkey && (str = dollarswap(str, NULL, i, j));
 	if (!rkey)
 		str = dollarswap(str, NULL, i, j);
 	str = dollarswap(str, rkey, i, j);
@@ -121,16 +122,6 @@ char	*parser(char *str, t_vars *vars)
 		(str[i] == '\\') && (str = slash(str, &i));
 		(str[i] == '\"') && (str = doublequotes(str, &i, vars));
 		(str[i] == '$') && (str = dollarsign(str, &i, vars));
-		/*
-		if (str[i] == '\'')
-			str = quotes(str, &i);
-		if (str[i] == '\\')
-			str = slash(str, &i);
-		if (str[i] == '\"')
-			str = doublequotes(str, &i, vars);
-		if (str[i] == '$')
-			str = dollarsign(str, &i, vars);
-			*/
 	}
 	return (str);
 }
