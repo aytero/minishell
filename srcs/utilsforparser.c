@@ -6,7 +6,7 @@
 /*   By: ssobchak <ssobchak@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/10 19:46:26 by ssobchak          #+#    #+#             */
-/*   Updated: 2021/07/30 21:46:42 by lpeggy           ###   ########.fr       */
+/*   Updated: 2021/07/31 17:56:53 by lpeggy           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,13 +28,13 @@ int	_print_all_rd(t_proc *proc)
 		printf(GREY"outfile[%d] = |%s|"RESET, i, proc->outfiles[i]);
 		printf(GREY"outfile[%d] type = %d"RESET, i, proc->rd_out_type[i]);
 	}
-	//printf(GREY""RESET);
 	return (1);
 }
 
 int	_print_list(t_list **head)
 {
 	t_list	*tmp;
+	t_proc	*proc;
 	int		i;
 	int		j;
 
@@ -42,15 +42,18 @@ int	_print_list(t_list **head)
 	tmp = *head;
 	while (tmp)
 	{
-		printf(GREY"node %d  cmd      >%s<"RESET, j, ((t_proc *)(tmp->content))->cmd);
+		proc = (t_proc *)tmp->content;
+		printf(GREY"node %d  cmd      >%s<"RESET, j, proc->cmd);
 		i = 0;
-		while (((t_proc *)(tmp->content))->args[i])
+		while (proc->args[i])
 		{
-			printf(GREY"node %d  arg[%d]   >%s<"RESET, j, i, ((t_proc *)(tmp->content))->args[i]);
+			printf(GREY"node %d  arg[%d]   >%s<"RESET, j, i, proc->args[i]);
 			i++;
 		}
-		printf(GREY"flag rd %d"RESET, ((t_proc *)(tmp->content))->flag_redir);
-		_print_all_rd((t_proc *)tmp->content);
+		printf(GREY"rd_in_nbr %d\trd_out_nbr %d"RESET, proc->rd_in_nbr,
+				proc->rd_out_nbr);
+		printf(GREY"flag rd %d"RESET, proc->flag_redir);
+		_print_all_rd(proc);
 		tmp = tmp->next;
 		j++;
 	}

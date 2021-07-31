@@ -6,7 +6,7 @@
 /*   By: lpeggy <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/01 17:14:48 by lpeggy            #+#    #+#             */
-/*   Updated: 2021/07/30 20:36:11 by lpeggy           ###   ########.fr       */
+/*   Updated: 2021/07/31 17:51:09 by lpeggy           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,6 +21,8 @@
 # include <readline/history.h>
 # include "execute.h"
 
+# define IO_IN 0
+# define IO_OUT 1
 # define REDIR_IN 0// <
 # define REDIR_OUT 1// >
 # define DB_REDIR_IN 2// <<
@@ -28,6 +30,7 @@
 
 typedef struct s_util
 {
+	int			k;
 	int			start;
 	int			nbr;
 	int			flag_dq;
@@ -37,8 +40,8 @@ typedef struct s_util
 
 int				count_elems(char *str, char *divider);
 char			**split_arr_if(char *str, int elem_nbr, t_util *util, int (*func)());
-int				cut_cmds(char **cmd_line, char *str, int *i, int k, t_util *util);
-int				cut_args(char **args, char *str, int *i, int k, t_util *util);
+int				cut_cmds(char **cmd_line, char *str, int *i, t_util *util);
+int				cut_args(char **args, char *str, int *i, t_util *util);
 int				make_cmd_list(char **cmd_line, t_vars *vars, t_util *util);
 void			pre_parser(char *str, t_vars *vars);
 int				skim(char *str);

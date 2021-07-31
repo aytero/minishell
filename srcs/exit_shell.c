@@ -6,7 +6,7 @@
 /*   By: lpeggy <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/26 22:20:19 by lpeggy            #+#    #+#             */
-/*   Updated: 2021/07/30 20:48:45 by lpeggy           ###   ########.fr       */
+/*   Updated: 2021/07/31 20:16:04 by lpeggy           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,16 +14,26 @@
 
 
 //print errors to fd 2
-int	exit_failure(char *str, int errtype)
+int	exit_failure(char *cmd, char *str, int errtype)
 {
 	if (errtype == 1)
 	{
-		printf("%s: %s\n", str, strerror(errno));
+		ft_putstr_fd(str, 2);
+		write(2, ": ", 2);
+		ft_putstr_fd(strerror(errno), 2);
+		write(2, "\n", 2);
+		//printf("%s: %s\n", str, strerror(errno));
 		g_exit_status = errno;
 	}
 	else
 	{
-		printf("%s\n", str);
+		write(2, "sh: ", 4);
+		ft_putstr_fd(cmd, 2);
+		write(2, ": ", 2);
+		ft_putstr_fd(str, 2);
+		write(2, "\n", 2);
+		//printf("sh: %s: %s\n", cmd, str);
+		//printf("%s\n", str);
 		g_exit_status = 1;
 	}
 	//if not in fork free mem (?)

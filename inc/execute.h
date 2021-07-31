@@ -6,7 +6,7 @@
 /*   By: lpeggy <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/01 20:51:06 by lpeggy            #+#    #+#             */
-/*   Updated: 2021/07/30 21:46:37 by lpeggy           ###   ########.fr       */
+/*   Updated: 2021/07/31 20:21:26 by lpeggy           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,11 +57,12 @@ typedef struct s_redir
 
 typedef struct s_proc
 {
-	int			flag_heredoc;//
+	int			pid;
+	int			flag_heredoc;//?
 	int			flag_pipe;
 	int			flag_redir;
-	int			type_redir;
 	int			fd[2];
+	int			rd_i;
 	int			rd_in_nbr;
 	int			rd_out_nbr;
 	int			*rd_in_type;
@@ -92,6 +93,8 @@ typedef struct s_vars
 
 int		g_exit_status;
 
+void	child_sig_handler(int signal);
+void	sig_handler(int signal);
 void	free_memory(t_vars *vars);
 void	free_double_array(void *ptr);
 
@@ -118,16 +121,17 @@ int		builtin_unset(char **cmd, t_vars *vars);
 int		builtin_env(t_proc *proc, t_list **head);
 int		builtin_exit(char **cmd, t_vars *vars);
 
-int	_deal_redir(t_proc *proc);
+void	wait_loop(void *ptr);
 int		exec_extern(t_proc *proc, t_vars *vars);
 int		exec_piped(t_vars *vars);
 void	close_pipes(t_vars *vars);
 void	deal_pipes(t_vars *vars, int i);
 void	open_pipes(t_vars *vars);
+int		deal_redir(t_proc *proc);
 char	*pathfinder(t_vars *vars, char *cmd);
 int		choose_cmd(t_proc *proc, t_vars *vars);
 int		execute(t_vars *vars);
-int		exit_failure(char *str, int errtype);
+int		exit_failure(char *cmd, char *str, int errtype);
 int		report_failure(char *cmd, char *str, int errtype);
 
 #endif

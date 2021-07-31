@@ -6,17 +6,17 @@
 /*   By: lpeggy <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/07/13 18:25:59 by lpeggy            #+#    #+#             */
-/*   Updated: 2021/07/30 21:46:44 by lpeggy           ###   ########.fr       */
+/*   Updated: 2021/07/31 19:46:49 by lpeggy           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "parser.h"
 
-static int word_after(char *str, int i, char *divider)
+static int	word_after(char *str, int i, char *divider)
 {
 	i = skip_symbs(str, i, divider);
 	i = skip_symbs(str, i, " \n\f\v\r\t");
-	if (!str[i] || ft_strchr(">|<", str[i]))
+	if ((!str[i] || ft_strchr(">|<", str[i])) && ft_strcmp(divider, "|"))
 		return (0);
 	return (1);
 }
@@ -29,16 +29,20 @@ int	skim(char *str)
 		return (0);
 	i = skip_symbs(str, 0, " \n\f\v\r\t");
 	if (str[i] == '|')
-		return (!write(1, "sh: syntax error\n", 17));
+		return (!write(2, "sh: syntax error\n", 17));
 	while (str[i])
 	{
 		i = if_quotes(str, i);
 		if (i == -1 || (ft_strchr("|", str[i]) && !word_after(str, i, "|")))
-			return (!write(1, "sh: syntax error\n", 17));
-		if (ft_strchr("><", str[i]) && (!word_after(str, i, "><")
-			|| !ft_strncmp(str + i, "<>", 2) || !ft_strncmp(str + i, ">>>", 3)
-			|| !ft_strncmp(str + i, "<<<", 3) || !ft_strncmp(str + i, "><", 2)))
-			return (!write(1, "sh: syntax error\n", 17));
+			return (!write(2, "sh: syntax error\n", 17));
+		if (ft_strchr("><", str[i]) && (!ft_strncmp(str + i, "<>", 2)
+				|| !ft_strncmp(str + i, ">>>", 3)
+				|| !ft_strncmp(str + i, "<<<", 3)
+				|| !ft_strncmp(str + i, "><", 2)))
+			return (!write(2, "sh: syntax error\n", 17));
+		if (ft_strchr("><", str[i]) && !word_after(str, i, "><"))
+			return (!write(2,
+					"sh: syntax error near unexpected token `newline'\n", 49));
 		i++;
 	}
 	return (1);
@@ -47,13 +51,14 @@ int	skim(char *str)
 void	deal_spec_symbs(void *ptr, t_vars *vars)
 {
 	int		i;
+	t_proc	*proc;
 
+	proc = (t_proc *)ptr;
 	i = -1;
-	//if (((t_proc *)ptr)->cmd)
-	//{
-		while (((t_proc *)ptr)->args[++i])
-			((t_proc *)ptr)->args[i] = parser(((t_proc *)ptr)->args[i], vars);
-	//}
+	if (proc->cmd)
+		proc->cmd = parser(proc->cmd, vars);
+	while (proc->args[++i])
+		proc->args[i] = parser(proc->args[i], vars);
 }
 
 void	pre_parser(char *str, t_vars *vars)
@@ -71,7 +76,8 @@ void	pre_parser(char *str, t_vars *vars)
 	if (vars->pipe_nbr)
 		vars->flag_pipe = 1;
 	((cmd_line = split_arr_if(str, vars->cmd_nbr, &util, cut_cmds))
-	 && (make_cmd_list(cmd_line, vars, &util))) || (vars->parse_err = 1);
+			&& (make_cmd_list(cmd_line, vars, &util))) || (vars->parse_err = 1);
+	free_double_array(cmd_line);
 	if (vars->parse_err)
 		return ;
 	//DEBUG_PARSER && printf(GREY"\tbefore dealing spec symbs"RESET);

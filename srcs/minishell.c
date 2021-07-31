@@ -6,31 +6,14 @@
 /*   By: lpeggy <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/01 17:14:27 by lpeggy            #+#    #+#             */
-/*   Updated: 2021/07/30 23:11:13 by lpeggy           ###   ########.fr       */
+/*   Updated: 2021/07/31 20:22:52 by lpeggy           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "execute.h"
 #include "parser.h"
 
-static void	sig_handler(int signal)
-{
-	if (signal == SIGINT)
-	{
-		write(2, "\n", 1);
-		g_exit_status = 1;
-		rl_on_new_line();
-		rl_replace_line("", 0);
-		rl_redisplay();
-	}
-	else if (signal == SIGQUIT)
-	{
-		write(2, "\r", 1);
-		rl_on_new_line();
-		rl_redisplay();
-		exit(0);
-	}
-}
+
 
 //if ctrl-D - exit shell and write "exit"
 //rl_replace_line("exit", 0);
@@ -92,12 +75,12 @@ int	main(int argc, char **argv, char **envp)
 	char	*line;
 
 	(void)argv;//
-	argc == 1 || exit_failure("Too many arguments", 0);
+	argc == 1 || exit_failure(NULL, "Too many arguments", 0);
 	init_sh(&vars, envp);
 	if (signal(SIGINT, sig_handler) == SIG_ERR)
-		exit_failure("Signal failure", 1);
+		exit_failure(NULL, "Signal failure", 1);
 	if (signal(SIGQUIT, sig_handler) == SIG_ERR)
-		exit_failure("Signal failure", 1);
+		exit_failure(NULL, "Signal failure", 1);
 	line = readline("sh:> ");
 	if (!line)
 	{

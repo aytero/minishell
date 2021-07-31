@@ -6,13 +6,13 @@
 /*   By: lpeggy <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/07/30 20:18:00 by lpeggy            #+#    #+#             */
-/*   Updated: 2021/07/30 21:46:41 by lpeggy           ###   ########.fr       */
+/*   Updated: 2021/07/31 18:04:43 by lpeggy           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "parser.h"
 
-int	cut_args(char **args, char *str, int *i, int k, t_util *util)
+int	cut_args(char **args, char *str, int *i, t_util *util)
 {
 	if (str[*i] == '\'')
 		util->flag_q++;
@@ -21,7 +21,7 @@ int	cut_args(char **args, char *str, int *i, int k, t_util *util)
 	if ((ft_strchr(" \n\f\v\r\t", str[*i]) || str[*i + 1] == '\0')
 		&& str[*i - 1] != '\\' && !(util->flag_q % 2) && !(util->flag_dq % 2))
 	{
-		args[k] = ft_substr(str, util->start, *i - util->start);// + 1 ?
+		args[util->k] = ft_substr(str, util->start, *i - util->start);
 		*i = skip_symbs(str, *i, " \n\t\f\v\r");
 		util->start = *i;
 		return (*i);
@@ -29,12 +29,12 @@ int	cut_args(char **args, char *str, int *i, int k, t_util *util)
 	return (0);
 }
 
-int	cut_cmds(char **cmd_line, char *str, int *i, int k, t_util *util)
+int	cut_cmds(char **cmd_line, char *str, int *i, t_util *util)
 {
 	*i = if_quotes(str, *i);
 	if (str[*i] == '|')
 	{
-		cmd_line[k] = ft_substr(str, util->start, *i - util->start);
+		cmd_line[util->k] = ft_substr(str, util->start, *i - util->start);
 		*i = skip_symbs(str, *i, "|");
 		util->start = *i;
 		return (*i);
@@ -44,31 +44,26 @@ int	cut_cmds(char **cmd_line, char *str, int *i, int k, t_util *util)
 
 char	**split_arr_if(char *str, int elem_nbr, t_util *util, int (*func)())
 {
-	int 	i;
-	int		k;
+	int		i;
 	char	**arr;
 
 	arr = ft_calloc(sizeof(char *), elem_nbr + 1);
 	if (!arr && report_failure(NULL, "malloc", 1))
 		return (NULL);
-	!(k = 0) && (util->nbr = elem_nbr);
-	if (elem_nbr == 1 && arr[k])
-	{
-		arr[k] = ft_strdup(str);
+	util->nbr = elem_nbr;
+	(elem_nbr == 1 && arr[util->k]) && (arr[util->k] = ft_strdup(str));
+	if (elem_nbr == 1 && arr[util->k])
 		return (arr);
-	}
 	i = skip_symbs(str, 0, " \n\t\f\v\r");
 	util->start = i;
-	while (str[i] && k < elem_nbr)
+	while (str[i] && util->k < elem_nbr)
 	{
-		if (k == elem_nbr - 1)
-		{
-			arr[k] = ft_strdup(str + i);
+		(util->k == elem_nbr - 1) && (arr[util->k] = ft_strdup(str + i));
+		if (util->k == elem_nbr - 1)
 			break ;
-		}
-		if (func(arr, str, &i, k, util))
+		if (func(arr, str, &i, util))
 		{
-			k++;
+			util->k++;
 			continue ;
 		}
 		i++;
@@ -107,8 +102,6 @@ int	make_cmd_list(char **cmd_line, t_vars *vars, t_util *util)
 		if (!proc && report_failure(NULL, "malloc", 1))
 			return (0);
 		cmd_line[i] = parse_redir(cmd_line[i], proc);
-		//if (!cmd_line[i][0])
-		//	return (0);
 		arg_nbr = count_elems(cmd_line[i], " \n\f\v\r\t");
 		DEBUG_PARSER && printf(GREY"arg_nbr %d"RESET, arg_nbr);
 		ft_memset(util, 0, sizeof(t_util));
@@ -118,6 +111,5 @@ int	make_cmd_list(char **cmd_line, t_vars *vars, t_util *util)
 		get_cmd_name(proc);
 		ft_lstadd_back(&vars->cmd_arr, ft_lstnew((t_proc *)proc));
 	}
-	free_double_array(cmd_line);
 	return (1);
 }
