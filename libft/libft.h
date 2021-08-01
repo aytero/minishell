@@ -6,7 +6,7 @@
 /*   By: lpeggy <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/10/31 15:28:02 by lpeggy            #+#    #+#             */
-/*   Updated: 2021/07/15 17:47:48 by lpeggy           ###   ########.fr       */
+/*   Updated: 2021/08/01 16:45:39 by lpeggy           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,6 +29,8 @@ typedef struct s_lst
 	struct s_lst	*next;
 }					t_lst;
 
+void				free_double_int_arr(int **arr, int size);
+void				free_double_char_arr(char **arr);
 void				*malloc_ptr(void **ptr, size_t size);
 char				*ft_strjoin_free(char *s1, char *s2);
 char				*ft_strjoin_sep(char *s1, char *s2, char sep);

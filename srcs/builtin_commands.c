@@ -6,7 +6,7 @@
 /*   By: lpeggy <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/08 16:42:00 by lpeggy            #+#    #+#             */
-/*   Updated: 2021/07/24 21:25:21 by lpeggy           ###   ########.fr       */
+/*   Updated: 2021/08/01 18:00:17 by lpeggy           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,11 +15,16 @@
 int	builtin_error(char *cmd, char *arg, char *error_mes)
 {
 	g_exit_status = 1;
-//	write(1, assh: unset:`, len);
-//	write(1, arg, len);
-//	write(1, "':", 2);
-//	write(1, error_mes, len);
-	printf("sh: %s: `%s': %s\n", cmd, arg, error_mes);
+	write(2, "sh: ", 4);
+	ft_putstr_fd(cmd, 2);
+	//write(2,": `", 3);//nned this for export; handled
+	write(2,": ", 2);
+	ft_putstr_fd(arg, 2);
+	write(2, ": ", 2);
+	//write(2, "': ", 3);
+	ft_putstr_fd(error_mes, 2);
+	write(2, "\n", 1);
+	//printf("sh: %s: `%s': %s\n", cmd, arg, error_mes);
 	return (0);
 	//return (1);
 }

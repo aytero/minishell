@@ -6,43 +6,22 @@
 /*   By: lpeggy <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/12 17:52:02 by lpeggy            #+#    #+#             */
-/*   Updated: 2021/07/24 21:25:42 by lpeggy           ###   ########.fr       */
+/*   Updated: 2021/08/01 18:00:06 by lpeggy           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "execute.h"
 
-static void	print_sorted(char **sorted)
+static int	print_sorted(char **sorted)
 {
 	int		i;
 
 	i = -1;
 	while (sorted[++i])
 		ft_strchr(sorted[i], '=') && printf("declare -x %s\n", sorted[i]);
-	free_double_array(sorted);	
+	free_double_char_arr(sorted);
+	return (1);
 }
-
-/*
-void	print_sorted(t_list **head)
-{
-	t_list	*tmp;
-
-	tmp = *head;
-	while (tmp)
-	{
-		printf("declare -x %s=%s\n", ((t_env_var *)tmp->content)->key, ((t_env_var *)tmp->content)->value);
-		tmp = tmp->next;
-	}
-}
-
-int	cmp_envs(void *ptr, void *ptr1)//put in .h
-{
-	int		ret;
-
-	ret = ft_strcmp(((t_env_var *)ptr)->key, ((t_env_var *)ptr1)->key);
-	return (ret);
-}
-*/
 
 static int	sort_env(t_vars *vars)
 {
@@ -53,7 +32,7 @@ static int	sort_env(t_vars *vars)
 	char	*tmp;
 
 	sorted = env_to_char(vars->env);
-	size = env_arr_size(sorted);//
+	size = env_arr_size(sorted);
 	i = -1;
 	while (++i < size)
 	{
@@ -70,38 +49,39 @@ static int	sort_env(t_vars *vars)
 			}
 		}
 	}
-	print_sorted(sorted);
-	return (1);
-
-	/*
-	t_list	*tmp;
-
-	tmp = vars->env;
-	tmp = ft_lstsort(&tmp, cmp_envs);
-	print_sorted(&tmp);
-	*/
+	return (print_sorted(sorted));
 }
 
 static int	check_export_arg(char *arg)
 {
+	char	*tmp;
 	int		i;
 
+	if (ft_isdigit(arg[0]))
+	{
+		tmp = ft_strjoin_free(arg, "'");
+		arg = ft_strjoin("`", tmp);
+		free(tmp);
+		return (!builtin_error("export", arg, "not a valid identifier"));
+	}
 	if (!ft_strchr(arg, '='))
 		return (0);
-	if (ft_isdigit(arg[0]))
-		return (builtin_error("export", arg, "not a valid identifier"));
 	i = -1;
 	while (arg[++i] && arg[i] != '=')
 	{
 		if (!ft_isalpha(arg[i]) && !ft_isdigit(arg[i]) && arg[i] != '_')
-			return (builtin_error("export", arg, "not a valid identifier"));
+		{
+			tmp = ft_strjoin_free(arg, "'");
+			arg = ft_strjoin("`", tmp);
+			free(tmp);
+			return (!builtin_error("export", arg, "not a valid identifier"));
+		}
 	}
 	return (1);
 }
 
 int	builtin_export(char **cmd, t_vars *vars)
 {
-	// cut quotes or maybe in parser
 	int		i;
 
 	g_exit_status = 0;
@@ -114,7 +94,6 @@ int	builtin_export(char **cmd, t_vars *vars)
 			continue ;
 		if (!set_env_var(&vars->env, cmd[i]))
 			return (!builtin_error("export", cmd[i], "malloc error"));
-		//set_env_var(&vars->env, cmd[i]);
 	}
 	return (0);
 }

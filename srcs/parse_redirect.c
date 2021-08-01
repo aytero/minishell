@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   parse_redirect.c                                   :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: lpeggy <marvin@42.fr>                      +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2021/08/01 16:47:13 by lpeggy            #+#    #+#             */
+/*   Updated: 2021/08/01 16:47:15 by lpeggy           ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "parser.h"
 
 char	*cut_redir(char *cmd_line, int type, int *io, t_proc *proc)
@@ -31,20 +43,20 @@ char	*cut_redir(char *cmd_line, int type, int *io, t_proc *proc)
 
 int	malloc_redir(t_proc *proc)
 {
-	proc->rd_in_nbr && (proc->infiles = malloc(sizeof(char *)
-				* (proc->rd_in_nbr + 1)));
+	proc->rd_in_nbr && (proc->infiles = ft_calloc(sizeof(char *),
+			(proc->rd_in_nbr + 1)));
 	if (proc->rd_in_nbr && !proc->infiles)
 		return (0);
-	proc->rd_out_nbr && (proc->outfiles = malloc(sizeof(char *)
-				* (proc->rd_out_nbr + 1)));
+	proc->rd_out_nbr && (proc->outfiles = ft_calloc(sizeof(char *),
+			(proc->rd_out_nbr + 1)));
 	if (proc->rd_out_nbr && !proc->outfiles)
 		return (0);
 	proc->rd_in_nbr && (proc->rd_in_type = malloc(sizeof(int *)
-				* proc->rd_in_nbr));
+			* proc->rd_in_nbr));
 	if (proc->rd_in_type && !proc->rd_in_type)
 		return (0);
 	proc->rd_out_nbr && (proc->rd_out_type = malloc(sizeof(int *)
-				* proc->rd_out_nbr));
+			* proc->rd_out_nbr));
 	if (proc->rd_out_type && !proc->rd_out_type)
 		return (0);
 	return (1);

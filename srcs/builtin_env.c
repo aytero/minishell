@@ -6,7 +6,7 @@
 /*   By: lpeggy <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/12 17:45:28 by lpeggy            #+#    #+#             */
-/*   Updated: 2021/07/24 21:24:51 by lpeggy           ###   ########.fr       */
+/*   Updated: 2021/08/01 16:28:52 by lpeggy           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,7 +50,6 @@ char	**env_to_char(t_list *env)//free arr after usage
 	return (arr);
 }
 
-//int	builtin_env(t_list *env)
 int	builtin_env(t_proc *proc, t_list **head)
 {
 	t_list	*env;

@@ -6,7 +6,7 @@
 /*   By: lpeggy <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/07/13 18:25:59 by lpeggy            #+#    #+#             */
-/*   Updated: 2021/07/31 19:46:49 by lpeggy           ###   ########.fr       */
+/*   Updated: 2021/08/01 16:34:04 by lpeggy           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -77,7 +77,7 @@ void	pre_parser(char *str, t_vars *vars)
 		vars->flag_pipe = 1;
 	((cmd_line = split_arr_if(str, vars->cmd_nbr, &util, cut_cmds))
 			&& (make_cmd_list(cmd_line, vars, &util))) || (vars->parse_err = 1);
-	free_double_array(cmd_line);
+	free_double_char_arr(cmd_line);
 	if (vars->parse_err)
 		return ;
 	//DEBUG_PARSER && printf(GREY"\tbefore dealing spec symbs"RESET);

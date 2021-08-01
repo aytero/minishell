@@ -6,7 +6,7 @@
 /*   By: lpeggy <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/01 20:51:06 by lpeggy            #+#    #+#             */
-/*   Updated: 2021/07/31 20:21:26 by lpeggy           ###   ########.fr       */
+/*   Updated: 2021/08/01 19:53:44 by lpeggy           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,6 +45,7 @@ typedef struct s_env_var
 	char		*value;
 }				t_env_var;
 
+/*
 typedef struct s_redir
 {
 	int			rd_in_nbr;
@@ -54,6 +55,7 @@ typedef struct s_redir
 	char		**infiles;
 	char		**outfiles;
 }				t_redir;
+*/
 
 typedef struct s_proc
 {
@@ -69,10 +71,9 @@ typedef struct s_proc
 	int			*rd_out_type;
 	char		**infiles;
 	char		**outfiles;
-	char		*filename;//
 	char		*cmd;
 	char		**args;
-	t_redir		*redir;
+	//t_redir		*redir;
 }				t_proc;
 
 typedef struct s_vars
@@ -83,10 +84,9 @@ typedef struct s_vars
 	int			cmd_nbr;
 	int			pipe_nbr;
 	int			fd[2];
+	int			fd_holder[2];
 	int			**pfd;
-	char		*path;
 	char		**path_arr;
-	char		**args;
 	t_list		*env;
 	t_list		*cmd_arr;
 }				t_vars;
@@ -95,10 +95,11 @@ int		g_exit_status;
 
 void	child_sig_handler(int signal);
 void	sig_handler(int signal);
-void	free_memory(t_vars *vars);
-void	free_double_array(void *ptr);
+void	free_proc(void *ptr);
+void	free_mem(t_vars *vars);
 
 void	rl_replace_line();
+void	rl_clear_history();
 
 // env funcs//
 //void	print_list(t_list **head);
@@ -123,14 +124,11 @@ int		builtin_exit(char **cmd, t_vars *vars);
 
 void	wait_loop(void *ptr);
 int		exec_extern(t_proc *proc, t_vars *vars);
-int		exec_piped(t_vars *vars);
-void	close_pipes(t_vars *vars);
-void	deal_pipes(t_vars *vars, int i);
-void	open_pipes(t_vars *vars);
+void	exec_piped(t_vars *vars);
 int		deal_redir(t_proc *proc);
 char	*pathfinder(t_vars *vars, char *cmd);
 int		choose_cmd(t_proc *proc, t_vars *vars);
-int		execute(t_vars *vars);
+void	execute(t_vars *vars);
 int		exit_failure(char *cmd, char *str, int errtype);
 int		report_failure(char *cmd, char *str, int errtype);
 

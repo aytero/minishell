@@ -1,28 +1,29 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ft_lstclear.c                                      :+:      :+:    :+:   */
+/*   free_double_int_arr.c                              :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: lpeggy <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2020/11/09 17:54:26 by lpeggy            #+#    #+#             */
-/*   Updated: 2021/08/01 16:54:23 by lpeggy           ###   ########.fr       */
+/*   Created: 2021/08/01 16:28:44 by lpeggy            #+#    #+#             */
+/*   Updated: 2021/08/01 16:32:04 by lpeggy           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "libft.h"
 
-void	ft_lstclear(t_list **lst, void (*del)(void *))
+void	free_double_int_arr(int **arr, int size)
 {
-	t_list	*tmp;
+	int		i;
 
-	if (lst && del)
+	i = -1;
+	if (arr)
 	{
-		while (*lst)
+		while (++i < size)
 		{
-			tmp = (*lst)->next;
-			ft_lstdelone(*lst, del);
-			(*lst) = tmp;
+			if (arr[i])
+				free(arr[i]);
 		}
+		free(arr);
 	}
 }
