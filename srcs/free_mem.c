@@ -6,7 +6,7 @@
 /*   By: lpeggy <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/08/01 19:51:41 by lpeggy            #+#    #+#             */
-/*   Updated: 2021/08/02 18:09:22 by lpeggy           ###   ########.fr       */
+/*   Updated: 2021/08/02 21:18:48 by lpeggy           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,11 +46,12 @@ void	free_proc(void *ptr)
 		free(proc);
 }
 
-void	free_mem(t_vars *vars)
+int	free_mem(t_vars *vars)
 {
 	free_double_char_arr(vars->path_arr);
 	ft_lstclear(&vars->cmd_arr, free_proc);
 	ft_lstclear(&vars->env, free_env);
 	//write(1, "emm\n", 4);
 	//sleep(10);
+	return (1);
 }

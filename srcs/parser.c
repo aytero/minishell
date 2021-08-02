@@ -6,13 +6,13 @@
 /*   By: ssobchak <ssobchak@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/01 17:14:16 by lpeggy            #+#    #+#             */
-/*   Updated: 2021/08/02 16:54:53 by lpeggy           ###   ########.fr       */
+/*   Updated: 2021/08/02 22:23:03 by lpeggy           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "parser.h"
 
-char	*dollarsign(char *str, int *i, t_vars *vars)
+static char	*dollarsign(char *str, int *i, t_vars *vars)
 {
 	int		j;
 	char	*key;
@@ -55,7 +55,7 @@ char	*slash(char *str, int *i)
 }
 */
 
-char	*quotes(char *str, int *i)
+static char	*quotes(char *str, int *i)
 {
 	int		j;
 	char	*bef;
@@ -79,7 +79,7 @@ char	*quotes(char *str, int *i)
 	return (bef);
 }
 
-char	*doublequotes(char *str, int *i, t_vars *vars)
+static char	*doublequotes(char *str, int *i, t_vars *vars)
 {
 	int		j;
 	char	*bef;

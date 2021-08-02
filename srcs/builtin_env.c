@@ -6,7 +6,7 @@
 /*   By: lpeggy <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/12 17:45:28 by lpeggy            #+#    #+#             */
-/*   Updated: 2021/08/01 16:28:52 by lpeggy           ###   ########.fr       */
+/*   Updated: 2021/08/02 21:26:38 by lpeggy           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,7 +29,7 @@ t_list	*env_to_list(char **env)
 	return (head);
 }
 
-char	**env_to_char(t_list *env)//free arr after usage
+char	**env_to_char(t_list *env)
 {
 	char	**arr;
 	int		i;
@@ -37,7 +37,6 @@ char	**env_to_char(t_list *env)//free arr after usage
 	arr = ft_calloc(sizeof(char *), (ft_lstsize(env) + 1));//creates leak
 	if (!arr)
 		return (NULL);
-	//ft_memset(arr, 0, sizeof(arr));
 	i = 0;
 	while (env)
 	{
@@ -62,10 +61,10 @@ int	builtin_env(t_proc *proc, t_list **head)
 		if (((t_env_var *)env->content)->value != NULL)
 		{
 			write(1, ((t_env_var *)env->content)->key,
-					ft_strlen(((t_env_var *)env->content)->key));
+				ft_strlen(((t_env_var *)env->content)->key));
 			write(1, "=", 1);
 			write(1, ((t_env_var *)env->content)->value,
-					ft_strlen(((t_env_var *)env->content)->value));
+				ft_strlen(((t_env_var *)env->content)->value));
 			write(1, "\n", 1);
 		}
 		env = env->next;

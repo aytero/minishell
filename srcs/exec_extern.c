@@ -6,7 +6,7 @@
 /*   By: lpeggy <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/08/02 18:48:21 by lpeggy            #+#    #+#             */
-/*   Updated: 2021/08/02 20:16:46 by lpeggy           ###   ########.fr       */
+/*   Updated: 2021/08/02 22:34:18 by lpeggy           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,19 +28,19 @@ void	wait_loop(void *ptr)
 //		exit_failure("");
 }
 
-void	wait_one(pid_t pid)
+static void	wait_one(pid_t pid)
 {
 	int		status;
 	int		wpid;
 
-	wpid = waitpid(pid, &status, 0);//WUNTRACED);
+	wpid = waitpid(pid, &status, 0);
 	while (!WIFEXITED(status) && !WIFSIGNALED(status))
 		wpid = waitpid(pid, &status, WUNTRACED);
 	if (WIFEXITED(status))
 		g_exit_status = WEXITSTATUS(status);
 }
 
-void	exec_child_proc(t_proc *proc, t_vars *vars)
+static void	exec_child_proc(t_proc *proc, t_vars *vars)
 {
 	char	*path;
 
@@ -53,13 +53,13 @@ void	exec_child_proc(t_proc *proc, t_vars *vars)
 	path = pathfinder(vars, proc->cmd);
 	DEBUG && printf(GREY"path = |%s|"RESET, path);
 	path || exit_failure(proc->cmd, "command not found", 0);
-	if (proc->rd_in_nbr)// || vars->flag_pipe)
+	if (proc->rd_in_nbr)
 		dup2(proc->fd[FD_IN], 0) >= 0 || exit_failure(proc->cmd, NULL, 1);
-	if (proc->rd_out_nbr)// || vars->flag_pipe)
+	if (proc->rd_out_nbr)
 		dup2(proc->fd[FD_OUT], 1) >= 0 || exit_failure(proc->cmd, NULL, 1);
 	(execve(path, proc->args, env_to_char(vars->env)) >= 0)
 		|| exit_failure(proc->cmd, NULL, 1);
-	free(path);//all mem free
+	free(path);
 }
 
 int	exec_extern(t_proc *proc, t_vars *vars)
@@ -80,9 +80,12 @@ int	exec_extern(t_proc *proc, t_vars *vars)
 	else
 	{
 		if (vars->flag_pipe)
+		{
 			close_pipes(vars);
-		//wait_loop(proc);
-		wait_one(pid);
+			wait_one(pid);
+		}
+		else
+			wait_loop(proc);
 		signal(SIGINT, sig_handler);
 		signal(SIGQUIT, sig_handler);
 	}

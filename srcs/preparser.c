@@ -6,7 +6,7 @@
 /*   By: lpeggy <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/07/13 18:25:59 by lpeggy            #+#    #+#             */
-/*   Updated: 2021/08/02 20:09:31 by lpeggy           ###   ########.fr       */
+/*   Updated: 2021/08/02 22:23:02 by lpeggy           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,7 +21,7 @@ static int	word_after(char *str, int i, char *divider)
 	return (1);
 }
 
-int	skim(char *str)
+static int	skim(char *str)
 {
 	int		i;
 
@@ -84,5 +84,6 @@ void	pre_parser(char *str, t_vars *vars)
 	//DEBUG_PARSER && _print_list(&vars->cmd_arr);
 	ft_lstiter_param(vars->cmd_arr, &deal_spec_symbs, vars);
 	DEBUG_PARSER && printf(GREY"\tafter all parse"RESET);
+	DEBUG_PARSER && printf(GREY"flag_pipe = %d"RESET, vars->flag_pipe);
 	DEBUG_PARSER && _print_list(&vars->cmd_arr);
 }

@@ -6,7 +6,7 @@
 /*   By: lpeggy <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/01 20:49:41 by lpeggy            #+#    #+#             */
-/*   Updated: 2021/08/02 20:17:48 by lpeggy           ###   ########.fr       */
+/*   Updated: 2021/08/02 21:48:39 by lpeggy           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,7 +36,6 @@ int	choose_cmd(t_proc *proc, t_vars *vars)
 	int		i;
 
 	DEBUG && printf(GREY"choosing cmd"RESET);
-
 	i = if_builtin(proc->cmd);
 	if (i)
 	{
@@ -54,8 +53,8 @@ int	choose_cmd(t_proc *proc, t_vars *vars)
 		i == 1 && builtin_echo(proc->args);
 		i == 2 && builtin_cd(proc->args, vars);
 		i == 3 && builtin_pwd(vars);
-		i == 4 && builtin_export(proc->args, vars);
-		i == 5 && builtin_unset(proc->args, vars);
+		i == 4 && builtin_export(proc->cmd, proc->args, vars);
+		i == 5 && builtin_unset(proc->cmd, proc->args, vars);
 		i == 6 && builtin_env(proc, &vars->env);
 		i == 7 && builtin_exit(proc->args, vars);
 		return (g_exit_status);
@@ -63,7 +62,7 @@ int	choose_cmd(t_proc *proc, t_vars *vars)
 	return (exec_extern(proc, vars));
 }
 
-int	restore_stdio(t_vars *vars)
+static int	restore_stdio(t_vars *vars)
 {
 	if (dup2(vars->fd_holder[FD_IN], 0) < 0)
 		return (!report_failure("dup2", NULL, 1));
@@ -72,7 +71,7 @@ int	restore_stdio(t_vars *vars)
 	return (1);
 }
 
-int	store_stdio(t_vars *vars)
+static int	store_stdio(t_vars *vars)
 {
 	vars->fd_holder[FD_IN] = dup(0);
 	if (vars->fd_holder[FD_IN] < 0)

@@ -6,7 +6,7 @@
 /*   By: lpeggy <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/07/05 18:24:09 by lpeggy            #+#    #+#             */
-/*   Updated: 2021/08/02 20:16:32 by lpeggy           ###   ########.fr       */
+/*   Updated: 2021/08/02 22:37:01 by lpeggy           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,12 +46,19 @@ static void	open_pipes(t_vars *vars, t_proc *proc)
 int	deal_pipes(t_vars *vars, t_proc *proc)
 {
 	if (proc->id != 0)
-		//dup2(vars->pfd[proc->id - 1][0], proc->fd[FD_IN]) >= 0 || exit_failure(proc->cmd, NULL, 1);
-		dup2(vars->pfd[proc->id - 1][0], 0) >= 0 || exit_failure(proc->cmd, NULL, 1);
+		dup2(vars->pfd[proc->id - 1][0], 0) >= 0
+		|| exit_failure(proc->cmd, NULL, 1);
 	if (proc->id != vars->pipe_nbr)
-		//dup2(vars->pfd[proc->id][1], proc->fd[FD_OUT]) >= 0 || exit_failure(proc->cmd, NULL, 1);
-		dup2(vars->pfd[proc->id][1], 1) >= 0 || exit_failure(proc->cmd, NULL, 1);
+		dup2(vars->pfd[proc->id][1], 1) >= 0
+		|| exit_failure(proc->cmd, NULL, 1);
 	return (1);
+}
+
+static void	pipe_child_proc(t_proc *proc, t_vars *vars, int i)
+{
+	proc->id = i;
+	choose_cmd(proc, vars);
+	exit(g_exit_status);
 }
 
 void	exec_piped(t_vars *vars)
@@ -64,35 +71,15 @@ void	exec_piped(t_vars *vars)
 	open_pipes(vars, (t_proc *)vars->cmd_arr->content);
 	i = 0;
 	tmp = vars->cmd_arr;
-	signal(SIGINT, parent_sig_handler);
-	signal(SIGQUIT, parent_sig_handler);
+	signal(SIGINT, SIG_IGN);
+	signal(SIGQUIT, SIG_IGN);
 	while (tmp)
 	{
 		proc = (t_proc *)tmp->content;
 		proc->pid = fork();
 		proc->pid >= 0 || report_failure(proc->cmd, NULL, 1);
 		if (proc->pid == 0)
-		{
-			signal(SIGINT, SIG_DFL);
-			signal(SIGQUIT, SIG_DFL);
-			/*
-			if (proc->flag_redir)
-			{
-				if (!deal_redir(proc))
-					exit(g_exit_status);
-				//write(2, "here\n", 5);
-			}
-			*/
-			//lags when heredoc
-			proc->id = i;
-			//write(2, "err\n", 4);
-			//deal_pipes(vars, proc) && close_pipes(vars);
-			//close_pipes(vars);
-			//write(2, "err\n", 4);
-			choose_cmd(proc, vars);
-			exit(g_exit_status);
-			//exit(0);
-		}
+			pipe_child_proc(proc, vars, i);
 		tmp = tmp->next;
 		i++;
 	}

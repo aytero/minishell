@@ -6,11 +6,21 @@
 /*   By: lpeggy <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/12 17:52:02 by lpeggy            #+#    #+#             */
-/*   Updated: 2021/08/01 18:00:06 by lpeggy           ###   ########.fr       */
+/*   Updated: 2021/08/02 21:26:42 by lpeggy           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "execute.h"
+
+static int	env_arr_size(char **env)
+{
+	int		i;
+
+	i = -1;
+	while (env[++i])
+		;
+	return (i);
+}
 
 static int	print_sorted(char **sorted)
 {
@@ -52,7 +62,7 @@ static int	sort_env(t_vars *vars)
 	return (print_sorted(sorted));
 }
 
-static int	check_export_arg(char *arg)
+int	check_env_arg(char *cmd, char *arg)
 {
 	char	*tmp;
 	int		i;
@@ -62,7 +72,7 @@ static int	check_export_arg(char *arg)
 		tmp = ft_strjoin_free(arg, "'");
 		arg = ft_strjoin("`", tmp);
 		free(tmp);
-		return (!builtin_error("export", arg, "not a valid identifier"));
+		return (!builtin_error(cmd, arg, "not a valid identifier"));
 	}
 	if (!ft_strchr(arg, '='))
 		return (0);
@@ -74,26 +84,26 @@ static int	check_export_arg(char *arg)
 			tmp = ft_strjoin_free(arg, "'");
 			arg = ft_strjoin("`", tmp);
 			free(tmp);
-			return (!builtin_error("export", arg, "not a valid identifier"));
+			return (!builtin_error(cmd, arg, "not a valid identifier"));
 		}
 	}
 	return (1);
 }
 
-int	builtin_export(char **cmd, t_vars *vars)
+int	builtin_export(char *cmd, char **args, t_vars *vars)
 {
 	int		i;
 
 	g_exit_status = 0;
-	if (!cmd[1])
+	if (!args[1])
 		return (!sort_env(vars));
 	i = 0;
-	while (cmd[++i])
+	while (args[++i])
 	{
-		if (!check_export_arg(cmd[i]))
+		if (!check_env_arg(cmd, args[i]))
 			continue ;
-		if (!set_env_var(&vars->env, cmd[i]))
-			return (!builtin_error("export", cmd[i], "malloc error"));
+		if (!set_env_var(&vars->env, args[i]))
+			return (!builtin_error(cmd, args[i], "malloc error"));
 	}
 	return (0);
 }

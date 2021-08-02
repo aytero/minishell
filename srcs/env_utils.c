@@ -6,21 +6,11 @@
 /*   By: lpeggy <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/12 17:24:31 by lpeggy            #+#    #+#             */
-/*   Updated: 2021/08/01 16:28:56 by lpeggy           ###   ########.fr       */
+/*   Updated: 2021/08/02 21:26:40 by lpeggy           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include <execute.h>
-
-int	env_arr_size(char **env)//needed for export sort
-{
-	int		i;
-
-	i = -1;
-	while (env[++i])
-		;
-	return (i);
-}
 
 char	*get_env_var(t_list *env, char *key)
 {
@@ -35,10 +25,6 @@ char	*get_env_var(t_list *env, char *key)
 
 int	delete_env_var(t_list **head, char *key)
 {
-	//ft_lstiter(*env, del_one);
-//}
-//void	ft_lst_del_node(t_lst **head, char *key)
-//{
 	t_list	*del;
 	t_list	*prev;
 
@@ -48,12 +34,8 @@ int	delete_env_var(t_list **head, char *key)
 	{
 		if (!ft_strcmp((((t_env_var *)del->content)->key), key))
 		{
-			//prev && (prev->next = del->next);
-			//!prev && (*head = del->next);
-			if (prev)
-				prev->next = del->next;
-			else
-				*head = del->next;
+			prev && (prev->next = del->next);
+			!prev && (*head = del->next);
 			free(((t_env_var *)del->content)->key);
 			free(((t_env_var *)del->content)->value);
 			free(del->content);
@@ -64,7 +46,7 @@ int	delete_env_var(t_list **head, char *key)
 			prev = del;
 		del = del->next;
 	}
-	return (0);//redo to void
+	return (0);
 }
 
 int	set_env_var(t_list **env, char *env_line)
@@ -76,8 +58,6 @@ int	set_env_var(t_list **env, char *env_line)
 	sign = ft_strchr(env_line, '=');
 //	if (sign == env_line)
 //		return (0);
-	//sign && (*sign = '\0');
-	//sign && (sign++);
 	if (sign)
 	{
 		*sign = '\0';
@@ -85,7 +65,6 @@ int	set_env_var(t_list **env, char *env_line)
 	}
 	kv[0] = ft_strdup(env_line);
 	kv[1] = ft_strdup(sign);
-	
 	tmp = *env;
 	while (tmp)
 	{
@@ -111,7 +90,7 @@ int	new_env_var(t_list **head, char **kv)
 
 int	replace_env_var(t_list *node, char **kv)
 {
-	free(((t_env_var *)node->content)->key);//why though replace key
+	free(((t_env_var *)node->content)->key);
 	free(((t_env_var *)node->content)->value);
 	((t_env_var *)node->content)->key = kv[0];
 	((t_env_var *)node->content)->value = kv[1];

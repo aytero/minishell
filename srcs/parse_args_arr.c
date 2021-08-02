@@ -6,7 +6,7 @@
 /*   By: lpeggy <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/07/30 20:18:00 by lpeggy            #+#    #+#             */
-/*   Updated: 2021/08/02 20:09:37 by lpeggy           ###   ########.fr       */
+/*   Updated: 2021/08/02 22:23:06 by lpeggy           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -71,7 +71,7 @@ char	**split_arr_if(char *str, int elem_nbr, t_util *util, int (*func)())
 	return (arr);
 }
 
-void	get_cmd_name(t_proc *proc)
+static void	get_cmd_name(t_proc *proc)
 {
 	char	*tmp;
 
