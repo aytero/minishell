@@ -6,7 +6,7 @@
 /*   By: lpeggy <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/01 20:51:06 by lpeggy            #+#    #+#             */
-/*   Updated: 2021/08/02 22:27:40 by lpeggy           ###   ########.fr       */
+/*   Updated: 2021/08/02 23:19:47 by lpeggy           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -76,7 +76,7 @@ typedef struct s_vars
 
 int				g_exit_status;
 
-void			rl_replace_line(void);
+void			rl_replace_line(const char *text, int clear_undo);
 void			rl_clear_history(void);
 void			parent_sig_handler(int signal);
 void			sig_handler(int signal);

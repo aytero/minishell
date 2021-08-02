@@ -6,7 +6,7 @@
 /*   By: lpeggy <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/08/02 18:32:14 by lpeggy            #+#    #+#             */
-/*   Updated: 2021/08/02 19:59:26 by lpeggy           ###   ########.fr       */
+/*   Updated: 2021/08/02 23:33:45 by lpeggy           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -80,9 +80,9 @@ static int	deal_infiles(t_proc *proc)
 	if (fd < 0)
 		return (!report_failure(proc->infiles[i], NULL, 1));
 	proc->fd[FD_IN] = dup(fd);
+	close(fd);
 	if (proc->fd[FD_IN] < 0)
 		return (!report_failure(proc->infiles[i], NULL, 1));
-	close(fd);
 	if (proc->rd_in_type[i] == 2 && unlink(proc->infiles[i]))
 		return (!report_failure(proc->infiles[i], NULL, 1));
 	return (1);

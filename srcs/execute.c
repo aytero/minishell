@@ -6,7 +6,7 @@
 /*   By: lpeggy <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/01 20:49:41 by lpeggy            #+#    #+#             */
-/*   Updated: 2021/08/02 21:48:39 by lpeggy           ###   ########.fr       */
+/*   Updated: 2021/08/02 23:49:43 by lpeggy           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,12 +44,20 @@ int	choose_cmd(t_proc *proc, t_vars *vars)
 			return (g_exit_status);
 		if (vars->flag_pipe)
 			deal_pipes(vars, proc);
-		if (proc->rd_in_nbr && (dup2(proc->fd[FD_IN], 0) < 0))
-			return (report_failure(proc->infiles[proc->rd_in_nbr - 1],
+		if (proc->rd_in_nbr)// && (dup2(proc->fd[FD_IN], 0) < 0))
+		{
+			if (dup2(proc->fd[FD_IN], 0) < 0)
+				return (report_failure(proc->infiles[proc->rd_in_nbr - 1],
 					NULL, 1));
-		if (proc->rd_out_nbr && (dup2(proc->fd[FD_OUT], 1) < 0))
-			return (report_failure(proc->outfiles[proc->rd_out_nbr - 1],
+			close(proc->fd[FD_IN]);
+		}
+		if (proc->rd_out_nbr)// && (dup2(proc->fd[FD_OUT], 1) < 0))
+		{
+			if (dup2(proc->fd[FD_OUT], 1) < 0)
+				return (report_failure(proc->outfiles[proc->rd_out_nbr - 1],
 					NULL, 1));
+			close(proc->fd[FD_OUT]);
+		}
 		i == 1 && builtin_echo(proc->args);
 		i == 2 && builtin_cd(proc->args, vars);
 		i == 3 && builtin_pwd(vars);
@@ -66,19 +74,23 @@ static int	restore_stdio(t_vars *vars)
 {
 	if (dup2(vars->fd_holder[FD_IN], 0) < 0)
 		return (!report_failure("dup2", NULL, 1));
+	close(vars->fd_holder[FD_IN]);
 	if (dup2(vars->fd_holder[FD_OUT], 1) < 0)
 		return (!report_failure("dup", NULL, 1));
+	close(vars->fd_holder[FD_IN]);
 	return (1);
 }
 
 static int	store_stdio(t_vars *vars)
 {
 	vars->fd_holder[FD_IN] = dup(0);
+	close(0);
 	if (vars->fd_holder[FD_IN] < 0)
 		return (!report_failure("dup", NULL, 1));
 	vars->fd_holder[FD_OUT] = dup(1);
 	if (vars->fd_holder[FD_OUT] < 0)
 		return (!report_failure("dup", NULL, 1));
+	close(1);
 	return (1);
 }
 
@@ -86,6 +98,7 @@ void	execute(t_vars *vars)
 {
 	t_proc	*proc;
 
+	// fd leaks in fd_holders
 	if (!store_stdio(vars) || vars->parse_err)
 		return ;
 	proc = (t_proc *)vars->cmd_arr->content;
@@ -101,6 +114,6 @@ void	execute(t_vars *vars)
 		exec_piped(vars);
 	else
 		choose_cmd(proc, vars);
-	restore_stdio(vars);
+	restore_stdio(vars);//maybe not useful in general execution
 	DEBUG && printf(GREY"exit status: %d"RESET, g_exit_status);
 }
