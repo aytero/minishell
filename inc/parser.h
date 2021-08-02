@@ -6,7 +6,7 @@
 /*   By: lpeggy <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/01 17:14:48 by lpeggy            #+#    #+#             */
-/*   Updated: 2021/07/31 17:51:09 by lpeggy           ###   ########.fr       */
+/*   Updated: 2021/08/02 16:54:09 by lpeggy           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,7 +16,7 @@
 # include <stdio.h>
 # include <stdlib.h>
 # include <fcntl.h>
-# include "../libft/libft.h"//
+# include "../libft/libft.h"
 # include <readline/readline.h>
 # include <readline/history.h>
 # include "execute.h"
@@ -35,9 +35,9 @@ typedef struct s_util
 	int			nbr;
 	int			flag_dq;
 	int			flag_q;
-	int			flag_sp;//
 }				t_util;
 
+void			get_cmd_name(t_proc *proc);
 int				count_elems(char *str, char *divider);
 char			**split_arr_if(char *str, int elem_nbr, t_util *util, int (*func)());
 int				cut_cmds(char **cmd_line, char *str, int *i, t_util *util);

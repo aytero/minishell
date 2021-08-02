@@ -6,7 +6,7 @@
 /*   By: lpeggy <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/07/30 20:18:00 by lpeggy            #+#    #+#             */
-/*   Updated: 2021/08/01 18:18:06 by lpeggy           ###   ########.fr       */
+/*   Updated: 2021/08/02 20:09:37 by lpeggy           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,8 +18,8 @@ int	cut_args(char **args, char *str, int *i, t_util *util)
 		util->flag_q++;
 	if (str[*i] == '\"')
 		util->flag_dq++;
-	if ((ft_strchr(" \n\f\v\r\t", str[*i]) || str[*i + 1] == '\0')
-		&& str[*i - 1] != '\\' && !(util->flag_q % 2) && !(util->flag_dq % 2))
+	if (ft_strchr(" \n\f\v\r\t", str[*i])// || str[*i + 1] == '\0')
+		&& !(util->flag_q % 2) && !(util->flag_dq % 2))
 	{
 		args[util->k] = ft_substr(str, util->start, *i - util->start);
 		*i = skip_symbs(str, *i, " \n\t\f\v\r");
@@ -79,7 +79,7 @@ void	get_cmd_name(t_proc *proc)
 		return ;
 	tmp = ft_strtrim(proc->args[0], " \n\f\v\r\t");
 	tmp = lowercasing(tmp);
-	if (!ft_strcmp(tmp, "export") || !ft_strcmp(tmp, "unset")
+	if (tmp[0] == '$' || !ft_strcmp(tmp, "export") || !ft_strcmp(tmp, "unset")
 		|| !ft_strcmp(tmp, "exit"))
 	{
 		proc->cmd = ft_strtrim(proc->args[0], " \n\f\v\r\t");

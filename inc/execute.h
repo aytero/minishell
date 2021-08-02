@@ -6,7 +6,7 @@
 /*   By: lpeggy <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/01 20:51:06 by lpeggy            #+#    #+#             */
-/*   Updated: 2021/08/01 19:53:44 by lpeggy           ###   ########.fr       */
+/*   Updated: 2021/08/02 20:11:06 by lpeggy           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,8 +27,8 @@
 # include <readline/history.h>
 
 # include "colors.h"
-# define DEBUG 1
-# define DEBUG_PARSER 1
+# define DEBUG 0
+# define DEBUG_PARSER 0
 
 # define FD_IN 0
 # define FD_OUT 1
@@ -60,13 +60,13 @@ typedef struct s_redir
 typedef struct s_proc
 {
 	int			pid;
-	int			flag_heredoc;//?
 	int			flag_pipe;
 	int			flag_redir;
-	int			fd[2];
 	int			rd_i;
+	int			fd[2];
 	int			rd_in_nbr;
 	int			rd_out_nbr;
+	int			id;
 	int			*rd_in_type;
 	int			*rd_out_type;
 	char		**infiles;
@@ -93,7 +93,7 @@ typedef struct s_vars
 
 int		g_exit_status;
 
-void	child_sig_handler(int signal);
+void	parent_sig_handler(int signal);
 void	sig_handler(int signal);
 void	free_proc(void *ptr);
 void	free_mem(t_vars *vars);
@@ -123,7 +123,10 @@ int		builtin_env(t_proc *proc, t_list **head);
 int		builtin_exit(char **cmd, t_vars *vars);
 
 void	wait_loop(void *ptr);
+void	exec_child_proc(t_proc *proc, t_vars *vars);
 int		exec_extern(t_proc *proc, t_vars *vars);
+int	close_pipes(t_vars *vars);
+int	deal_pipes(t_vars *vars, t_proc *proc);
 void	exec_piped(t_vars *vars);
 int		deal_redir(t_proc *proc);
 char	*pathfinder(t_vars *vars, char *cmd);

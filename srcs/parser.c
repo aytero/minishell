@@ -6,7 +6,7 @@
 /*   By: ssobchak <ssobchak@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/01 17:14:16 by lpeggy            #+#    #+#             */
-/*   Updated: 2021/07/31 18:00:23 by lpeggy           ###   ########.fr       */
+/*   Updated: 2021/08/02 16:54:53 by lpeggy           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,6 +39,7 @@ char	*dollarsign(char *str, int *i, t_vars *vars)
 	return (str);
 }
 
+/*
 char	*slash(char *str, int *i)
 {
 	char	*bef;
@@ -52,6 +53,7 @@ char	*slash(char *str, int *i)
 	free(aft);
 	return (bef);
 }
+*/
 
 char	*quotes(char *str, int *i)
 {
@@ -87,9 +89,9 @@ char	*doublequotes(char *str, int *i, t_vars *vars)
 	j = *i;
 	while (str[++(*i)])
 	{
-		if (str[*i] == '\\' && (str[*i + 1] == '\"' || str[*i + 1] == '$'
-				|| str[*i + 1] == '\\'))
-			str = slash(str, i);
+		//if (str[*i] == '\\' && (str[*i + 1] == '\"' || str[*i + 1] == '$'
+		//		|| str[*i + 1] == '\\'))
+		//	str = slash(str, i);
 		//(str[*i] == '$') && (str = dollarsign(str, i, vars));
 		if (str[*i] == '$')
 			str = dollarsign(str, i, vars);
@@ -119,7 +121,7 @@ char	*parser(char *str, t_vars *vars)
 	while (str[++i])
 	{
 		(str[i] == '\'') && (str = quotes(str, &i));
-		(str[i] == '\\') && (str = slash(str, &i));
+		//(str[i] == '\\') && (str = slash(str, &i));
 		(str[i] == '\"') && (str = doublequotes(str, &i, vars));
 		(str[i] == '$') && (str = dollarsign(str, &i, vars));
 	}

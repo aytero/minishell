@@ -6,7 +6,7 @@
 /*   By: ssobchak <ssobchak@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/10 19:46:26 by ssobchak          #+#    #+#             */
-/*   Updated: 2021/08/01 18:06:24 by lpeggy           ###   ########.fr       */
+/*   Updated: 2021/08/02 16:54:48 by lpeggy           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -64,7 +64,7 @@ static int	skip_until(char *str, int i, int sym)// replace with skip symbs cause
 {
 	while (str[i])
 	{
-		if (str[i] == sym && str[i - 1] != '\\')
+		if (str[i] == sym)// && str[i - 1] != '\\')
 			return (i);
 		i++;
 	}
@@ -77,8 +77,8 @@ int	if_quotes(char *str, int i)
 		i = skip_until(str, i + 1, '\'');
 	if (str[i] == '\"')
 		i = skip_until(str, i + 1, '\"');
-	if (str[i] == '\\')
-		i += 2;
+	//if (str[i] == '\\')
+	//	i += 2;
 	return (i);
 }
 
@@ -102,7 +102,7 @@ char	*dollarswap(char *str, char *rkey, int *i, int j)
 
 	//may be error with aft-index
 	bef = ft_substr(str, 0, j);
-	aft = ft_strdup(str + *i + 1);
+	aft = ft_strdup(str + *i);// + 1);
 	bef = ft_strjoin_free(bef, rkey);
 	bef = ft_strjoin_free(bef, aft);
 	free(aft);

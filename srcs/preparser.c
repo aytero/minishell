@@ -6,7 +6,7 @@
 /*   By: lpeggy <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/07/13 18:25:59 by lpeggy            #+#    #+#             */
-/*   Updated: 2021/08/01 16:34:04 by lpeggy           ###   ########.fr       */
+/*   Updated: 2021/08/02 20:09:31 by lpeggy           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,7 +16,7 @@ static int	word_after(char *str, int i, char *divider)
 {
 	i = skip_symbs(str, i, divider);
 	i = skip_symbs(str, i, " \n\f\v\r\t");
-	if ((!str[i] || ft_strchr(">|<", str[i])) && ft_strcmp(divider, "|"))
+	if ((!str[i] || ft_strchr(">|<", str[i])))// && ft_strcmp(divider, "|"))
 		return (0);
 	return (1);
 }

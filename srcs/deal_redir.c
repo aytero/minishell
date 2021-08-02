@@ -1,14 +1,25 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   deal_redir.c                                       :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: lpeggy <marvin@42.fr>                      +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2021/08/02 18:32:14 by lpeggy            #+#    #+#             */
+/*   Updated: 2021/08/02 19:59:26 by lpeggy           ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "execute.h"
 
-static int	deal_here_doc(t_proc *proc, int i)
+static void	write_heredoc(t_proc *proc, int i)
 {
-	int		fd;
 	char	*str;
+	int		fd;
 
-	fd = -1;
 	fd = open(proc->infiles[i], O_WRONLY | O_TRUNC | O_CREAT, 0644);
 	if (fd < 0)
-		return (0);
+		exit(1);
 	str = readline("> ");
 	while (str != NULL && ft_strcmp(str, proc->infiles[i]))
 	{
@@ -19,12 +30,33 @@ static int	deal_here_doc(t_proc *proc, int i)
 	}
 	free(str);
 	close(fd);
-	if (i < proc->rd_in_nbr - 1)
+}
+
+static int	deal_heredoc(t_proc *proc, int i)
+{
+	pid_t	pid;
+
+	signal(SIGINT, SIG_IGN);
+	signal(SIGQUIT, SIG_IGN);
+	pid = fork();
+	if (pid == -1)
+		return (0);
+	if (pid == 0)
 	{
-		if (!unlink(proc->infiles[i]))
-			return (0);
+		signal(SIGINT, SIG_DFL);
+		signal(SIGQUIT, SIG_DFL);
+		write_heredoc(proc, i);
+		exit(0);
 	}
-	return (1);
+	else
+	{
+		waitpid(pid, 0, 0);
+		signal(SIGINT, sig_handler);
+		signal(SIGQUIT, sig_handler);
+		if ((i < proc->rd_in_nbr - 1) && unlink(proc->infiles[i]))
+			return (0);
+		return (1);
+	}
 }
 
 static int	deal_infiles(t_proc *proc)
@@ -35,28 +67,24 @@ static int	deal_infiles(t_proc *proc)
 	i = -1;
 	while (++i < proc->rd_in_nbr)
 	{
+		if (proc->rd_in_type[i] == 2 && !deal_heredoc(proc, i))
+			return (!report_failure(proc->infiles[i], NULL, 1));
 		if (proc->rd_in_type[i] == 2)
-		{
-			if (!deal_here_doc(proc, i))
-				return (!report_failure(proc->infiles[i], NULL, 1));
 			continue ;
-		}
 		fd = open(proc->infiles[i], O_RDONLY);
 		if (fd < 0)
 			return (!report_failure(proc->infiles[i], NULL, 1));
 		close(fd);
 	}
-	i--;
-	fd = open(proc->infiles[i], O_RDONLY);
+	fd = open(proc->infiles[--i], O_RDONLY);
 	if (fd < 0)
 		return (!report_failure(proc->infiles[i], NULL, 1));
 	proc->fd[FD_IN] = dup(fd);
 	if (proc->fd[FD_IN] < 0)
 		return (!report_failure(proc->infiles[i], NULL, 1));
 	close(fd);
-	//if signal hd_buf remains
-	if (proc->flag_heredoc)
-		!unlink(proc->infiles[i]) || report_failure(proc->infiles[i], NULL, 1);
+	if (proc->rd_in_type[i] == 2 && unlink(proc->infiles[i]))
+		return (!report_failure(proc->infiles[i], NULL, 1));
 	return (1);
 }
 
@@ -87,9 +115,9 @@ static int	deal_outfiles(t_proc *proc)
 
 int	deal_redir(t_proc *proc)
 {
-	if (!deal_outfiles(proc))
+	if (proc->rd_out_nbr && !deal_outfiles(proc))
 		return (0);
-	if (!deal_infiles(proc))
+	if (proc->rd_in_nbr && !deal_infiles(proc))
 		return (0);
 	return (1);
 }
