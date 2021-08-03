@@ -6,7 +6,7 @@
 /*   By: lpeggy <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/08 16:42:00 by lpeggy            #+#    #+#             */
-/*   Updated: 2021/08/03 18:00:06 by lpeggy           ###   ########.fr       */
+/*   Updated: 2021/08/03 23:36:57 by lpeggy           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,7 +22,7 @@ int	builtin_error(char *cmd, char *arg, char *error_mes)
 	write(2, ": ", 2);
 	ft_putstr_fd(error_mes, 2);
 	write(2, "\n", 1);
-	return (0);
+	return (1);
 }
 
 int	builtin_unset(char *cmd, char **args, t_vars *vars)
@@ -30,6 +30,7 @@ int	builtin_unset(char *cmd, char **args, t_vars *vars)
 	int		i;
 
 	i = 0;
+	(void)cmd;
 	while (args[++i])
 	{
 		if (!check_env_arg(cmd, args[i]))

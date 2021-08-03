@@ -6,7 +6,7 @@
 /*   By: lpeggy <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/01 20:51:06 by lpeggy            #+#    #+#             */
-/*   Updated: 2021/08/02 23:19:47 by lpeggy           ###   ########.fr       */
+/*   Updated: 2021/08/04 00:00:35 by lpeggy           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -66,7 +66,6 @@ typedef struct s_vars
 	int			parse_err;
 	int			cmd_nbr;
 	int			pipe_nbr;
-	int			fd[2];
 	int			fd_holder[2];
 	int			**pfd;
 	char		**path_arr;
@@ -78,34 +77,49 @@ int				g_exit_status;
 
 void			rl_replace_line(const char *text, int clear_undo);
 void			rl_clear_history(void);
+
+/*		signal.c		*/
 void			parent_sig_handler(int signal);
 void			sig_handler(int signal);
+
+/*		free_mem.c		*/
 void			free_proc(void *ptr);
 int				free_mem(t_vars *vars);
 
-t_list			*env_to_list(char **env);
-char			**env_to_char(t_list *env);
+/*		env_utils.c		*/
 char			*get_env_var(t_list *env, char *key);
 int				delete_env_var(t_list **env, char *key);
 int				set_env_var(t_list **env, char *env_line);
 int				new_env_var(t_list **head, char **kv);
 int				replace_env_var(t_list *node, char **kv);
-int				check_env_arg(char *cmd, char *arg);
 
+/*		builtin_commands.c		*/
 int				builtin_error(char *cmd, char *arg, char *error_mes);
 int				builtin_pwd(t_vars *vars);
 int				builtin_echo(char **cmd);
-int				builtin_cd(char **cmd, t_vars *vars);
-int				builtin_export(char *cmd, char **args, t_vars *vars);
 int				builtin_unset(char *cmd, char **args, t_vars *vars);
-int				builtin_env(t_proc *proc, t_list **head);
 int				builtin_exit(char **cmd, t_vars *vars);
 
+/*		builtin_cd.c		*/
+int				builtin_cd(char **cmd, t_vars *vars);
+
+/*		builtin_export.c		*/
+int				builtin_export(char *cmd, char **args, t_vars *vars);
+int				check_env_arg(char *cmd, char *arg);
+
+/*		builtin_env.c		*/
+int				builtin_env(t_proc *proc, t_list **head);
+char			**env_to_char(t_list *env);
+t_list			*env_to_list(char **env);
+
+int				restore_stdio(t_vars *vars);
+int				store_stdio(t_vars *vars);
 int				close_pipes(t_vars *vars);
 int				deal_pipes(t_vars *vars, t_proc *proc);
 int				deal_redir(t_proc *proc);
 void			exec_piped(t_vars *vars);
 int				exec_extern(t_proc *proc, t_vars *vars);
+int				exec_builtin(t_vars *vars, t_proc *proc, int cmd_id);
 int				choose_cmd(t_proc *proc, t_vars *vars);
 void			execute(t_vars *vars);
 void			wait_loop(void *ptr);

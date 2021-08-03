@@ -6,7 +6,7 @@
 /*   By: lpeggy <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/29 20:28:49 by lpeggy            #+#    #+#             */
-/*   Updated: 2021/08/02 20:31:07 by lpeggy           ###   ########.fr       */
+/*   Updated: 2021/08/03 20:48:33 by lpeggy           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,6 +21,10 @@ static char	*search_in_environ(t_vars *vars, char *cmd, DIR *dir)
 	tmp = NULL;
 	i = -1;
 	DEBUG && printf(GREY"getting path from bin:"RESET);
+	if (!vars->path_arr[0])
+	{
+		return (NULL);
+	}
 	while (vars->path_arr[++i])
 	{
 		dir = opendir(vars->path_arr[i]);

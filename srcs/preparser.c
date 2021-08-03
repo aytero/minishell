@@ -6,7 +6,7 @@
 /*   By: lpeggy <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/07/13 18:25:59 by lpeggy            #+#    #+#             */
-/*   Updated: 2021/08/02 22:23:02 by lpeggy           ###   ########.fr       */
+/*   Updated: 2021/08/03 23:55:04 by lpeggy           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,6 +28,8 @@ static int	skim(char *str)
 	if (!str[0])
 		return (0);
 	i = skip_symbs(str, 0, " \n\f\v\r\t");
+	if (!str[i])
+		return (0);
 	if (str[i] == '|')
 		return (!write(2, "sh: syntax error\n", 17));
 	while (str[i])
@@ -48,7 +50,7 @@ static int	skim(char *str)
 	return (1);
 }
 
-void	deal_spec_symbs(void *ptr, t_vars *vars)
+static void	deal_spec_symbs(void *ptr, t_vars *vars)
 {
 	int		i;
 	t_proc	*proc;
@@ -56,9 +58,9 @@ void	deal_spec_symbs(void *ptr, t_vars *vars)
 	proc = (t_proc *)ptr;
 	i = -1;
 	if (proc->cmd)
-		proc->cmd = parser(proc->cmd, vars);
+		proc->cmd = parse_spec_symbs(proc->cmd, vars);
 	while (proc->args[++i])
-		proc->args[i] = parser(proc->args[i], vars);
+		proc->args[i] = parse_spec_symbs(proc->args[i], vars);
 }
 
 void	pre_parser(char *str, t_vars *vars)

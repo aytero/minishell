@@ -6,7 +6,7 @@
 /*   By: lpeggy <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/12 17:24:31 by lpeggy            #+#    #+#             */
-/*   Updated: 2021/08/02 21:26:40 by lpeggy           ###   ########.fr       */
+/*   Updated: 2021/08/04 00:00:47 by lpeggy           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,7 +38,7 @@ int	delete_env_var(t_list **head, char *key)
 			!prev && (*head = del->next);
 			free(((t_env_var *)del->content)->key);
 			free(((t_env_var *)del->content)->value);
-			free(del->content);
+			free((t_env_var *)del->content);
 			free(del);
 			return (1);
 		}

@@ -6,13 +6,13 @@
 /*   By: lpeggy <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/08/01 16:47:13 by lpeggy            #+#    #+#             */
-/*   Updated: 2021/08/02 20:09:41 by lpeggy           ###   ########.fr       */
+/*   Updated: 2021/08/03 23:53:58 by lpeggy           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "parser.h"
 
-char	*cut_redir(char *str, int type, int *io, t_proc *proc)
+static char	*cut_redir(char *str, int type, int *io, t_proc *proc)
 {
 	int		file_i;
 	char	*tmp;
@@ -41,7 +41,7 @@ char	*cut_redir(char *str, int type, int *io, t_proc *proc)
 	return (str);
 }
 
-int	malloc_redir(t_proc *proc)
+static int	malloc_redir(t_proc *proc)
 {
 	proc->rd_in_nbr && (proc->infiles = ft_calloc(sizeof(char *),
 			(proc->rd_in_nbr + 1)));

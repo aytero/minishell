@@ -6,13 +6,13 @@
 /*   By: lpeggy <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/01 20:49:41 by lpeggy            #+#    #+#             */
-/*   Updated: 2021/08/03 19:26:48 by lpeggy           ###   ########.fr       */
+/*   Updated: 2021/08/03 20:19:32 by lpeggy           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "execute.h"
 
-static int	restore_stdio(t_vars *vars)
+int	restore_stdio(t_vars *vars)
 {
 	if (dup2(vars->fd_holder[FD_IN], 0) < 0)
 		return (!report_failure("dup2", NULL, 1));
@@ -23,7 +23,7 @@ static int	restore_stdio(t_vars *vars)
 	return (1);
 }
 
-static int	store_stdio(t_vars *vars)
+int	store_stdio(t_vars *vars)
 {
 	vars->fd_holder[FD_IN] = dup(0);
 	close(0);
@@ -36,7 +36,7 @@ static int	store_stdio(t_vars *vars)
 	return (1);
 }
 
-int	if_builtin(char *cmd)
+static int	if_builtin(char *cmd)
 {
 	if (!ft_strcmp(cmd, "echo"))
 		return (1);
@@ -60,45 +60,18 @@ int	choose_cmd(t_proc *proc, t_vars *vars)
 	int		i;
 
 	DEBUG && printf(GREY"choosing cmd"RESET);
-	i = if_builtin(proc->cmd);
-	if (i)
+	if (!proc->cmd)
 	{
-		DEBUG && printf(GREY"executing builtin cmd"RESET);
-		if ((proc->flag_redir && !vars->flag_pipe) && !deal_redir(proc))
-			return (g_exit_status);
-		if (vars->flag_pipe)
-			deal_pipes(vars, proc);
-		if (proc->rd_in_nbr || proc->rd_out_nbr)
-		{
-			if (!store_stdio(vars))
-				return (0);
-		}
-		if (proc->rd_in_nbr && !(dup2(proc->fd[FD_IN], 0) >= 0
-			&& !close(proc->fd[FD_IN])))
-				return (report_failure(proc->infiles[proc->rd_in_nbr - 1],
-					NULL, 1));
-		if (proc->rd_out_nbr)// && (dup2(proc->fd[FD_OUT], 1) < 0))
-		{
-			if (dup2(proc->fd[FD_OUT], 1) < 0)
-				return (report_failure(proc->outfiles[proc->rd_out_nbr - 1],
-					NULL, 1));
-			close(proc->fd[FD_OUT]);
-		}
-		i == 1 && builtin_echo(proc->args);
-		i == 2 && builtin_cd(proc->args, vars);
-		i == 3 && builtin_pwd(vars);
-		i == 4 && builtin_export(proc->cmd, proc->args, vars);
-		i == 5 && builtin_unset(proc->cmd, proc->args, vars);
-		i == 6 && builtin_env(proc, &vars->env);
-		i == 7 && builtin_exit(proc->args, vars);
-		if (proc->rd_in_nbr || proc->rd_out_nbr)
-		{
-			restore_stdio(vars);
-			return (0);
-		}
+		store_stdio(vars);
+		deal_redir(proc);
+		restore_stdio(vars);
 		return (g_exit_status);
 	}
-	return (exec_extern(proc, vars));
+	i = if_builtin(proc->cmd);
+	if (!i)
+		return (exec_extern(proc, vars));
+	exec_builtin(vars, proc, i);
+	return (g_exit_status);
 }
 
 void	execute(t_vars *vars)
@@ -108,14 +81,6 @@ void	execute(t_vars *vars)
 	if (vars->parse_err)
 		return ;
 	proc = (t_proc *)vars->cmd_arr->content;
-	if (!proc->cmd)
-	{
-		store_stdio(vars);
-		deal_redir(proc);
-		restore_stdio(vars);
-		DEBUG && printf(GREY"exit status: %d"RESET, g_exit_status);
-		return ;
-	}
 	DEBUG && printf(GREY"\tstarting execution"RESET);
 	if (vars->flag_pipe)
 		exec_piped(vars);

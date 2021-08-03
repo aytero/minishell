@@ -6,7 +6,7 @@
 /*   By: lpeggy <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/08/02 18:32:14 by lpeggy            #+#    #+#             */
-/*   Updated: 2021/08/03 19:28:13 by lpeggy           ###   ########.fr       */
+/*   Updated: 2021/08/03 23:39:03 by lpeggy           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -115,7 +115,6 @@ static int	deal_outfiles(t_proc *proc)
 
 int	deal_redir(t_proc *proc)
 {
-	DEBUG && printf(GREY"dealing redirects"RESET);
 	if (proc->rd_out_nbr && !deal_outfiles(proc))
 		return (0);
 	if (proc->rd_in_nbr && !deal_infiles(proc))

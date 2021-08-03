@@ -6,7 +6,7 @@
 /*   By: ssobchak <ssobchak@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/01 17:14:16 by lpeggy            #+#    #+#             */
-/*   Updated: 2021/08/02 22:23:03 by lpeggy           ###   ########.fr       */
+/*   Updated: 2021/08/03 23:55:43 by lpeggy           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -109,7 +109,7 @@ static char	*doublequotes(char *str, int *i, t_vars *vars)
 	return (bef);
 }
 
-char	*parser(char *str, t_vars *vars)
+char	*parse_spec_symbs(char *str, t_vars *vars)
 {
 	int		i;
 	char	*tmp;

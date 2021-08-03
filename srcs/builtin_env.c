@@ -6,7 +6,7 @@
 /*   By: lpeggy <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/12 17:45:28 by lpeggy            #+#    #+#             */
-/*   Updated: 2021/08/02 21:26:38 by lpeggy           ###   ########.fr       */
+/*   Updated: 2021/08/04 00:00:39 by lpeggy           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,7 +34,7 @@ char	**env_to_char(t_list *env)
 	char	**arr;
 	int		i;
 
-	arr = ft_calloc(sizeof(char *), (ft_lstsize(env) + 1));//creates leak
+	arr = ft_calloc(sizeof(char *), (ft_lstsize(env) + 1));
 	if (!arr)
 		return (NULL);
 	i = 0;
@@ -54,7 +54,7 @@ int	builtin_env(t_proc *proc, t_list **head)
 	t_list	*env;
 
 	if (proc->args[1])
-		return (!builtin_error(proc->cmd, proc->args[1], "too many arguments"));
+		return (builtin_error(proc->cmd, proc->args[1], "too many arguments"));
 	env = *head;
 	while (env)
 	{
