@@ -6,7 +6,7 @@
 /*   By: lpeggy <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/01 17:14:27 by lpeggy            #+#    #+#             */
-/*   Updated: 2021/08/02 16:55:34 by lpeggy           ###   ########.fr       */
+/*   Updated: 2021/08/03 17:47:05 by lpeggy           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,7 +21,7 @@ static void	init_sh(t_vars *vars, char **envp)
 	g_exit_status = 0;
 	errno = 0;
 	vars->env = env_to_list(envp);
-	//set_env_var(&vars->env, "OLDPWD");//makes it kinda invisible
+	set_env_var(&vars->env, "OLDPWD");
 	path = get_env_var(vars->env, "PATH");
 	vars->path_arr = ft_split(path, ':');
 }
@@ -40,7 +40,7 @@ int	main(int argc, char **argv, char **envp)
 	t_vars	vars;
 	char	*line;
 
-	(void)argv;//
+	(void)argv;
 	if (argc > 1)
 		return (!write(1, "Too many arguments\n", 19));
 	init_sh(&vars, envp);

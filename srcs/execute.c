@@ -6,11 +6,35 @@
 /*   By: lpeggy <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/01 20:49:41 by lpeggy            #+#    #+#             */
-/*   Updated: 2021/08/02 23:49:43 by lpeggy           ###   ########.fr       */
+/*   Updated: 2021/08/03 19:26:48 by lpeggy           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "execute.h"
+
+static int	restore_stdio(t_vars *vars)
+{
+	if (dup2(vars->fd_holder[FD_IN], 0) < 0)
+		return (!report_failure("dup2", NULL, 1));
+	close(vars->fd_holder[FD_IN]);
+	if (dup2(vars->fd_holder[FD_OUT], 1) < 0)
+		return (!report_failure("dup", NULL, 1));
+	close(vars->fd_holder[FD_IN]);
+	return (1);
+}
+
+static int	store_stdio(t_vars *vars)
+{
+	vars->fd_holder[FD_IN] = dup(0);
+	close(0);
+	if (vars->fd_holder[FD_IN] < 0)
+		return (!report_failure("dup", NULL, 1));
+	vars->fd_holder[FD_OUT] = dup(1);
+	if (vars->fd_holder[FD_OUT] < 0)
+		return (!report_failure("dup", NULL, 1));
+	close(1);
+	return (1);
+}
 
 int	if_builtin(char *cmd)
 {
@@ -44,13 +68,15 @@ int	choose_cmd(t_proc *proc, t_vars *vars)
 			return (g_exit_status);
 		if (vars->flag_pipe)
 			deal_pipes(vars, proc);
-		if (proc->rd_in_nbr)// && (dup2(proc->fd[FD_IN], 0) < 0))
+		if (proc->rd_in_nbr || proc->rd_out_nbr)
 		{
-			if (dup2(proc->fd[FD_IN], 0) < 0)
+			if (!store_stdio(vars))
+				return (0);
+		}
+		if (proc->rd_in_nbr && !(dup2(proc->fd[FD_IN], 0) >= 0
+			&& !close(proc->fd[FD_IN])))
 				return (report_failure(proc->infiles[proc->rd_in_nbr - 1],
 					NULL, 1));
-			close(proc->fd[FD_IN]);
-		}
 		if (proc->rd_out_nbr)// && (dup2(proc->fd[FD_OUT], 1) < 0))
 		{
 			if (dup2(proc->fd[FD_OUT], 1) < 0)
@@ -65,45 +91,26 @@ int	choose_cmd(t_proc *proc, t_vars *vars)
 		i == 5 && builtin_unset(proc->cmd, proc->args, vars);
 		i == 6 && builtin_env(proc, &vars->env);
 		i == 7 && builtin_exit(proc->args, vars);
+		if (proc->rd_in_nbr || proc->rd_out_nbr)
+		{
+			restore_stdio(vars);
+			return (0);
+		}
 		return (g_exit_status);
 	}
 	return (exec_extern(proc, vars));
-}
-
-static int	restore_stdio(t_vars *vars)
-{
-	if (dup2(vars->fd_holder[FD_IN], 0) < 0)
-		return (!report_failure("dup2", NULL, 1));
-	close(vars->fd_holder[FD_IN]);
-	if (dup2(vars->fd_holder[FD_OUT], 1) < 0)
-		return (!report_failure("dup", NULL, 1));
-	close(vars->fd_holder[FD_IN]);
-	return (1);
-}
-
-static int	store_stdio(t_vars *vars)
-{
-	vars->fd_holder[FD_IN] = dup(0);
-	close(0);
-	if (vars->fd_holder[FD_IN] < 0)
-		return (!report_failure("dup", NULL, 1));
-	vars->fd_holder[FD_OUT] = dup(1);
-	if (vars->fd_holder[FD_OUT] < 0)
-		return (!report_failure("dup", NULL, 1));
-	close(1);
-	return (1);
 }
 
 void	execute(t_vars *vars)
 {
 	t_proc	*proc;
 
-	// fd leaks in fd_holders
-	if (!store_stdio(vars) || vars->parse_err)
+	if (vars->parse_err)
 		return ;
 	proc = (t_proc *)vars->cmd_arr->content;
 	if (!proc->cmd)
 	{
+		store_stdio(vars);
 		deal_redir(proc);
 		restore_stdio(vars);
 		DEBUG && printf(GREY"exit status: %d"RESET, g_exit_status);
@@ -114,6 +121,5 @@ void	execute(t_vars *vars)
 		exec_piped(vars);
 	else
 		choose_cmd(proc, vars);
-	restore_stdio(vars);//maybe not useful in general execution
 	DEBUG && printf(GREY"exit status: %d"RESET, g_exit_status);
 }

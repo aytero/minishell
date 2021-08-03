@@ -6,7 +6,7 @@
 /*   By: lpeggy <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/08/02 18:48:21 by lpeggy            #+#    #+#             */
-/*   Updated: 2021/08/02 23:40:11 by lpeggy           ###   ########.fr       */
+/*   Updated: 2021/08/03 19:29:11 by lpeggy           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -92,10 +92,6 @@ int	exec_extern(t_proc *proc, t_vars *vars)
 		}
 		else
 			wait_loop(proc);
-		if (proc->rd_out_nbr)
-			close(proc->fd[FD_OUT]);
-		if (proc->rd_in_nbr)
-			close(proc->fd[FD_IN]);
 		signal(SIGINT, sig_handler);
 		signal(SIGQUIT, sig_handler);
 	}
