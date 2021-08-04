@@ -6,7 +6,7 @@
 /*   By: lpeggy <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/01 17:14:27 by lpeggy            #+#    #+#             */
-/*   Updated: 2021/08/03 21:55:37 by lpeggy           ###   ########.fr       */
+/*   Updated: 2021/08/04 18:30:38 by lpeggy           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,7 +15,6 @@
 
 static void	reset_vars(t_vars *vars)
 {
-	g_exit_status = 0;
 	errno = 0;
 	vars->parse_err = 0;
 	vars->flag_pipe = 0;
@@ -60,7 +59,7 @@ int	main(int argc, char **argv, char **envp)
 	(void)argv;
 	if (argc > 1)
 		return (!write(1, "Too many arguments\n", 19));
-	init_sh(&vars, envp) || exit_failure("malloc fatal", NULL, 1);
+	init_sh(&vars, envp) || exit_failure("malloc fatal", NULL, 0);
 	signal(SIGINT, sig_handler);
 	signal(SIGQUIT, sig_handler);
 	line = readline("sh:> ");

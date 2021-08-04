@@ -6,7 +6,7 @@
 /*   By: lpeggy <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/08 16:42:00 by lpeggy            #+#    #+#             */
-/*   Updated: 2021/08/03 23:36:57 by lpeggy           ###   ########.fr       */
+/*   Updated: 2021/08/04 21:00:50 by lpeggy           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -69,7 +69,11 @@ int	builtin_echo(char **cmd)
 		write(1, "\n", 1);
 		return (0);
 	}
-	!ft_strcmp(cmd[1], "-n") && ((opt_flag = 1) && i++);
+	while (cmd[i] && !ft_strcmp(cmd[i], "-n"))
+	{
+		opt_flag = 1;
+		i++;
+	}
 	while (cmd[i])
 	{
 		write(1, cmd[i], ft_strlen(cmd[i]));
@@ -84,23 +88,28 @@ int	builtin_echo(char **cmd)
 int	builtin_exit(char **cmd, t_vars *vars)
 {
 	int		i;
+	int		arg;
 
 	i = -1;
-	if (!cmd[1] && free_mem(vars))
+	if (!cmd[1] && free_mem(vars) && write(2, "exit\n", 5))
 		exit(0);
+	arg = ft_atoi(cmd[1]);
 	while (cmd[1][++i])
 	{
-		if (!ft_isdigit(cmd[1][i]) && cmd[1][i] != '-')
+		if ((!ft_isdigit(cmd[1][i]) && cmd[1][i] != '-')
+			|| (cmd[1][0] == '-' && arg == 0)
+			|| (cmd[1][0] != '-' && arg == -1))
 		{
+			write(2, "exit\n", 5);
 			builtin_error(cmd[0], cmd[1], "numeric argument required");
 			free_mem(vars);
 			exit(255);
 		}
 	}
 	cmd[2] && builtin_error(cmd[0], cmd[2], "too many arguments");
-	if (!cmd[2] && (cmd[1] < 0 && free_mem(vars)))
-		exit(256 - ft_atoi(cmd[1]));
-	if (!cmd[2] && free_mem(vars))
-		exit(ft_atoi(cmd[1]));
+	if (!cmd[2] && (arg < 0 && free_mem(vars) && write(2, "exit\n", 5)))
+		exit(256 + arg);
+	if (!cmd[2] && free_mem(vars) && write(2, "exit\n", 5))
+		exit(arg);
 	return (0);
 }

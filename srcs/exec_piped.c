@@ -6,7 +6,7 @@
 /*   By: lpeggy <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/07/05 18:24:09 by lpeggy            #+#    #+#             */
-/*   Updated: 2021/08/03 20:40:53 by lpeggy           ###   ########.fr       */
+/*   Updated: 2021/08/04 18:20:51 by lpeggy           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,12 +31,12 @@ static void	open_pipes(t_vars *vars, t_proc *proc)
 	int		i;
 
 	vars->pfd = malloc(sizeof(int *) * vars->pipe_nbr);
-	vars->pfd || exit_failure(proc->cmd, NULL, 1);
+	vars->pfd || exit_failure(proc->cmd, NULL, 0);
 	i = -1;
 	while (++i < vars->pipe_nbr)
 	{
 		vars->pfd[i] = malloc(sizeof(int) * 2);
-		vars->pfd[i] || exit_failure(proc->cmd, NULL, 1);
+		vars->pfd[i] || exit_failure(proc->cmd, NULL, 0);
 	}
 	i = -1;
 	while (++i < vars->pipe_nbr)
@@ -77,7 +77,7 @@ void	exec_piped(t_vars *vars)
 	{
 		proc = (t_proc *)tmp->content;
 		proc->pid = fork();
-		proc->pid >= 0 || report_failure(proc->cmd, NULL, 1);
+		proc->pid >= 0 || report_failure(proc->cmd, NULL, 0);
 		if (proc->pid == 0)
 			pipe_child_proc(proc, vars, i);
 		tmp = tmp->next;

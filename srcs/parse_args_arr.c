@@ -6,7 +6,7 @@
 /*   By: lpeggy <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/07/30 20:18:00 by lpeggy            #+#    #+#             */
-/*   Updated: 2021/08/03 23:54:01 by lpeggy           ###   ########.fr       */
+/*   Updated: 2021/08/04 18:18:14 by lpeggy           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,7 +48,7 @@ char	**split_arr_if(char *str, int elem_nbr, t_util *util, int (*func)())
 	char	**arr;
 
 	arr = ft_calloc(sizeof(char *), elem_nbr + 1);
-	if (!arr && report_failure("malloc", NULL, 1))
+	if (!arr && report_failure("malloc", NULL, 0))
 		return (NULL);
 	util->nbr = elem_nbr;
 	(elem_nbr == 1 && arr[util->k]) && (arr[util->k] = ft_strdup(str));
@@ -99,7 +99,7 @@ int	make_cmd_list(char **cmd_line, t_vars *vars, t_util *util)
 	while (++i < vars->cmd_nbr)
 	{
 		proc = ft_calloc(sizeof(t_proc), 1);
-		if (!proc && report_failure("malloc", NULL, 1))
+		if (!proc && report_failure("malloc", NULL, 0))
 			return (0);
 		cmd_line[i] = parse_redir(cmd_line[i], proc);
 		arg_nbr = count_elems(cmd_line[i], " \n\f\v\r\t");

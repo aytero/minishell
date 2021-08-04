@@ -6,7 +6,7 @@
 /*   By: lpeggy <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/01 20:49:41 by lpeggy            #+#    #+#             */
-/*   Updated: 2021/08/03 20:19:32 by lpeggy           ###   ########.fr       */
+/*   Updated: 2021/08/04 18:16:24 by lpeggy           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,10 +15,10 @@
 int	restore_stdio(t_vars *vars)
 {
 	if (dup2(vars->fd_holder[FD_IN], 0) < 0)
-		return (!report_failure("dup2", NULL, 1));
+		return (!report_failure("dup2", NULL, 0));
 	close(vars->fd_holder[FD_IN]);
 	if (dup2(vars->fd_holder[FD_OUT], 1) < 0)
-		return (!report_failure("dup", NULL, 1));
+		return (!report_failure("dup", NULL, 0));
 	close(vars->fd_holder[FD_IN]);
 	return (1);
 }
@@ -28,10 +28,10 @@ int	store_stdio(t_vars *vars)
 	vars->fd_holder[FD_IN] = dup(0);
 	close(0);
 	if (vars->fd_holder[FD_IN] < 0)
-		return (!report_failure("dup", NULL, 1));
+		return (!report_failure("dup", NULL, 0));
 	vars->fd_holder[FD_OUT] = dup(1);
 	if (vars->fd_holder[FD_OUT] < 0)
-		return (!report_failure("dup", NULL, 1));
+		return (!report_failure("dup", NULL, 0));
 	close(1);
 	return (1);
 }

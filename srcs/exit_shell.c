@@ -6,7 +6,7 @@
 /*   By: lpeggy <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/26 22:20:19 by lpeggy            #+#    #+#             */
-/*   Updated: 2021/08/02 22:36:27 by lpeggy           ###   ########.fr       */
+/*   Updated: 2021/08/04 19:19:11 by lpeggy           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,7 @@
 
 int	exit_failure(char *cmd, char *str, int errtype)
 {
-	if (errtype == 1)
+	if (errtype == 0)
 	{
 		write(2, "sh: ", 4);
 		ft_putstr_fd(cmd, 2);
@@ -30,14 +30,14 @@ int	exit_failure(char *cmd, char *str, int errtype)
 		write(2, ": ", 2);
 		ft_putstr_fd(str, 2);
 		write(2, "\n", 2);
-		g_exit_status = 1;
+		g_exit_status = errtype;
 	}
 	exit(g_exit_status);
 }
 
 int	report_failure(char *cmd, char *str, int errtype)
 {
-	if (errtype)
+	if (errtype == 0)
 	{
 		write(2, "sh: ", 4);
 		ft_putstr_fd(cmd, 2);
@@ -53,7 +53,7 @@ int	report_failure(char *cmd, char *str, int errtype)
 		write(2, ": ", 2);
 		ft_putstr_fd(str, 2);
 		write(2, "\n", 2);
-		g_exit_status = 1;
+		g_exit_status = errtype;
 	}
 	return (g_exit_status);
 }

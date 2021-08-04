@@ -6,7 +6,7 @@
 /*   By: lpeggy <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/08/02 18:32:14 by lpeggy            #+#    #+#             */
-/*   Updated: 2021/08/03 23:39:03 by lpeggy           ###   ########.fr       */
+/*   Updated: 2021/08/04 18:20:14 by lpeggy           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -68,23 +68,23 @@ static int	deal_infiles(t_proc *proc)
 	while (++i < proc->rd_in_nbr)
 	{
 		if (proc->rd_in_type[i] == 2 && !deal_heredoc(proc, i))
-			return (!report_failure(proc->infiles[i], NULL, 1));
+			return (!report_failure(proc->infiles[i], NULL, 0));
 		if (proc->rd_in_type[i] == 2)
 			continue ;
 		fd = open(proc->infiles[i], O_RDONLY);
 		if (fd < 0)
-			return (!report_failure(proc->infiles[i], NULL, 1));
+			return (!report_failure(proc->infiles[i], NULL, 0));
 		close(fd);
 	}
 	fd = open(proc->infiles[--i], O_RDONLY);
 	if (fd < 0)
-		return (!report_failure(proc->infiles[i], NULL, 1));
+		return (!report_failure(proc->infiles[i], NULL, 0));
 	proc->fd[FD_IN] = dup(fd);
 	close(fd);
 	if (proc->fd[FD_IN] < 0)
-		return (!report_failure(proc->infiles[i], NULL, 1));
+		return (!report_failure(proc->infiles[i], NULL, 0));
 	if (proc->rd_in_type[i] == 2 && unlink(proc->infiles[i]))
-		return (!report_failure(proc->infiles[i], NULL, 1));
+		return (!report_failure(proc->infiles[i], NULL, 0));
 	return (1);
 }
 
@@ -101,12 +101,12 @@ static int	deal_outfiles(t_proc *proc)
 	{
 		fd = open(proc->outfiles[i], flags[proc->rd_out_type[i] / 3], 0644);
 		if (fd < 0)
-			return (!report_failure(proc->outfiles[i], NULL, 1));
+			return (!report_failure(proc->outfiles[i], NULL, 0));
 		if (i == proc->rd_out_nbr - 1)
 		{
 			proc->fd[FD_OUT] = dup(fd);
 			if (proc->fd[FD_OUT] < 0)
-				return (!report_failure(proc->outfiles[i], NULL, 1));
+				return (!report_failure(proc->outfiles[i], NULL, 0));
 		}
 		close(fd);
 	}

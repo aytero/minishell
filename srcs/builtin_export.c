@@ -6,7 +6,7 @@
 /*   By: lpeggy <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/12 17:52:02 by lpeggy            #+#    #+#             */
-/*   Updated: 2021/08/03 23:59:58 by lpeggy           ###   ########.fr       */
+/*   Updated: 2021/08/04 19:31:20 by lpeggy           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -67,7 +67,7 @@ int	check_env_arg(char *cmd, char *arg)
 	char	*tmp;
 	int		i;
 
-	if (ft_isdigit(arg[0]))
+	if (ft_isdigit(arg[0]) || arg[0] == '=')
 	{
 		tmp = ft_strjoin_free(arg, "'");
 		arg = ft_strjoin("`", tmp);

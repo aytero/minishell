@@ -6,7 +6,7 @@
 /*   By: lpeggy <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/07/13 18:25:59 by lpeggy            #+#    #+#             */
-/*   Updated: 2021/08/03 23:55:04 by lpeggy           ###   ########.fr       */
+/*   Updated: 2021/08/04 18:46:37 by lpeggy           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,13 +25,12 @@ static int	skim(char *str)
 {
 	int		i;
 
-	if (!str[0])
-		return (0);
 	i = skip_symbs(str, 0, " \n\f\v\r\t");
 	if (!str[i])
 		return (0);
 	if (str[i] == '|')
-		return (!write(2, "sh: syntax error\n", 17));
+		return (!write(2, 
+				"sh: syntax error near unexpected token `|'\n", 43));
 	while (str[i])
 	{
 		i = if_quotes(str, i);
@@ -68,10 +67,12 @@ void	pre_parser(char *str, t_vars *vars)
 	t_util	util;
 	char	**cmd_line;
 
+	if (!str[0] && (vars->parse_err = 1))
+		return ;
 	ft_memset(&util, 0, sizeof(t_util));
 	(skim(str) && (vars->cmd_nbr = count_elems(str, "|")))
 		|| (vars->parse_err = 1);
-	if (vars->parse_err)
+	if (vars->parse_err && (g_exit_status = 258))
 		return ;
 	DEBUG_PARSER && printf(GREY"cmd_nbr %d"RESET, vars->cmd_nbr);
 	vars->pipe_nbr = vars->cmd_nbr - 1;

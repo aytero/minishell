@@ -6,7 +6,7 @@
 /*   By: lpeggy <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/29 20:28:49 by lpeggy            #+#    #+#             */
-/*   Updated: 2021/08/03 20:48:33 by lpeggy           ###   ########.fr       */
+/*   Updated: 2021/08/04 20:48:27 by lpeggy           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -74,7 +74,8 @@ char	*pathfinder(t_vars *vars, char *cmd)
 
 	if (!ft_strncmp(cmd, "~/", 2))
 		return (get_abs_path(vars, cmd));
-	if (ft_strncmp(cmd, "./", 2) == 0 || ft_strncmp(cmd, "../", 3) == 0)
+	if (ft_strncmp(cmd, "./", 2) == 0 || ft_strncmp(cmd, "../", 3) == 0
+		|| ft_strncmp(cmd, "/bin/", 5) == 0)
 	{
 		DEBUG && printf(GREY"getting relatable path:"RESET);
 		return (ft_strdup(cmd));

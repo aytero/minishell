@@ -1,21 +1,22 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ft_atoi.c                                          :+:      :+:    :+:   */
+/*   ft_atoi_long.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: lpeggy <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2020/10/28 17:31:06 by lpeggy            #+#    #+#             */
-/*   Updated: 2021/08/04 20:52:08 by lpeggy           ###   ########.fr       */
+/*   Created: 2021/08/04 20:28:52 by lpeggy            #+#    #+#             */
+/*   Updated: 2021/08/04 20:52:05 by lpeggy           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "libft.h"
 
-int	ft_atoi(const char *str)
+long	ft_atol(const char *str)
 {
-	long	result;
-	int		sign;
+	long long			signed_res;
+	unsigned long long	result;
+	int					sign;
 
 	result = 0;
 	sign = 1;
@@ -29,11 +30,16 @@ int	ft_atoi(const char *str)
 	while (*str >= '0' && *str <= '9')
 	{
 		result = result * 10 + *str - '0';
-		if (result > 2147483647 && sign == 1)
+		if (result > 9223372036854775807 && sign == 1)
 			return (-1);
-		if (result > 2147483648 && sign == -1)
+		if (result > 9223372036854775807 && sign == -1)
 			return (0);
+		//if (result > 2147483647 && sign == 1)
+		//	return (-1);
+		//if (result > 2147483648 && sign == -1)
+		//	return (0);
 		str++;
 	}
+	signed_res = (long long)result;
 	return (result * sign);
 }
