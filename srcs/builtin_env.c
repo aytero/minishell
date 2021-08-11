@@ -6,7 +6,7 @@
 /*   By: lpeggy <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/12 17:45:28 by lpeggy            #+#    #+#             */
-/*   Updated: 2021/08/11 17:07:46 by lpeggy           ###   ########.fr       */
+/*   Updated: 2021/08/11 22:05:34 by lpeggy           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,10 +29,12 @@ t_list	*env_to_list(char **env)
 	return (head);
 }
 
-char	**env_to_char(t_list *env)
+char	**env_to_char(t_list *env, int flag_exp)
 {
-	char	**arr;
-	int		i;
+	char		**arr;
+	int			i;
+	t_env_var	*env_var;
+	char		*tmp;
 
 	arr = ft_calloc(sizeof(char *), (ft_lstsize(env) + 1));
 	if (!arr)
@@ -40,9 +42,22 @@ char	**env_to_char(t_list *env)
 	i = 0;
 	while (env)
 	{
-		((t_env_var *)env->content)->value != NULL
-			&& (arr[i] = ft_strjoin_sep(((t_env_var *)env->content)->key,
-			((t_env_var *)env->content)->value, '='));
+		env_var = (t_env_var *)env->content;
+		if (env_var->value != NULL)
+		//if (env_var->value[0])
+		{
+			if (flag_exp)
+			{
+				tmp = ft_strjoin("\"", env_var->value);
+				tmp = ft_strjoin_free(tmp, "\"");
+				arr[i] = ft_strjoin_sep(env_var->key, tmp, '=');
+				free(tmp);
+			}
+			else
+				arr[i] = ft_strjoin_sep(env_var->key, env_var->value, '=');
+		}
+		//env_var->value != NULL && (arr[i] = ft_strjoin_sep(env_var->key, env_var->value, '='));
+
 		env = env->next;
 		i++;
 	}

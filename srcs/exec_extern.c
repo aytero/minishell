@@ -6,7 +6,7 @@
 /*   By: lpeggy <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/08/02 18:48:21 by lpeggy            #+#    #+#             */
-/*   Updated: 2021/08/04 19:34:50 by lpeggy           ###   ########.fr       */
+/*   Updated: 2021/08/11 21:35:05 by lpeggy           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -65,7 +65,7 @@ static void	exec_child_proc(t_proc *proc, t_vars *vars)
 		dup2(proc->fd[FD_OUT], 1) >= 0 || exit_failure(proc->cmd, NULL, 0);
 		close(proc->fd[FD_OUT]);
 	}
-	(execve(path, proc->args, env_to_char(vars->env)) >= 0)
+	(execve(path, proc->args, env_to_char(vars->env, 0)) >= 0)
 		|| exit_failure(proc->cmd, NULL, 0);
 	free(path);
 }

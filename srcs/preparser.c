@@ -6,7 +6,7 @@
 /*   By: lpeggy <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/07/13 18:25:59 by lpeggy            #+#    #+#             */
-/*   Updated: 2021/08/04 18:46:37 by lpeggy           ###   ########.fr       */
+/*   Updated: 2021/08/11 20:56:46 by lpeggy           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,7 +16,7 @@ static int	word_after(char *str, int i, char *divider)
 {
 	i = skip_symbs(str, i, divider);
 	i = skip_symbs(str, i, " \n\f\v\r\t");
-	if ((!str[i] || ft_strchr(">|<", str[i])))// && ft_strcmp(divider, "|"))
+	if ((!str[i] || ft_strchr(">|<", str[i])))
 		return (0);
 	return (1);
 }
@@ -29,7 +29,7 @@ static int	skim(char *str)
 	if (!str[i])
 		return (0);
 	if (str[i] == '|')
-		return (!write(2, 
+		return (!write(2,
 				"sh: syntax error near unexpected token `|'\n", 43));
 	while (str[i])
 	{
@@ -67,12 +67,15 @@ void	pre_parser(char *str, t_vars *vars)
 	t_util	util;
 	char	**cmd_line;
 
-	if (!str[0] && (vars->parse_err = 1))
+	if (!str[0])
+	{
+		vars->parse_err = 1;
 		return ;
+	}
 	ft_memset(&util, 0, sizeof(t_util));
 	(skim(str) && (vars->cmd_nbr = count_elems(str, "|")))
-		|| (vars->parse_err = 1);
-	if (vars->parse_err && (g_exit_status = 258))
+		|| ((vars->parse_err = 1) && (g_exit_status = 258));
+	if (vars->parse_err)
 		return ;
 	DEBUG_PARSER && printf(GREY"cmd_nbr %d"RESET, vars->cmd_nbr);
 	vars->pipe_nbr = vars->cmd_nbr - 1;
@@ -83,10 +86,6 @@ void	pre_parser(char *str, t_vars *vars)
 	free_double_char_arr(cmd_line);
 	if (vars->parse_err)
 		return ;
-	//DEBUG_PARSER && printf(GREY"\tbefore dealing spec symbs"RESET);
-	//DEBUG_PARSER && _print_list(&vars->cmd_arr);
 	ft_lstiter_param(vars->cmd_arr, &deal_spec_symbs, vars);
-	DEBUG_PARSER && printf(GREY"\tafter all parse"RESET);
-	DEBUG_PARSER && printf(GREY"flag_pipe = %d"RESET, vars->flag_pipe);
 	DEBUG_PARSER && _print_list(&vars->cmd_arr);
 }

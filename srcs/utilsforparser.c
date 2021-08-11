@@ -6,7 +6,7 @@
 /*   By: ssobchak <ssobchak@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/10 19:46:26 by ssobchak          #+#    #+#             */
-/*   Updated: 2021/08/04 18:18:43 by lpeggy           ###   ########.fr       */
+/*   Updated: 2021/08/11 20:56:43 by lpeggy           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -60,11 +60,11 @@ int	_print_list(t_list **head)
 	return (1);
 }
 
-static int	skip_until(char *str, int i, int sym)// replace with skip symbs cause no slash
+static int	skip_until(char *str, int i, int sym)
 {
 	while (str[i])
 	{
-		if (str[i] == sym)// && str[i - 1] != '\\')
+		if (str[i] == sym)
 			return (i);
 		i++;
 	}
@@ -77,10 +77,9 @@ int	if_quotes(char *str, int i)
 		i = skip_until(str, i + 1, '\'');
 	if (str[i] == '\"')
 		i = skip_until(str, i + 1, '\"');
-	//if (str[i] == '\\')
-	//	i += 2;
 	return (i);
 }
+
 
 char *lowercasing(char *str)
 {
@@ -95,20 +94,6 @@ char *lowercasing(char *str)
 	return (str);
 }
 
-char	*dollarswap(char *str, char *rkey, int *i, int j)
-{
-	char *bef;
-	char *aft;
-
-	//may be error with aft-index
-	bef = ft_substr(str, 0, j);
-	aft = ft_strdup(str + *i);// + 1);
-	bef = ft_strjoin_free(bef, rkey);
-	bef = ft_strjoin_free(bef, aft);
-	free(aft);
-	free(str);
-	return (bef);
-}
 
 int	skip_symbs(char *str, int i, char *set)
 {
@@ -127,7 +112,9 @@ int	count_elems(char *str, char *divider)
 	!ft_strchr("><", str[i]) && (i = skip_symbs(str, 0, divider));
 	while (str[i])
 	{
+		//printf(RED"%s"RESET, str + i);
 		i = if_quotes(str, i);
+		//printf(RED"%s"RESET, str + i);
 		if (ft_strchr(divider, str[i]))
 		{
 			elems_nbr++;

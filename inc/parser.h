@@ -6,7 +6,7 @@
 /*   By: lpeggy <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/01 17:14:48 by lpeggy            #+#    #+#             */
-/*   Updated: 2021/08/11 17:23:49 by lpeggy           ###   ########.fr       */
+/*   Updated: 2021/08/11 19:52:09 by lpeggy           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,7 +55,6 @@ char		*parse_spec_symbs(char *str, t_vars *vars);
 
 /*		utilsforparser.c	*/
 int			count_elems(char *str, char *divider);
-char		*dollarswap(char *str, char *rkey, int *i, int j);
 int			if_quotes(char *str, int i);
 int			skip_symbs(char *str, int i, char *set);
 char		*lowercasing(char *str);

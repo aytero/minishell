@@ -6,7 +6,7 @@
 /*   By: lpeggy <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/01 20:51:06 by lpeggy            #+#    #+#             */
-/*   Updated: 2021/08/11 17:23:43 by lpeggy           ###   ########.fr       */
+/*   Updated: 2021/08/11 21:23:39 by lpeggy           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -110,7 +110,7 @@ int				check_env_arg(char *cmd, char *arg);
 
 /*		builtin_env.c		*/
 int				builtin_env(t_proc *proc, t_list **head);
-char			**env_to_char(t_list *env);
+char			**env_to_char(t_list *env, int flag_exp);
 t_list			*env_to_list(char **env);
 
 /*		execute.c		*/

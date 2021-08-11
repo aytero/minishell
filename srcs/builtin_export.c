@@ -6,7 +6,7 @@
 /*   By: lpeggy <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/12 17:52:02 by lpeggy            #+#    #+#             */
-/*   Updated: 2021/08/11 17:11:17 by lpeggy           ###   ########.fr       */
+/*   Updated: 2021/08/11 22:05:49 by lpeggy           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,7 +28,8 @@ static int	print_sorted(char **sorted)
 
 	i = -1;
 	while (sorted[++i])
-		ft_strchr(sorted[i], '=') && printf("declare -x %s\n", sorted[i]);
+		printf("declare -x %s\n", sorted[i]);
+		//ft_strchr(sorted[i], '=') && printf("declare -x %s\n", sorted[i]);
 	free_double_char_arr(sorted);
 	return (1);
 }
@@ -41,7 +42,7 @@ static int	sort_env(t_vars *vars)
 	char	**sorted;
 	char	*tmp;
 
-	sorted = env_to_char(vars->env);
+	sorted = env_to_char(vars->env, 1);
 	size = env_arr_size(sorted);
 	i = -1;
 	while (++i < size)
@@ -88,6 +89,7 @@ int	check_env_arg(char *cmd, char *arg)
 	}
 	if (!ft_strchr(arg, '=') && !ft_strcmp(cmd, "export"))
 		return (0);
+	//	set_env_var without =
 	return (1);
 }
 
