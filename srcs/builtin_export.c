@@ -6,7 +6,7 @@
 /*   By: lpeggy <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/12 17:52:02 by lpeggy            #+#    #+#             */
-/*   Updated: 2021/08/04 19:31:20 by lpeggy           ###   ########.fr       */
+/*   Updated: 2021/08/11 17:11:17 by lpeggy           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -72,7 +72,7 @@ int	check_env_arg(char *cmd, char *arg)
 		tmp = ft_strjoin_free(arg, "'");
 		arg = ft_strjoin("`", tmp);
 		free(tmp);
-		return (!builtin_error(cmd, arg, "not a valid identifier"));
+		return (!builtin_error(cmd, arg, "not a valid identifier", 1));
 	}
 	i = -1;
 	while (arg[++i] && arg[i] != '=')
@@ -83,7 +83,7 @@ int	check_env_arg(char *cmd, char *arg)
 			tmp = ft_strjoin_free(arg, "'");
 			arg = ft_strjoin("`", tmp);
 			free(tmp);
-			return (!builtin_error(cmd, arg, "not a valid identifier"));
+			return (!builtin_error(cmd, arg, "not a valid identifier", 1));
 		}
 	}
 	if (!ft_strchr(arg, '=') && !ft_strcmp(cmd, "export"))
@@ -104,7 +104,7 @@ int	builtin_export(char *cmd, char **args, t_vars *vars)
 		if (!check_env_arg(cmd, args[i]))
 			continue ;
 		if (!set_env_var(&vars->env, args[i]))
-			return (builtin_error(cmd, args[i], "malloc error"));
+			return (builtin_error(cmd, args[i], "malloc error", 1));
 	}
 	return (0);
 }

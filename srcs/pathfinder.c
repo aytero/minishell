@@ -6,11 +6,18 @@
 /*   By: lpeggy <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/29 20:28:49 by lpeggy            #+#    #+#             */
-/*   Updated: 2021/08/04 20:48:27 by lpeggy           ###   ########.fr       */
+/*   Updated: 2021/08/11 17:38:40 by lpeggy           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "execute.h"
+
+static char	*prep_env_ret(DIR *dir, char *tmp, char *cmd, char *env_path)
+{
+	tmp = ft_strjoin_sep(env_path, cmd, '/');
+	closedir(dir);
+	return (tmp);
+}
 
 static char	*search_in_environ(t_vars *vars, char *cmd, DIR *dir)
 {
@@ -22,9 +29,7 @@ static char	*search_in_environ(t_vars *vars, char *cmd, DIR *dir)
 	i = -1;
 	DEBUG && printf(GREY"getting path from bin:"RESET);
 	if (!vars->path_arr[0])
-	{
 		return (NULL);
-	}
 	while (vars->path_arr[++i])
 	{
 		dir = opendir(vars->path_arr[i]);
@@ -34,11 +39,7 @@ static char	*search_in_environ(t_vars *vars, char *cmd, DIR *dir)
 		while (entry != NULL)
 		{
 			if (ft_strcmp(cmd, entry->d_name) == 0)
-			{
-				tmp = ft_strjoin_sep(vars->path_arr[i], cmd, '/');
-				closedir(dir);
-				return (tmp);
-			}
+				return (prep_env_ret(dir, tmp, cmd, vars->path_arr[i]));
 			entry = readdir(dir);
 		}
 		closedir(dir);

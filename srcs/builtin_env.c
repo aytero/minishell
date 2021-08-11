@@ -6,7 +6,7 @@
 /*   By: lpeggy <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/12 17:45:28 by lpeggy            #+#    #+#             */
-/*   Updated: 2021/08/04 00:00:39 by lpeggy           ###   ########.fr       */
+/*   Updated: 2021/08/11 17:07:46 by lpeggy           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,7 +54,8 @@ int	builtin_env(t_proc *proc, t_list **head)
 	t_list	*env;
 
 	if (proc->args[1])
-		return (builtin_error(proc->cmd, proc->args[1], "too many arguments"));
+		return (builtin_error(proc->cmd, proc->args[1],
+				"too many arguments", 1));
 	env = *head;
 	while (env)
 	{

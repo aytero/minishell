@@ -6,22 +6,35 @@
 /*   By: lpeggy <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/08 16:42:00 by lpeggy            #+#    #+#             */
-/*   Updated: 2021/08/04 21:00:50 by lpeggy           ###   ########.fr       */
+/*   Updated: 2021/08/11 17:11:15 by lpeggy           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "execute.h"
 
-int	builtin_error(char *cmd, char *arg, char *error_mes)
+int	builtin_error(char *cmd, char *arg, char *error_mes, int errtype)
 {
-	g_exit_status = 1;
-	write(2, "sh: ", 4);
-	ft_putstr_fd(cmd, 2);
-	write(2, ": ", 2);
-	ft_putstr_fd(arg, 2);
-	write(2, ": ", 2);
-	ft_putstr_fd(error_mes, 2);
-	write(2, "\n", 1);
+	if (errtype == 0)
+	{
+		ft_putstr_fd(cmd, 2);
+		write(2, ": ", 2);
+		ft_putstr_fd(arg, 2);
+		write(2, ": ", 2);
+		ft_putstr_fd(strerror(errno), 2);
+		write(2, "\n", 2);
+		g_exit_status = errno;
+	}
+	else
+	{
+		write(2, "sh: ", 4);
+		ft_putstr_fd(cmd, 2);
+		write(2, ": ", 2);
+		ft_putstr_fd(arg, 2);
+		write(2, ": ", 2);
+		ft_putstr_fd(error_mes, 2);
+		write(2, "\n", 1);
+		g_exit_status = 1;
+	}
 	return (1);
 }
 
@@ -101,12 +114,12 @@ int	builtin_exit(char **cmd, t_vars *vars)
 			|| (cmd[1][0] != '-' && arg == -1))
 		{
 			write(2, "exit\n", 5);
-			builtin_error(cmd[0], cmd[1], "numeric argument required");
+			builtin_error(cmd[0], cmd[1], "numeric argument required", 255);
 			free_mem(vars);
 			exit(255);
 		}
 	}
-	cmd[2] && builtin_error(cmd[0], cmd[2], "too many arguments");
+	cmd[2] && builtin_error(cmd[0], cmd[2], "too many arguments", 1);
 	if (!cmd[2] && (arg < 0 && free_mem(vars) && write(2, "exit\n", 5)))
 		exit(256 + arg);
 	if (!cmd[2] && free_mem(vars) && write(2, "exit\n", 5))

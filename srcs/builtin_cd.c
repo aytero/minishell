@@ -6,7 +6,7 @@
 /*   By: lpeggy <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/16 20:36:45 by lpeggy            #+#    #+#             */
-/*   Updated: 2021/08/03 23:50:49 by lpeggy           ###   ########.fr       */
+/*   Updated: 2021/08/11 17:11:10 by lpeggy           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,7 +39,7 @@ int	builtin_cd(char **cmd, t_vars *vars)
 	if (chdir(dir) < 0)
 	{
 		free(old_pwd);
-		return (builtin_error("cd", cmd[1], "No such file or directory"));
+		return (builtin_error("cd", cmd[1], NULL, 0));
 	}
 	new_pwd = getcwd(NULL, 0);
 	change_pwd_envs(vars, old_pwd, new_pwd);
