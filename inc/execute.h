@@ -6,7 +6,7 @@
 /*   By: lpeggy <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/01 20:51:06 by lpeggy            #+#    #+#             */
-/*   Updated: 2021/08/11 21:23:39 by lpeggy           ###   ########.fr       */
+/*   Updated: 2021/08/12 17:02:18 by lpeggy           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,7 +28,7 @@
 # include "colors.h"
 
 # define DEBUG 0
-# define DEBUG_PARSER 0
+# define DEBUG_PARSER 1
 # define FD_IN 0
 # define FD_OUT 1
 # define REDIR_IN 0
@@ -52,6 +52,7 @@ typedef struct s_proc
 	int			rd_in_nbr;
 	int			rd_out_nbr;
 	int			id;
+	int			arg_nbr;
 	int			*rd_in_type;
 	int			*rd_out_type;
 	char		**infiles;

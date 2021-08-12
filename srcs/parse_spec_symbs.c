@@ -6,7 +6,7 @@
 /*   By: ssobchak <ssobchak@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/01 17:14:16 by lpeggy            #+#    #+#             */
-/*   Updated: 2021/08/11 23:41:02 by lpeggy           ###   ########.fr       */
+/*   Updated: 2021/08/12 16:50:22 by lpeggy           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,13 +18,11 @@ static char	*dollarswap(char *str, char *rkey, int *i, int j)
 	char *aft;
 
 	bef = ft_substr(str, 0, j);
-	aft = ft_strdup(str + *i + 1);
+	aft = ft_strdup(str + *i + 1);// causes errors when end of line
 	bef = ft_strjoin_free(bef, rkey);
 	bef = ft_strjoin_free(bef, aft);
 	free(aft);
 	free(str);
-	//*i = -1;
-	//*i = j;
 	return (bef);
 }
 
@@ -35,39 +33,36 @@ static char	*dollarsign(char *str, int *i, t_vars *vars)
 	char	*rkey;
 
 	j = *i;
-	*i += 1;
-	if (str[*i] == '?')
+	if (str[*i + 1] == '?')
 	{
-		//printf("%s\n", str + *i + 1);
 		key = ft_itoa(g_exit_status);
-		//*i += 1;
+		*i += 1;
 		str = dollarswap(str, key, i, j);
 		free(key);
 		return (str);
 	}
-	if (ft_isdigit(str[*i]))
+	if (ft_isdigit(str[*i + 1]) || ft_strchr(";|", str[*i + 1]))
 	{
-		//*i += 1;
+		*i += 1;
 		str = dollarswap(str, NULL, i, j);
 		return (str);
 	}
-	//if (!ft_isalnum(str[*i] || str[*i] == ''))
 	while (str[++(*i)])
 	{
-		if (str[*i] != '_' && !ft_isalnum(str[*i]))// && str[*i] == '$')
+		if (str[*i] != '_' && !ft_isalnum(str[*i]))
 			break ;
 	}
-	//if (*i == j + 1)
-	if (*i == j)
+	if (*i == j + 1)
 		return (str);
 	key = ft_substr(str, j + 1, *i - j - 1);
 	//key = ft_substr(str, j + 1, *i - j);
 	rkey = get_env_var(vars->env, key);
+	//(*i)++;
 	!rkey && (str = dollarswap(str, NULL, i, j));
 	rkey && (str = dollarswap(str, rkey, i, j));
 	free(key);
 	//*i = j;
-	*i = -1;
+	//*i = -1;
 	//printf("str + i |%s|\n", str + *i);
 	return (str);
 }
@@ -104,14 +99,20 @@ static char	*doublequotes(char *str, int *i, t_vars *vars)
 	char	*aft;
 
 	j = *i;
-	while (str[++(*i)])
+	(*i)++;
+	while (str[*i])
 	{
 		//(str[*i] == '$') && (str = dollarsign(str, i, vars));
 		//printf("%c\n", str[*i]);
 		if (str[*i] == '$' && str[*i + 1] != '\"')
+		{
 			str = dollarsign(str, i, vars);
+			//*i = j + 1;
+			//continue ;
+		}
 		if (str[*i] == '\"')
 			break ;
+		(*i)++;
 	}
 	bef = ft_substr(str, 0, j);
 	into = ft_substr(str, j + 1, *i - j - 1);
@@ -138,7 +139,8 @@ char	*parse_spec_symbs(char *str, t_vars *vars)
 		//printf("%c\n", str[i]);
 		(str[i] == '\'') && (str = quotes(str, &i));
 		(str[i] == '\"') && (str = doublequotes(str, &i, vars));
-		(str[i] == '$') && (str = dollarsign(str, &i, vars));
+		(str[i] == '$' && str[i + 1] && (ft_isalnum(str[i + 1])
+			|| ft_strchr("-_", str[i + 1]))) && (str = dollarsign(str, &i, vars));
 	}
 	return (str);
 }

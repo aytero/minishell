@@ -6,7 +6,7 @@
 /*   By: lpeggy <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/07/30 20:18:00 by lpeggy            #+#    #+#             */
-/*   Updated: 2021/08/04 18:18:14 by lpeggy           ###   ########.fr       */
+/*   Updated: 2021/08/12 17:32:22 by lpeggy           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -92,7 +92,6 @@ static void	get_cmd_name(t_proc *proc)
 int	make_cmd_list(char **cmd_line, t_vars *vars, t_util *util)
 {
 	int		i;
-	int		arg_nbr;
 	t_proc	*proc;
 
 	i = -1;
@@ -102,10 +101,10 @@ int	make_cmd_list(char **cmd_line, t_vars *vars, t_util *util)
 		if (!proc && report_failure("malloc", NULL, 0))
 			return (0);
 		cmd_line[i] = parse_redir(cmd_line[i], proc);
-		arg_nbr = count_elems(cmd_line[i], " \n\f\v\r\t");
-		DEBUG_PARSER && printf(GREY"arg_nbr %d"RESET, arg_nbr);
+		proc->arg_nbr = count_elems(cmd_line[i], " \n\f\v\r\t");
+		DEBUG_PARSER && printf(GREY"proc->arg_nbr %d"RESET, proc->arg_nbr);
 		ft_memset(util, 0, sizeof(t_util));
-		proc->args = split_arr_if(cmd_line[i], arg_nbr, util, cut_args);
+		proc->args = split_arr_if(cmd_line[i], proc->arg_nbr, util, cut_args);
 		if (!proc->args)
 			return (0);
 		get_cmd_name(proc);
