@@ -6,7 +6,7 @@
 /*   By: ssobchak <ssobchak@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/01 17:14:16 by lpeggy            #+#    #+#             */
-/*   Updated: 2021/08/12 20:09:23 by ssobchak         ###   ########.fr       */
+/*   Updated: 2021/08/12 20:14:17 by ssobchak         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -84,11 +84,10 @@ static char	*quotes(char *str, int *i)
 	free(into);
 	free(aft);
 	free(str);
-	// *i = -1;
 	return (bef);
 }
 
-static char	*doublequotes(char *str, int *i, t_vars *vars)
+static char	*doublequotes(char *str, int *i)
 {
 	int		j;
 	char	*bef;
@@ -97,8 +96,6 @@ static char	*doublequotes(char *str, int *i, t_vars *vars)
 
 	j = *i;
 	(*i)++;
-	(void)vars;
-
 	while (str[*i])
 	{
 		if (str[*i] == '\"')
@@ -129,9 +126,8 @@ char	*parse_spec_symbs(char *str, t_vars *vars)
 	while (str[++i])
 	{
 		(str[i] == '\'') && (str = quotes(str, &i));
-		(str[i] == '\"') && (str = doublequotes(str, &i, vars));
-		(str[i] == '$' && str[i + 1]/* && (ft_isalnum(str[i + 1])
-			|| ft_strchr("-_", str[i + 1]))*/) && (str = dollarsign(str, &i, vars));
+		(str[i] == '\"') && (str = doublequotes(str, &i));
+		(str[i] == '$' && str[i + 1]) && (str = dollarsign(str, &i, vars));
 	}
 	return (str);
 }
