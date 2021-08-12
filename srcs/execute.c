@@ -6,7 +6,7 @@
 /*   By: lpeggy <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/01 20:49:41 by lpeggy            #+#    #+#             */
-/*   Updated: 2021/08/12 21:20:34 by lpeggy           ###   ########.fr       */
+/*   Updated: 2021/08/12 22:14:37 by lpeggy           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -61,9 +61,9 @@ int	choose_cmd(t_proc *proc, t_vars *vars)
 
 	if (!proc->cmd)
 	{
-		store_stdio(vars);
+		proc->flag_pipe && store_stdio(vars);
 		deal_redir(proc);
-		restore_stdio(vars);
+		proc->flag_pipe && restore_stdio(vars);
 		return (g_exit_status);
 	}
 	i = if_builtin(proc->cmd);
