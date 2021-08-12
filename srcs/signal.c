@@ -6,7 +6,7 @@
 /*   By: lpeggy <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/08/02 18:09:16 by lpeggy            #+#    #+#             */
-/*   Updated: 2021/08/12 21:32:33 by lpeggy           ###   ########.fr       */
+/*   Updated: 2021/08/12 21:56:01 by lpeggy           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,12 +35,5 @@ void	sig_handler(int signal)
 		rl_on_new_line();
 		rl_replace_line("", 0);
 		rl_redisplay();
-	}
-	else if (signal == SIGQUIT)
-	{
-		write(2, "\r", 1);
-		rl_on_new_line();
-		rl_redisplay();
-		exit(0);
-	}
+	}	
 }
