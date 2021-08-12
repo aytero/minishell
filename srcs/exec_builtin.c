@@ -6,7 +6,7 @@
 /*   By: lpeggy <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/08/03 19:58:30 by lpeggy            #+#    #+#             */
-/*   Updated: 2021/08/12 22:03:38 by lpeggy           ###   ########.fr       */
+/*   Updated: 2021/08/12 22:40:44 by lpeggy           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,7 +26,8 @@ int	exec_builtin(t_vars *vars, t_proc *proc, int cmd_id)
 	if ((proc->flag_redir && !vars->flag_pipe) && !deal_redir(proc))
 		return (g_exit_status);
 	vars->flag_pipe && deal_pipes(vars, proc);
-	if ((proc->rd_in_nbr || proc->rd_out_nbr) && !store_stdio(vars))
+	if ((proc->rd_in_nbr && !store_stdio(vars, 0))
+		|| (proc->rd_out_nbr && !store_stdio(vars, 1)))
 		return (g_exit_status);
 	if (proc->rd_in_nbr && !(dup2(proc->fd[FD_IN], 0) >= 0
 			&& !close(proc->fd[FD_IN])))
@@ -43,6 +44,7 @@ int	exec_builtin(t_vars *vars, t_proc *proc, int cmd_id)
 	cmd_id == 5 && builtin_unset(proc->cmd, proc->args, vars);
 	cmd_id == 6 && builtin_env(proc, &vars->env);
 	cmd_id == 7 && builtin_exit(proc->args, vars);
-	(proc->rd_in_nbr || proc->rd_out_nbr) && restore_stdio(vars);
+	(proc->rd_in_nbr && restore_stdio(vars, 0))
+		|| (proc->rd_out_nbr && restore_stdio(vars, 1));
 	return (0);
 }

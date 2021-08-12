@@ -6,33 +6,45 @@
 /*   By: lpeggy <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/01 20:49:41 by lpeggy            #+#    #+#             */
-/*   Updated: 2021/08/12 22:14:37 by lpeggy           ###   ########.fr       */
+/*   Updated: 2021/08/12 22:40:00 by lpeggy           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "execute.h"
 
-int	restore_stdio(t_vars *vars)
+int	restore_stdio(t_vars *vars, int io)
 {
-	if (dup2(vars->fd_holder[FD_IN], 0) < 0)
-		return (!report_failure("dup2", NULL, 0));
-	close(vars->fd_holder[FD_IN]);
-	if (dup2(vars->fd_holder[FD_OUT], 1) < 0)
-		return (!report_failure("dup", NULL, 0));
-	close(vars->fd_holder[FD_IN]);
+	if (io == 0)
+	{
+		if (dup2(vars->fd_holder[FD_IN], 0) < 0)
+			return (!report_failure("dup2", NULL, 0));
+		close(vars->fd_holder[FD_IN]);
+	}
+	else if (io == 1)
+	{
+		if (dup2(vars->fd_holder[FD_OUT], 1) < 0)
+			return (!report_failure("dup", NULL, 0));
+		close(vars->fd_holder[FD_OUT]);
+	}
 	return (1);
 }
 
-int	store_stdio(t_vars *vars)
+int	store_stdio(t_vars *vars, int io)
 {
-	vars->fd_holder[FD_IN] = dup(0);
-	close(0);
-	if (vars->fd_holder[FD_IN] < 0)
-		return (!report_failure("dup", NULL, 0));
-	vars->fd_holder[FD_OUT] = dup(1);
-	if (vars->fd_holder[FD_OUT] < 0)
-		return (!report_failure("dup", NULL, 0));
-	close(1);
+	if (io == 0)
+	{
+		vars->fd_holder[FD_IN] = dup(0);
+		close(0);
+		if (vars->fd_holder[FD_IN] < 0)
+			return (!report_failure("dup", NULL, 0));
+	}
+	if (io == 1)
+	{
+		vars->fd_holder[FD_OUT] = dup(1);
+		if (vars->fd_holder[FD_OUT] < 0)
+			return (!report_failure("dup", NULL, 0));
+		close(1);
+	}
 	return (1);
 }
 
@@ -61,9 +73,7 @@ int	choose_cmd(t_proc *proc, t_vars *vars)
 
 	if (!proc->cmd)
 	{
-		proc->flag_pipe && store_stdio(vars);
 		deal_redir(proc);
-		proc->flag_pipe && restore_stdio(vars);
 		return (g_exit_status);
 	}
 	i = if_builtin(proc->cmd);

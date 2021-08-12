@@ -6,7 +6,7 @@
 /*   By: ssobchak <ssobchak@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/01 20:51:06 by lpeggy            #+#    #+#             */
-/*   Updated: 2021/08/12 17:58:29 by ssobchak         ###   ########.fr       */
+/*   Updated: 2021/08/12 22:36:45 by lpeggy           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -117,8 +117,8 @@ t_list			*env_to_list(char **env);
 /*		execute.c		*/
 void			execute(t_vars *vars);
 int				choose_cmd(t_proc *proc, t_vars *vars);
-int				store_stdio(t_vars *vars);
-int				restore_stdio(t_vars *vars);
+int				store_stdio(t_vars *vars, int io);
+int				restore_stdio(t_vars *vars, int io);
 
 /*		exec_extern.c		*/
 int				exec_extern(t_proc *proc, t_vars *vars);
