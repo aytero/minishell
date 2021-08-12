@@ -6,7 +6,7 @@
 /*   By: lpeggy <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/08/01 16:47:13 by lpeggy            #+#    #+#             */
-/*   Updated: 2021/08/04 18:18:27 by lpeggy           ###   ########.fr       */
+/*   Updated: 2021/08/12 21:44:50 by lpeggy           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -77,6 +77,7 @@ char	*parse_redir(char *cmd_line, t_proc *proc)
 	proc->rd_i = -1;
 	while (cmd_line[++proc->rd_i])
 	{
+		proc->rd_i = if_quotes(cmd_line, proc->rd_i);
 		if (cmd_line[proc->rd_i] == '>' && cmd_line[proc->rd_i + 1] == '>')
 			cmd_line = cut_redir(cmd_line, DB_REDIR_OUT, &out, proc);
 		else if (cmd_line[proc->rd_i] == '<' && cmd_line[proc->rd_i + 1] == '<')

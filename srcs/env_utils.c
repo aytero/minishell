@@ -6,7 +6,7 @@
 /*   By: lpeggy <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/12 17:24:31 by lpeggy            #+#    #+#             */
-/*   Updated: 2021/08/11 22:05:41 by lpeggy           ###   ########.fr       */
+/*   Updated: 2021/08/12 21:19:18 by lpeggy           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,8 +56,6 @@ int	set_env_var(t_list **env, char *env_line)
 	t_list	*tmp;
 
 	sign = ft_strchr(env_line, '=');
-//	if (sign == env_line)
-//		return (0);
 	if (sign)
 	{
 		*sign = '\0';

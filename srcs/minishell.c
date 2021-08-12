@@ -6,7 +6,7 @@
 /*   By: lpeggy <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/01 17:14:27 by lpeggy            #+#    #+#             */
-/*   Updated: 2021/08/11 18:49:31 by lpeggy           ###   ########.fr       */
+/*   Updated: 2021/08/12 21:12:36 by lpeggy           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -62,9 +62,7 @@ int	main(int argc, char **argv, char **envp)
 	init_sh(&vars, envp) || exit_failure("malloc fatal", NULL, 0);
 	signal(SIGINT, sig_handler);
 	signal(SIGQUIT, sig_handler);
-	write(2, "sh:> ", 5);
-	line = readline("");
-	//line = readline("sh:> ");
+	line = readline("sh:> ");
 	!line && deal_eof(&vars, line);
 	while (line != NULL)
 	{
@@ -74,9 +72,7 @@ int	main(int argc, char **argv, char **envp)
 		execute(&vars);
 		free(line);
 		ft_lstclear(&vars.cmd_arr, free_proc);
-		write(2, "sh:> ", 5);
-		line = readline("");
-		//line = readline("sh:> ");
+		line = readline("sh:> ");
 		!line && deal_eof(&vars, line);
 	}
 	return (0);

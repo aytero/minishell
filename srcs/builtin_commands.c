@@ -6,7 +6,7 @@
 /*   By: lpeggy <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/08 16:42:00 by lpeggy            #+#    #+#             */
-/*   Updated: 2021/08/11 22:27:31 by lpeggy           ###   ########.fr       */
+/*   Updated: 2021/08/12 21:13:01 by lpeggy           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -89,11 +89,6 @@ int	builtin_echo(char **cmd)
 	}
 	while (cmd[i])
 	{
-		//if (!cmd[i][0])
-		//{
-		//	i++;
-		//	continue ;
-		//}
 		write(1, cmd[i], ft_strlen(cmd[i]));
 		(cmd[i + 1] != NULL) && write(1, " ", 1);
 		i++;

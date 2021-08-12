@@ -6,7 +6,7 @@
 /*   By: lpeggy <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/08/02 18:48:21 by lpeggy            #+#    #+#             */
-/*   Updated: 2021/08/11 21:35:05 by lpeggy           ###   ########.fr       */
+/*   Updated: 2021/08/12 21:20:10 by lpeggy           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,14 +19,12 @@ void	wait_loop(void *ptr)
 	t_proc	*proc;
 
 	proc = (t_proc *)ptr;
-	wpid = waitpid(proc->pid, &status, 0);//WUNTRACED);
+	wpid = waitpid(proc->pid, &status, 0);
 	while (!WIFEXITED(status) && !WIFSIGNALED(status))
 		wpid = waitpid(proc->pid, &status, WUNTRACED);
 	if (WIFEXITED(status))
 		g_exit_status = WEXITSTATUS(status);
 	g_exit_status == 127 && report_failure(proc->cmd, "command not found", 127);
-//	if (waitpid(pid, &status, WUNTRACED | WCONTINUED) == -1)
-//		exit_failure("");
 }
 
 static void	wait_one(pid_t pid)
@@ -52,7 +50,6 @@ static void	exec_child_proc(t_proc *proc, t_vars *vars)
 	if (vars->flag_pipe)
 		deal_pipes(vars, proc) && close_pipes(vars);
 	path = pathfinder(vars, proc->cmd);
-	DEBUG && printf(GREY"path = |%s|"RESET, path);
 	if (!path)
 		exit(127);
 	if (proc->rd_in_nbr)
@@ -74,7 +71,6 @@ int	exec_extern(t_proc *proc, t_vars *vars)
 {
 	pid_t	pid;
 
-	DEBUG && printf(GREY"executing extern prog"RESET);
 	signal(SIGINT, parent_sig_handler);
 	signal(SIGQUIT, parent_sig_handler);
 	pid = fork();

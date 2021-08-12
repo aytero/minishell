@@ -6,7 +6,7 @@
 /*   By: lpeggy <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/07/30 20:18:00 by lpeggy            #+#    #+#             */
-/*   Updated: 2021/08/12 17:32:22 by lpeggy           ###   ########.fr       */
+/*   Updated: 2021/08/12 21:46:22 by lpeggy           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,7 +18,7 @@ int	cut_args(char **args, char *str, int *i, t_util *util)
 		util->flag_q++;
 	if (str[*i] == '\"')
 		util->flag_dq++;
-	if (ft_strchr(" \n\f\v\r\t", str[*i])// || str[*i + 1] == '\0')
+	if (ft_strchr(" \n\f\v\r\t", str[*i])
 		&& !(util->flag_q % 2) && !(util->flag_dq % 2))
 	{
 		args[util->k] = ft_substr(str, util->start, *i - util->start);
@@ -102,7 +102,6 @@ int	make_cmd_list(char **cmd_line, t_vars *vars, t_util *util)
 			return (0);
 		cmd_line[i] = parse_redir(cmd_line[i], proc);
 		proc->arg_nbr = count_elems(cmd_line[i], " \n\f\v\r\t");
-		DEBUG_PARSER && printf(GREY"proc->arg_nbr %d"RESET, proc->arg_nbr);
 		ft_memset(util, 0, sizeof(t_util));
 		proc->args = split_arr_if(cmd_line[i], proc->arg_nbr, util, cut_args);
 		if (!proc->args)

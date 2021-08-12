@@ -6,7 +6,7 @@
 /*   By: lpeggy <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/07/05 18:24:09 by lpeggy            #+#    #+#             */
-/*   Updated: 2021/08/04 18:20:51 by lpeggy           ###   ########.fr       */
+/*   Updated: 2021/08/12 21:20:22 by lpeggy           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -67,7 +67,6 @@ void	exec_piped(t_vars *vars)
 	t_list	*tmp;
 	t_proc	*proc;
 
-	DEBUG && printf(GREY"executing piped"RESET);
 	open_pipes(vars, (t_proc *)vars->cmd_arr->content);
 	i = 0;
 	tmp = vars->cmd_arr;

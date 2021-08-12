@@ -6,7 +6,7 @@
 /*   By: lpeggy <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/12 17:52:02 by lpeggy            #+#    #+#             */
-/*   Updated: 2021/08/11 22:05:49 by lpeggy           ###   ########.fr       */
+/*   Updated: 2021/08/12 21:14:00 by lpeggy           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,7 +29,6 @@ static int	print_sorted(char **sorted)
 	i = -1;
 	while (sorted[++i])
 		printf("declare -x %s\n", sorted[i]);
-		//ft_strchr(sorted[i], '=') && printf("declare -x %s\n", sorted[i]);
 	free_double_char_arr(sorted);
 	return (1);
 }
@@ -89,7 +88,6 @@ int	check_env_arg(char *cmd, char *arg)
 	}
 	if (!ft_strchr(arg, '=') && !ft_strcmp(cmd, "export"))
 		return (0);
-	//	set_env_var without =
 	return (1);
 }
 

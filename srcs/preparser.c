@@ -6,11 +6,25 @@
 /*   By: lpeggy <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/07/13 18:25:59 by lpeggy            #+#    #+#             */
-/*   Updated: 2021/08/12 17:32:19 by lpeggy           ###   ########.fr       */
+/*   Updated: 2021/08/12 21:42:44 by lpeggy           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "parser.h"
+
+char	*dollarswap(char *str, char *rkey, int *i, int j)
+{
+	char	*bef;
+	char	*aft;
+
+	bef = ft_substr(str, 0, j);
+	aft = ft_strdup(str + *i);
+	bef = ft_strjoin_free(bef, rkey);
+	bef = ft_strjoin_free(bef, aft);
+	free(aft);
+	free(str);
+	return (bef);
+}
 
 static int	word_after(char *str, int i, char *divider)
 {
@@ -49,44 +63,6 @@ static int	skim(char *str)
 	return (1);
 }
 
-char	**realloc_arr(char **arr, int size)
-{
-	char	**arr_new;
-	int		i;
-
-	arr_new = malloc(sizeof(char *) * (size + 1));// one extra for \0
- 	if (!arr_new)
- 		return (NULL);
- 	//memset(env_new, 0, sizeof(char *) * (size + 1));
- 	i = 0;
- 	while (i < size && arr[i])
- 	{
-		arr_new[i] = ft_strdup(arr[i]);
-		i++;
-	}
-	arr_new[size] = 0;
-	free_double_char_arr(arr);
-	return (arr_new);
-}
- 
-char	**delete_line(char **arr, int line_index, int size)
-{
-	char	*to_swap;
-
-	//printf("2\n");
-	while (arr[line_index + 1])
-	{
- 		//swap strings so the last one is empty
- 		to_swap = ft_strdup(arr[line_index + 1]);
- 		free(arr[line_index]);
- 		//env[env_index] = NULL;
- 		arr[line_index] = to_swap;
- 		line_index++;
- 	}
- 	arr = realloc_arr(arr, size - 1);
- 	return (arr);
- }
-
 static void	deal_spec_symbs(void *ptr, t_vars *vars)
 {
 	int		i;
@@ -98,18 +74,6 @@ static void	deal_spec_symbs(void *ptr, t_vars *vars)
 		proc->cmd = parse_spec_symbs(proc->cmd, vars);
 	while (proc->args[++i])
 		proc->args[i] = parse_spec_symbs(proc->args[i], vars);
-	/*
-	i = -1;
-	while (proc->args[++i])
-	{
-		if (!proc->args[i][0])
-		{
-			proc->args = delete_line(proc->args, i, proc->arg_nbr);
-			proc->arg_nbr--;
-			i = -1;
-		}
-	}
-	*/
 }
 
 void	pre_parser(char *str, t_vars *vars)
@@ -127,7 +91,6 @@ void	pre_parser(char *str, t_vars *vars)
 		|| ((vars->parse_err = 1) && (g_exit_status = 258));
 	if (vars->parse_err)
 		return ;
-	DEBUG_PARSER && printf(GREY"cmd_nbr %d"RESET, vars->cmd_nbr);
 	vars->pipe_nbr = vars->cmd_nbr - 1;
 	if (vars->pipe_nbr)
 		vars->flag_pipe = 1;
@@ -137,5 +100,4 @@ void	pre_parser(char *str, t_vars *vars)
 	if (vars->parse_err)
 		return ;
 	ft_lstiter_param(vars->cmd_arr, &deal_spec_symbs, vars);
-	DEBUG_PARSER && _print_list(&vars->cmd_arr);
 }

@@ -6,7 +6,7 @@
 /*   By: lpeggy <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/08/03 19:58:30 by lpeggy            #+#    #+#             */
-/*   Updated: 2021/08/11 18:38:58 by lpeggy           ###   ########.fr       */
+/*   Updated: 2021/08/12 21:27:03 by lpeggy           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,7 +23,6 @@
 */
 int	exec_builtin(t_vars *vars, t_proc *proc, int cmd_id)
 {
-	DEBUG && printf(GREY"executing builtin cmd"RESET);
 	if ((proc->flag_redir && !vars->flag_pipe) && !deal_redir(proc))
 		return (g_exit_status);
 	vars->flag_pipe && deal_pipes(vars, proc);

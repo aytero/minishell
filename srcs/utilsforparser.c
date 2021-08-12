@@ -6,59 +6,11 @@
 /*   By: ssobchak <ssobchak@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/10 19:46:26 by ssobchak          #+#    #+#             */
-/*   Updated: 2021/08/11 20:56:43 by lpeggy           ###   ########.fr       */
+/*   Updated: 2021/08/12 21:33:10 by lpeggy           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "parser.h"
-
-int	_print_all_rd(t_proc *proc)
-{
-	int		i;
-
-	i = -1;
-	while (++i < proc->rd_in_nbr)
-	{
-		printf(GREY"infile[%d] = |%s|"RESET, i, proc->infiles[i]);
-		printf(GREY"infile[%d] type = %d"RESET, i, proc->rd_in_type[i]);
-	}
-	i = -1;
-	while (++i < proc->rd_out_nbr)
-	{
-		printf(GREY"outfile[%d] = |%s|"RESET, i, proc->outfiles[i]);
-		printf(GREY"outfile[%d] type = %d"RESET, i, proc->rd_out_type[i]);
-	}
-	return (1);
-}
-
-int	_print_list(t_list **head)
-{
-	t_list	*tmp;
-	t_proc	*proc;
-	int		i;
-	int		j;
-
-	j = 0;
-	tmp = *head;
-	while (tmp)
-	{
-		proc = (t_proc *)tmp->content;
-		printf(GREY"node %d  cmd      >%s<"RESET, j, proc->cmd);
-		i = 0;
-		while (proc->args[i])
-		{
-			printf(GREY"node %d  arg[%d]   >%s<"RESET, j, i, proc->args[i]);
-			i++;
-		}
-		printf(GREY"rd_in_nbr %d\trd_out_nbr %d"RESET, proc->rd_in_nbr,
-				proc->rd_out_nbr);
-		printf(GREY"flag rd %d"RESET, proc->flag_redir);
-		_print_all_rd(proc);
-		tmp = tmp->next;
-		j++;
-	}
-	return (1);
-}
 
 static int	skip_until(char *str, int i, int sym)
 {
@@ -80,8 +32,7 @@ int	if_quotes(char *str, int i)
 	return (i);
 }
 
-
-char *lowercasing(char *str)
+char	*lowercasing(char *str)
 {
 	int		i;
 
@@ -94,11 +45,10 @@ char *lowercasing(char *str)
 	return (str);
 }
 
-
 int	skip_symbs(char *str, int i, char *set)
 {
 	while (str[i] && ft_strchr(set, str[i]))
-			i++;
+		i++;
 	return (i);
 }
 
@@ -106,15 +56,13 @@ int	count_elems(char *str, char *divider)
 {
 	int		i;
 	int		elems_nbr;
-	
+
 	elems_nbr = 0;
 	i = 0;
 	!ft_strchr("><", str[i]) && (i = skip_symbs(str, 0, divider));
 	while (str[i])
 	{
-		//printf(RED"%s"RESET, str + i);
 		i = if_quotes(str, i);
-		//printf(RED"%s"RESET, str + i);
 		if (ft_strchr(divider, str[i]))
 		{
 			elems_nbr++;

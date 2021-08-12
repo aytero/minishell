@@ -6,33 +6,16 @@
 /*   By: ssobchak <ssobchak@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/01 17:14:16 by lpeggy            #+#    #+#             */
-/*   Updated: 2021/08/12 20:14:17 by ssobchak         ###   ########.fr       */
+/*   Updated: 2021/08/12 21:39:28 by lpeggy           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "parser.h"
 
-static char	*dollarswap(char *str, char *rkey, int *i, int j)
+static char	*dollar_one_letter(char *str, int *i, int j)
 {
-	char *bef;
-	char *aft;
-
-	bef = ft_substr(str, 0, j);
-	aft = ft_strdup(str + *i);
-	bef = ft_strjoin_free(bef, rkey);
-	bef = ft_strjoin_free(bef, aft);
-	free(aft);
-	free(str);
-	return (bef);
-}
-
-static char	*dollarsign(char *str, int *i, t_vars *vars)
-{
-	int		j;
 	char	*key;
-	char	*rkey;
 
-	j = *i;
 	if (str[*i + 1] == '?')
 	{
 		key = ft_itoa(g_exit_status);
@@ -47,6 +30,18 @@ static char	*dollarsign(char *str, int *i, t_vars *vars)
 		str = dollarswap(str, NULL, i, j);
 		return (str);
 	}
+	return (str);
+}
+
+static char	*dollarsign(char *str, int *i, t_vars *vars)
+{
+	int		j;
+	char	*key;
+	char	*rkey;
+
+	j = *i;
+	if (ft_strchr("?;|", str[*i + 1]) || ft_isdigit(str[*i + 1]))
+		return (dollar_one_letter(str, i, j));
 	while (str[++(*i)])
 	{
 		if (str[*i] != '_' && !ft_isalnum(str[*i]))
