@@ -6,7 +6,7 @@
 /*   By: ssobchak <ssobchak@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/01 20:51:06 by lpeggy            #+#    #+#             */
-/*   Updated: 2021/08/12 22:36:45 by lpeggy           ###   ########.fr       */
+/*   Updated: 2021/08/13 22:32:19 by lpeggy           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -74,7 +74,7 @@ typedef struct s_vars
 	t_list		*cmd_arr;
 }				t_vars;
 
-int				g_exit_status;
+extern int		g_exit_status;
 
 void			rl_replace_line(const char *text, int clear_undo);
 void			rl_clear_history(void);
@@ -98,9 +98,11 @@ int				replace_env_var(t_list *node, char **kv);
 int				builtin_error(char *cmd, char *arg, char *error_mes,
 					int errtype);
 int				builtin_pwd(t_vars *vars);
-int				builtin_echo(char **cmd);
 int				builtin_unset(char *cmd, char **args, t_vars *vars);
 int				builtin_exit(char **cmd, t_vars *vars);
+
+/*		builtin_echo.c		*/
+int				builtin_echo(char **cmd);
 
 /*		builtin_cd.c		*/
 int				builtin_cd(char **cmd, t_vars *vars);
@@ -134,9 +136,13 @@ int				deal_pipes(t_vars *vars, t_proc *proc);
 
 /*		deal_redir.c		*/
 int				deal_redir(t_proc *proc);
+int				deal_heredoc(t_proc *proc, int i);
 
 /*		pathfinder.c		*/
 char			*pathfinder(t_vars *vars, char *cmd);
+
+/*		minishell.c		*/
+char			**get_path_arr(t_vars *vars);
 
 /*		exit_shell.c		*/
 int				exit_failure(char *cmd, char *str, int errtype);

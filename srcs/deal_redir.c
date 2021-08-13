@@ -6,7 +6,7 @@
 /*   By: lpeggy <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/08/02 18:32:14 by lpeggy            #+#    #+#             */
-/*   Updated: 2021/08/04 18:20:14 by lpeggy           ###   ########.fr       */
+/*   Updated: 2021/08/13 22:33:27 by lpeggy           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,7 +32,7 @@ static void	write_heredoc(t_proc *proc, int i)
 	close(fd);
 }
 
-static int	deal_heredoc(t_proc *proc, int i)
+int	deal_heredoc(t_proc *proc, int i)
 {
 	pid_t	pid;
 
@@ -67,8 +67,6 @@ static int	deal_infiles(t_proc *proc)
 	i = -1;
 	while (++i < proc->rd_in_nbr)
 	{
-		if (proc->rd_in_type[i] == 2 && !deal_heredoc(proc, i))
-			return (!report_failure(proc->infiles[i], NULL, 0));
 		if (proc->rd_in_type[i] == 2)
 			continue ;
 		fd = open(proc->infiles[i], O_RDONLY);

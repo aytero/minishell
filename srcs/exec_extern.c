@@ -6,7 +6,7 @@
 /*   By: lpeggy <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/08/02 18:48:21 by lpeggy            #+#    #+#             */
-/*   Updated: 2021/08/12 21:20:10 by lpeggy           ###   ########.fr       */
+/*   Updated: 2021/08/13 22:32:55 by lpeggy           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,7 +24,6 @@ void	wait_loop(void *ptr)
 		wpid = waitpid(proc->pid, &status, WUNTRACED);
 	if (WIFEXITED(status))
 		g_exit_status = WEXITSTATUS(status);
-	g_exit_status == 127 && report_failure(proc->cmd, "command not found", 127);
 }
 
 static void	wait_one(pid_t pid)
@@ -51,7 +50,7 @@ static void	exec_child_proc(t_proc *proc, t_vars *vars)
 		deal_pipes(vars, proc) && close_pipes(vars);
 	path = pathfinder(vars, proc->cmd);
 	if (!path)
-		exit(127);
+		exit_failure(proc->cmd, "command not found", 127);
 	if (proc->rd_in_nbr)
 	{
 		dup2(proc->fd[FD_IN], 0) >= 0 || exit_failure(proc->cmd, NULL, 0);

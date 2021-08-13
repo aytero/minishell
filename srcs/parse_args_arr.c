@@ -6,7 +6,7 @@
 /*   By: lpeggy <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/07/30 20:18:00 by lpeggy            #+#    #+#             */
-/*   Updated: 2021/08/12 21:46:22 by lpeggy           ###   ########.fr       */
+/*   Updated: 2021/08/13 22:31:43 by lpeggy           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -71,12 +71,12 @@ char	**split_arr_if(char *str, int elem_nbr, t_util *util, int (*func)())
 	return (arr);
 }
 
-static void	get_cmd_name(t_proc *proc)
+static int	get_cmd_name(t_proc *proc)
 {
 	char	*tmp;
 
 	if (!proc->args[0])
-		return ;
+		return (1);
 	tmp = ft_strtrim(proc->args[0], " \n\f\v\r\t");
 	tmp = lowercasing(tmp);
 	if (tmp[0] == '$' || !ft_strcmp(tmp, "export") || !ft_strcmp(tmp, "unset")
@@ -87,10 +87,12 @@ static void	get_cmd_name(t_proc *proc)
 	}
 	else
 		proc->cmd = tmp;
+	return (1);
 }
 
 int	make_cmd_list(char **cmd_line, t_vars *vars, t_util *util)
 {
+	int		k;
 	int		i;
 	t_proc	*proc;
 
@@ -104,9 +106,14 @@ int	make_cmd_list(char **cmd_line, t_vars *vars, t_util *util)
 		proc->arg_nbr = count_elems(cmd_line[i], " \n\f\v\r\t");
 		ft_memset(util, 0, sizeof(t_util));
 		proc->args = split_arr_if(cmd_line[i], proc->arg_nbr, util, cut_args);
-		if (!proc->args)
+		if (!proc->args || !get_cmd_name(proc))
 			return (0);
-		get_cmd_name(proc);
+		k = -1;
+		while (proc->rd_in_nbr && ++k < proc->rd_in_nbr)
+		{
+			if (proc->rd_in_type[k] == 2 && !deal_heredoc(proc, k))
+				return (!report_failure(proc->infiles[k], NULL, 0));
+		}
 		ft_lstadd_back(&vars->cmd_arr, ft_lstnew((t_proc *)proc));
 	}
 	return (1);

@@ -6,7 +6,7 @@
 /*   By: ssobchak <ssobchak@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/01 17:14:16 by lpeggy            #+#    #+#             */
-/*   Updated: 2021/08/12 21:39:28 by lpeggy           ###   ########.fr       */
+/*   Updated: 2021/08/13 22:43:36 by lpeggy           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,7 +54,7 @@ static char	*dollarsign(char *str, int *i, t_vars *vars)
 	!rkey && (str = dollarswap(str, NULL, i, j));
 	rkey && (str = dollarswap(str, rkey, i, j));
 	free(key);
-	*i = -1;
+	*i = 0;
 	return (str);
 }
 
@@ -79,6 +79,7 @@ static char	*quotes(char *str, int *i)
 	free(into);
 	free(aft);
 	free(str);
+	(*i)--;
 	return (bef);
 }
 
@@ -105,7 +106,7 @@ static char	*doublequotes(char *str, int *i)
 	free(str);
 	free(into);
 	free(aft);
-	*i = -1;
+	*i = 0;
 	return (bef);
 }
 
@@ -114,15 +115,20 @@ char	*parse_spec_symbs(char *str, t_vars *vars)
 	int		i;
 	char	*tmp;
 
-	i = -1;
+	i = 0;
 	tmp = ft_strtrim(str, " \n\f\v\r\t");
 	free(str);
 	str = tmp;
-	while (str[++i])
+	while (str[i])
 	{
-		(str[i] == '\'') && (str = quotes(str, &i));
+		if (str[i] == '\'')
+		{
+			str = quotes(str, &i);
+			continue ;
+		}
 		(str[i] == '\"') && (str = doublequotes(str, &i));
 		(str[i] == '$' && str[i + 1]) && (str = dollarsign(str, &i, vars));
+		i++;
 	}
 	return (str);
 }

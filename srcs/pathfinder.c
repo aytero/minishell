@@ -6,27 +6,29 @@
 /*   By: lpeggy <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/29 20:28:49 by lpeggy            #+#    #+#             */
-/*   Updated: 2021/08/12 21:24:24 by lpeggy           ###   ########.fr       */
+/*   Updated: 2021/08/13 21:58:51 by lpeggy           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "execute.h"
 
-static char	*prep_env_ret(DIR *dir, char *tmp, char *cmd, char *env_path)
+static char	*prep_env_ret(DIR *dir, char *cmd, int i, t_vars *vars)
 {
-	tmp = ft_strjoin_sep(env_path, cmd, '/');
+	char	*tmp;
+
+	tmp = ft_strjoin_sep(vars->path_arr[i], cmd, '/');
 	closedir(dir);
+	free_double_char_arr(vars->path_arr);
 	return (tmp);
 }
 
 static char	*search_in_environ(t_vars *vars, char *cmd, DIR *dir)
 {
 	struct dirent	*entry;
-	char			*tmp;
 	int				i;
 
-	tmp = NULL;
 	i = -1;
+	get_path_arr(vars);
 	if (!vars->path_arr[0])
 		return (NULL);
 	while (vars->path_arr[++i])
@@ -38,12 +40,13 @@ static char	*search_in_environ(t_vars *vars, char *cmd, DIR *dir)
 		while (entry != NULL)
 		{
 			if (ft_strcmp(cmd, entry->d_name) == 0)
-				return (prep_env_ret(dir, tmp, cmd, vars->path_arr[i]));
+				return (prep_env_ret(dir, cmd, i, vars));
 			entry = readdir(dir);
 		}
 		closedir(dir);
 	}
-	return (tmp);
+	free_double_char_arr(vars->path_arr);
+	return (NULL);
 }
 
 static char	*get_abs_path(t_vars *vars, char *cmd)

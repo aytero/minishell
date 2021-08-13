@@ -6,12 +6,26 @@
 /*   By: lpeggy <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/01 17:14:27 by lpeggy            #+#    #+#             */
-/*   Updated: 2021/08/12 21:12:36 by lpeggy           ###   ########.fr       */
+/*   Updated: 2021/08/13 22:01:24 by lpeggy           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "execute.h"
 #include "parser.h"
+
+int		g_exit_status = 0;
+
+char	**get_path_arr(t_vars *vars)
+{
+	char	*path;
+
+	path = get_env_var(vars->env, "PATH");
+	path && (vars->path_arr = ft_split(path, ':'));
+	!path && (vars->path_arr = ft_calloc(sizeof(char *), 1));
+	if (!vars->path_arr)
+		return (NULL);
+	return (vars->path_arr);
+}
 
 static void	reset_vars(t_vars *vars)
 {
@@ -22,24 +36,13 @@ static void	reset_vars(t_vars *vars)
 	vars->pipe_nbr = 0;
 }
 
-static int	init_sh(t_vars *vars, char **envp)
+static void	init_sh(t_vars *vars, char **envp)
 {
-	char	*path;
-	char	*tmp;
-
-	tmp = ft_strdup("OLDPWD");
 	ft_memset(vars, 0, sizeof(t_vars));
 	g_exit_status = 0;
 	errno = 0;
 	vars->env = env_to_list(envp);
-	delete_env_var(&vars->env, tmp);
-	free(tmp);
-	path = get_env_var(vars->env, "PATH");
-	path && (vars->path_arr = ft_split(path, ':'));
-	!path && (vars->path_arr = ft_calloc(sizeof(char *), 1));
-	if (!vars->path_arr)
-		return (0);
-	return (1);
+	delete_env_var(&vars->env, "OLDPWD");
 }
 
 static int	deal_eof(t_vars *vars, char *line)
@@ -59,7 +62,7 @@ int	main(int argc, char **argv, char **envp)
 	(void)argv;
 	if (argc > 1)
 		return (!write(1, "Too many arguments\n", 19));
-	init_sh(&vars, envp) || exit_failure("malloc fatal", NULL, 0);
+	init_sh(&vars, envp);
 	signal(SIGINT, sig_handler);
 	signal(SIGQUIT, sig_handler);
 	line = readline("sh:> ");

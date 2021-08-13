@@ -6,7 +6,7 @@
 /*   By: lpeggy <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/16 20:36:45 by lpeggy            #+#    #+#             */
-/*   Updated: 2021/08/11 17:11:10 by lpeggy           ###   ########.fr       */
+/*   Updated: 2021/08/13 18:07:36 by lpeggy           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,6 +26,16 @@ static void	change_pwd_envs(t_vars *vars, char *old_pwd, char *new_pwd)
 	tmp = NULL;
 }
 
+static char	*deal_rel_path(char *cmd, t_vars *vars)
+{
+	char	*tmp;
+
+	tmp = get_env_var(vars->env, "HOME");
+	tmp = ft_strjoin(tmp, cmd + 1);
+	free(cmd);
+	return (tmp);
+}
+
 int	builtin_cd(char **cmd, t_vars *vars)
 {
 	char	*dir;
@@ -34,6 +44,8 @@ int	builtin_cd(char **cmd, t_vars *vars)
 
 	g_exit_status = 0;
 	!cmd[1] && (dir = get_env_var(vars->env, "HOME"));
+	if (cmd[1][0] == '~')
+		cmd[1] = deal_rel_path(cmd[1], vars);
 	cmd[1] && (dir = cmd[1]);
 	old_pwd = getcwd(NULL, 0);
 	if (chdir(dir) < 0)

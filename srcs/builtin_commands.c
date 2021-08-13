@@ -6,7 +6,7 @@
 /*   By: lpeggy <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/08 16:42:00 by lpeggy            #+#    #+#             */
-/*   Updated: 2021/08/12 22:31:02 by lpeggy           ###   ########.fr       */
+/*   Updated: 2021/08/13 18:25:58 by lpeggy           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -66,34 +66,6 @@ int	builtin_pwd(t_vars *vars)
 	write(1, "\n", 1);
 	if (i == 0)
 		free(pwd);
-	g_exit_status = 0;
-	return (0);
-}
-
-int	builtin_echo(char **cmd)
-{
-	int		opt_flag;
-	int		i;
-
-	i = 1;
-	opt_flag = 0;
-	if (!cmd[1] || !cmd[1][0])
-	{
-		write(1, "\n", 1);
-		return (0);
-	}
-	while (cmd[i] && !ft_strcmp(cmd[i], "-n"))
-	{
-		opt_flag = 1;
-		i++;
-	}
-	while (cmd[i])
-	{
-		write(1, cmd[i], ft_strlen(cmd[i]));
-		(cmd[i + 1] != NULL) && write(1, " ", 1);
-		i++;
-	}
-	!opt_flag && write(1, "\n", 1);
 	g_exit_status = 0;
 	return (0);
 }
