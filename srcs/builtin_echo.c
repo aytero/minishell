@@ -6,7 +6,7 @@
 /*   By: lpeggy <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/08/13 22:32:35 by lpeggy            #+#    #+#             */
-/*   Updated: 2021/08/13 22:33:09 by lpeggy           ###   ########.fr       */
+/*   Updated: 2021/08/14 16:01:42 by lpeggy           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,7 +31,7 @@ int	builtin_echo(char **cmd)
 
 	i = 1;
 	opt_flag = 0;
-	if ((!cmd[1] || !cmd[1][0]) && write(1, "\n", 1))
+	if (!cmd[1] && write(1, "\n", 1))
 		return (0);
 	while (cmd[i] && !ft_strncmp(cmd[i], "-n", 2) && echo_check_opt(cmd[i]))
 	{
@@ -41,6 +41,8 @@ int	builtin_echo(char **cmd)
 	while (cmd[i])
 	{
 		write(1, cmd[i], ft_strlen(cmd[i]));
+		//if (cmd[i + 1] && cmd[i + 1][0] && cmd[i + 1][0])
+		//	write(1, " ", 1);
 		(cmd[i + 1] != NULL) && write(1, " ", 1);
 		i++;
 	}

@@ -6,7 +6,7 @@
 /*   By: lpeggy <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/07/05 18:24:09 by lpeggy            #+#    #+#             */
-/*   Updated: 2021/08/13 22:18:47 by lpeggy           ###   ########.fr       */
+/*   Updated: 2021/08/14 17:26:35 by lpeggy           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -72,17 +72,32 @@ void	exec_piped(t_vars *vars)
 	tmp = vars->cmd_arr;
 	signal(SIGINT, SIG_IGN);
 	signal(SIGQUIT, SIG_IGN);
-	while (tmp)
+	/*
+	pid_t	pid;
+	pid = fork();
+	//proc->pid >= 0 || report_failure(proc->cmd, NULL, 0);
+	if (pid == 0)
 	{
-		proc = (t_proc *)tmp->content;
-		proc->pid = fork();
-		proc->pid >= 0 || report_failure(proc->cmd, NULL, 0);
-		if (proc->pid == 0)
-			pipe_child_proc(proc, vars, i);
-		tmp = tmp->next;
-		i++;
-	}
+	*/
+		while (tmp)
+		{
+			//write(2, "aaa\n", 4);
+			proc = (t_proc *)tmp->content;
+			proc->pid = fork();
+			proc->pid >= 0 || report_failure(proc->cmd, NULL, 0);
+			if (proc->pid == 0)
+				pipe_child_proc(proc, vars, i);
+			tmp = tmp->next;
+			i++;
+		}
+		//close_pipes(vars);
+		//exit(0);
+	//}
+
+	//write(2, "aaa\n", 4);
+	//waitpid(pid, 0, 0);
 	close_pipes(vars);
+	//wait_loop((t_proc *)vars->cmd_arr->content);
 	ft_lstiter(vars->cmd_arr, &wait_loop);
 	signal(SIGINT, sig_handler);
 	signal(SIGQUIT, sig_handler);

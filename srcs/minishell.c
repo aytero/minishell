@@ -6,7 +6,7 @@
 /*   By: lpeggy <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/01 17:14:27 by lpeggy            #+#    #+#             */
-/*   Updated: 2021/08/13 22:01:24 by lpeggy           ###   ########.fr       */
+/*   Updated: 2021/08/14 15:47:24 by lpeggy           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,6 +38,7 @@ static void	reset_vars(t_vars *vars)
 
 static void	init_sh(t_vars *vars, char **envp)
 {
+	rl_outstream = stderr;
 	ft_memset(vars, 0, sizeof(t_vars));
 	g_exit_status = 0;
 	errno = 0;

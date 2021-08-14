@@ -6,7 +6,7 @@
 /*   By: lpeggy <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/12 17:52:02 by lpeggy            #+#    #+#             */
-/*   Updated: 2021/08/12 21:14:00 by lpeggy           ###   ########.fr       */
+/*   Updated: 2021/08/14 16:02:52 by lpeggy           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -69,7 +69,8 @@ int	check_env_arg(char *cmd, char *arg)
 
 	if (ft_isdigit(arg[0]) || arg[0] == '=')
 	{
-		tmp = ft_strjoin_free(arg, "'");
+		//tmp = ft_strjoin_free(arg, "'");
+		tmp = ft_strjoin(arg, "'");
 		arg = ft_strjoin("`", tmp);
 		free(tmp);
 		return (!builtin_error(cmd, arg, "not a valid identifier", 1));
@@ -80,7 +81,8 @@ int	check_env_arg(char *cmd, char *arg)
 		if ((!ft_isalpha(arg[i]) && !ft_isdigit(arg[i]) && arg[i] != '_')
 			|| (ft_strchr(arg, '=') && !ft_strcmp(cmd, "unset")))
 		{
-			tmp = ft_strjoin_free(arg, "'");
+			tmp = ft_strjoin(arg, "'");
+			//tmp = ft_strjoin_free(arg, "'");
 			arg = ft_strjoin("`", tmp);
 			free(tmp);
 			return (!builtin_error(cmd, arg, "not a valid identifier", 1));
