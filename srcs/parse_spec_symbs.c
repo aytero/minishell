@@ -6,7 +6,7 @@
 /*   By: ssobchak <ssobchak@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/01 17:14:16 by lpeggy            #+#    #+#             */
-/*   Updated: 2021/08/14 16:01:40 by lpeggy           ###   ########.fr       */
+/*   Updated: 2021/08/15 20:18:53 by lpeggy           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,7 +54,6 @@ static char	*dollarsign(char *str, int *i, t_vars *vars)
 	!rkey && (str = dollarswap(str, NULL, i, j));
 	rkey && (str = dollarswap(str, rkey, i, j));
 	free(key);
-	//*i = j - 1;
 	*i = 0;
 	return (str);
 }
@@ -107,8 +106,9 @@ static char	*doublequotes(char *str, int *i)
 	free(str);
 	free(into);
 	free(aft);
-	*i = 0;
-	//(*i)--;
+	//if (*i ==0)  echo "aa'aaa'a"'eee' - works wrong!
+	//*i = 0;
+	(*i)--;
 	return (bef);
 }
 
@@ -123,6 +123,14 @@ char	*parse_spec_symbs(char *str, t_vars *vars)
 	str = tmp;
 	while (str[i])
 	{
+		/*
+		if (str[i] == '\'' || str[i] == '\"')
+		{
+			(str[i] == '\'' && (str = quotes(str, &i)))
+				|| (str[i] == '\"' && (str = doublequotes(str, &i)));
+			continue ;
+		}
+		*/
 		if (str[i] == '\'')
 		{
 			str = quotes(str, &i);
@@ -133,22 +141,12 @@ char	*parse_spec_symbs(char *str, t_vars *vars)
 			str = doublequotes(str, &i);
 			continue ;
 		}
-		//(str[i] == '\"') && (str = doublequotes(str, &i));
 		if (str[i] == '$' && str[i + 1])
 		{
 			str = dollarsign(str, &i, vars);
-			/*
-			if (str && !str[0])
-			{
-				free(str);
-				str = NULL;
-			}
-			*/
 			continue ;
 		}
-		//(str[i] == '$' && str[i + 1]) && (str = dollarsign(str, &i, vars));
 		i++;
 	}
-	//printf(BLU"%s"RESET, str);
 	return (str);
 }

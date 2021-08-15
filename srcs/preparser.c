@@ -6,7 +6,7 @@
 /*   By: lpeggy <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/07/13 18:25:59 by lpeggy            #+#    #+#             */
-/*   Updated: 2021/08/14 17:07:44 by lpeggy           ###   ########.fr       */
+/*   Updated: 2021/08/15 20:13:08 by lpeggy           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -63,44 +63,6 @@ static int	skim(char *str)
 	return (1);
 }
 
-char	**realloc_arr(char **arr, int size)
- {
- 	char	**arr_new;
- 	int		i;
-
- 	arr_new = malloc(sizeof(char *) * (size + 1));// one extra for \0
-  	if (!arr_new)
-  		return (NULL);
-  	//memset(env_new, 0, sizeof(char *) * (size + 1));
-  	i = 0;
-  	while (i < size && arr[i])
-  	{
- 		arr_new[i] = ft_strdup(arr[i]);
- 		i++;
- 	}
- 	arr_new[size] = 0;
- 	free_double_char_arr(arr);
- 	return (arr_new);
- }
-
- char	**delete_line(char **arr, int line_index, int size)
- {
- 	char	*to_swap;
-
- 	//printf("2\n");
- 	while (arr[line_index + 1])
- 	{
-  		//swap strings so the last one is empty
-  		to_swap = ft_strdup(arr[line_index + 1]);
-  		free(arr[line_index]);
-  		//env[env_index] = NULL;
-  		arr[line_index] = to_swap;
-  		line_index++;
-  	}
-  	arr = realloc_arr(arr, size - 1);
-  	return (arr);
-  }
-
 static void	deal_spec_symbs(void *ptr, t_vars *vars)
 {
 	int		i;
@@ -115,13 +77,11 @@ static void	deal_spec_symbs(void *ptr, t_vars *vars)
 	i = -1;
 	while (proc->args[++i])
 	{
-		//printf(GREY"%s"RESET, proc->args[i]);
 		if (proc->args[i] && !proc->args[i][0])
-		//if (!proc->args[i])// && !proc->args[i][0])
 		{
- 			proc->args = delete_line(proc->args, i, proc->arg_nbr);
- 			proc->arg_nbr--;
- 			i = -1;
+			proc->args = delete_line(proc->args, i, proc->arg_nbr);
+			proc->arg_nbr--;
+			i = -1;
 		}
 	}
 }

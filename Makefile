@@ -6,7 +6,8 @@ SRCS = minishell.c execute.c parse_spec_symbs.c pathfinder.c builtin_commands.c\
 	   env_utils.c builtin_env.c builtin_export.c builtin_cd.c\
 	   exit_shell.c preparser.c utilsforparser.c exec_piped.c\
 	   parse_redirect.c parse_args_arr.c deal_redir.c signal.c\
-	   free_mem.c exec_extern.c exec_builtin.c builtin_echo.c
+	   free_mem.c exec_extern.c exec_builtin.c builtin_echo.c\
+	   del_empty_args.c
 
 OBJSDIR = ./objs
 SRCSDIR = ./srcs

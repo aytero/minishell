@@ -6,7 +6,7 @@
 /*   By: lpeggy <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/29 20:28:49 by lpeggy            #+#    #+#             */
-/*   Updated: 2021/08/13 21:58:51 by lpeggy           ###   ########.fr       */
+/*   Updated: 2021/08/15 20:26:47 by lpeggy           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -75,8 +75,8 @@ char	*pathfinder(t_vars *vars, char *cmd)
 
 	if (!ft_strncmp(cmd, "~/", 2))
 		return (get_abs_path(vars, cmd));
-	if (ft_strncmp(cmd, "./", 2) == 0 || ft_strncmp(cmd, "../", 3) == 0
-		|| ft_strncmp(cmd, "/bin/", 5) == 0)
+	if (!ft_strncmp(cmd, "./", 2) || !ft_strncmp(cmd, "../", 3)
+		|| !ft_strncmp(cmd, "/bin/", 5) || cmd[0] == '/')
 		return (ft_strdup(cmd));
 	dirname = getcwd(NULL, 0);
 	tmp = NULL;

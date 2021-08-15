@@ -6,7 +6,7 @@
 /*   By: lpeggy <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/01 17:14:48 by lpeggy            #+#    #+#             */
-/*   Updated: 2021/08/12 21:33:59 by lpeggy           ###   ########.fr       */
+/*   Updated: 2021/08/15 20:13:12 by lpeggy           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,6 +40,9 @@ typedef struct s_util
 /*		preparser.c		*/
 void		pre_parser(char *str, t_vars *vars);
 char		*dollarswap(char *str, char *rkey, int *i, int j);
+
+/*		del_empty_args.c		*/
+char	**delete_line(char **arr, int line_index, int size);
 
 /*		parse_args_arr.c	*/
 int			cut_cmds(char **cmd_line, char *str, int *i, t_util *util);
