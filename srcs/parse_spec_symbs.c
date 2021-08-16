@@ -6,7 +6,7 @@
 /*   By: ssobchak <ssobchak@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/01 17:14:16 by lpeggy            #+#    #+#             */
-/*   Updated: 2021/08/15 20:18:53 by lpeggy           ###   ########.fr       */
+/*   Updated: 2021/08/16 17:35:24 by lpeggy           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,16 +54,15 @@ static char	*dollarsign(char *str, int *i, t_vars *vars)
 	!rkey && (str = dollarswap(str, NULL, i, j));
 	rkey && (str = dollarswap(str, rkey, i, j));
 	free(key);
-	*i = 0;
+	*i = j;
 	return (str);
 }
 
 static char	*quotes(char *str, int *i)
 {
 	int		j;
-	char	*bef;
-	char	*into;
-	char	*aft;
+	char	*new;
+	char	*tmp;
 
 	j = *i;
 	while (str[++(*i)])
@@ -71,45 +70,45 @@ static char	*quotes(char *str, int *i)
 		if (str[*i] == '\'')
 			break ;
 	}
-	bef = ft_substr(str, 0, j);
-	into = ft_substr(str, j + 1, *i - j - 1);
-	aft = ft_strdup(str + *i + 1);
-	bef = ft_strjoin_free(bef, into);
-	bef = ft_strjoin_free(bef, aft);
-	free(into);
-	free(aft);
+	new = ft_substr(str, 0, j);
+	tmp = ft_substr(str, j + 1, *i - j - 1);
+	new = ft_strjoin_free(new, tmp);
+	free(tmp);
+	tmp = ft_strdup(str + *i + 1);
+	new = ft_strjoin_free(new, tmp);
+	free(tmp);
 	free(str);
 	(*i)--;
-	return (bef);
+	return (new);
 }
 
-static char	*doublequotes(char *str, int *i)
+static char	*doublequotes(char *str, int *i, int j, t_vars *vars)
 {
-	int		j;
-	char	*bef;
-	char	*into;
-	char	*aft;
+	char	*new;
+	char	*tmp;
 
-	j = *i;
 	(*i)++;
 	while (str[*i])
 	{
+		if (str[*i] == '$' && str[*i + 1])
+		{
+			str = dollarsign(str, i, vars);
+			continue ;
+		}
 		if (str[*i] == '\"')
 			break ;
 		(*i)++;
 	}
-	bef = ft_substr(str, 0, j);
-	into = ft_substr(str, j + 1, *i - j - 1);
-	aft = ft_strdup(str + *i + 1);
-	bef = ft_strjoin_free(bef, into);
-	bef = ft_strjoin_free(bef, aft);
+	new = ft_substr(str, 0, j);
+	tmp = ft_substr(str, j + 1, *i - j - 1);
+	new = ft_strjoin_free(new, tmp);
+	free(tmp);
+	tmp = ft_strdup(str + *i + 1);
+	new = ft_strjoin_free(new, tmp);
+	free(tmp);
 	free(str);
-	free(into);
-	free(aft);
-	//if (*i ==0)  echo "aa'aaa'a"'eee' - works wrong!
-	//*i = 0;
 	(*i)--;
-	return (bef);
+	return (new);
 }
 
 char	*parse_spec_symbs(char *str, t_vars *vars)
@@ -123,22 +122,10 @@ char	*parse_spec_symbs(char *str, t_vars *vars)
 	str = tmp;
 	while (str[i])
 	{
-		/*
 		if (str[i] == '\'' || str[i] == '\"')
 		{
 			(str[i] == '\'' && (str = quotes(str, &i)))
-				|| (str[i] == '\"' && (str = doublequotes(str, &i)));
-			continue ;
-		}
-		*/
-		if (str[i] == '\'')
-		{
-			str = quotes(str, &i);
-			continue ;
-		}
-		if (str[i] == '\"')
-		{
-			str = doublequotes(str, &i);
+				|| (str[i] == '\"' && (str = doublequotes(str, &i, i, vars)));
 			continue ;
 		}
 		if (str[i] == '$' && str[i + 1])

@@ -6,7 +6,7 @@
 /*   By: lpeggy <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/12 17:52:02 by lpeggy            #+#    #+#             */
-/*   Updated: 2021/08/15 20:19:31 by lpeggy           ###   ########.fr       */
+/*   Updated: 2021/08/16 17:35:25 by lpeggy           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,10 +33,9 @@ static int	print_sorted(char **sorted)
 	return (1);
 }
 
-static int	sort_env(t_vars *vars)
+static int	sort_env(t_vars *vars, int j)
 {
 	int		i;
-	int		j;
 	int		size;
 	char	**sorted;
 	char	*tmp;
@@ -56,39 +55,38 @@ static int	sort_env(t_vars *vars)
 				sorted[j] = ft_strdup(sorted[j + 1]);
 				free(sorted[j + 1]);
 				sorted[j + 1] = ft_strdup(tmp);
+				free(tmp);
 			}
 		}
 	}
 	return (print_sorted(sorted));
 }
 
-int	check_env_arg(char *cmd, char *arg)
+int	check_env_arg(char *cmd, char **arg, int i)
 {
 	char	*tmp;
-	int		i;
+	int		k;
 
-	if (ft_isdigit(arg[0]) || arg[0] == '=')
+	if (ft_isdigit(arg[i][0]) || arg[i][0] == '=')
 	{
-		//tmp = ft_strjoin_free(arg, "'");
-		tmp = ft_strjoin(arg, "'");
-		arg = ft_strjoin("`", tmp);
+		tmp = ft_strjoin_free(arg[i], "'");
+		arg[i] = ft_strjoin("`", tmp);
 		free(tmp);
-		return (!builtin_error(cmd, arg, "not a valid identifier", 1));
+		return (!builtin_error(cmd, arg[i], "not a valid identifier", 1));
 	}
-	i = -1;
-	while (arg[++i] && arg[i] != '=')
+	k = -1;
+	while (arg[i][++k] && arg[i][k] != '=')
 	{
-		if ((!ft_isalpha(arg[i]) && !ft_isdigit(arg[i]) && arg[i] != '_')
-			|| (ft_strchr(arg, '=') && !ft_strcmp(cmd, "unset")))
+		if ((!ft_isalpha(arg[i][k]) && !ft_isdigit(arg[i][k]) && arg[i][k]
+			!= '_') || (ft_strchr(arg[i], '=') && !ft_strcmp(cmd, "unset")))
 		{
-			tmp = ft_strjoin(arg, "'");
-			//tmp = ft_strjoin_free(arg, "'");
-			arg = ft_strjoin("`", tmp);
+			tmp = ft_strjoin_free(arg[i], "'");
+			arg[i] = ft_strjoin("`", tmp);
 			free(tmp);
-			return (!builtin_error(cmd, arg, "not a valid identifier", 1));
+			return (!builtin_error(cmd, arg[i], "not a valid identifier", 1));
 		}
 	}
-	if (!ft_strchr(arg, '=') && !ft_strcmp(cmd, "export"))
+	if (!ft_strchr(arg[i], '=') && !ft_strcmp(cmd, "export"))
 		return (0);
 	return (1);
 }
@@ -99,11 +97,11 @@ int	builtin_export(char *cmd, char **args, t_vars *vars)
 
 	g_exit_status = 0;
 	if (!args[1])
-		return (!sort_env(vars));
+		return (!sort_env(vars, -1));
 	i = 0;
 	while (args[++i])
 	{
-		if (!check_env_arg(cmd, args[i]))
+		if (!check_env_arg(cmd, args, i))
 			continue ;
 		if (!set_env_var(&vars->env, args[i]))
 			return (builtin_error(cmd, args[i], "malloc error", 1));

@@ -6,7 +6,7 @@
 /*   By: lpeggy <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/08 16:42:00 by lpeggy            #+#    #+#             */
-/*   Updated: 2021/08/13 18:25:58 by lpeggy           ###   ########.fr       */
+/*   Updated: 2021/08/16 17:35:23 by lpeggy           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,7 +46,7 @@ int	builtin_unset(char *cmd, char **args, t_vars *vars)
 	(void)cmd;
 	while (args[++i])
 	{
-		if (!check_env_arg(cmd, args[i]))
+		if (!check_env_arg(cmd, args, i))
 			continue ;
 		delete_env_var(&vars->env, args[i]);
 	}

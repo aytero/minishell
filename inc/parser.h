@@ -6,7 +6,7 @@
 /*   By: lpeggy <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/01 17:14:48 by lpeggy            #+#    #+#             */
-/*   Updated: 2021/08/15 20:13:12 by lpeggy           ###   ########.fr       */
+/*   Updated: 2021/08/16 17:35:14 by lpeggy           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,7 +42,7 @@ void		pre_parser(char *str, t_vars *vars);
 char		*dollarswap(char *str, char *rkey, int *i, int j);
 
 /*		del_empty_args.c		*/
-char	**delete_line(char **arr, int line_index, int size);
+char		**delete_line(char **arr, int line_index, int size);
 
 /*		parse_args_arr.c	*/
 int			cut_cmds(char **cmd_line, char *str, int *i, t_util *util);
@@ -62,8 +62,5 @@ int			count_elems(char *str, char *divider);
 int			if_quotes(char *str, int i);
 int			skip_symbs(char *str, int i, char *set);
 char		*lowercasing(char *str);
-
-int			_print_list(t_list **head);
-int			_print_all_rd(t_proc *proc);
 
 #endif

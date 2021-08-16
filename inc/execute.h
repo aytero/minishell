@@ -6,7 +6,7 @@
 /*   By: ssobchak <ssobchak@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/01 20:51:06 by lpeggy            #+#    #+#             */
-/*   Updated: 2021/08/13 22:32:19 by lpeggy           ###   ########.fr       */
+/*   Updated: 2021/08/16 17:35:15 by lpeggy           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -109,7 +109,7 @@ int				builtin_cd(char **cmd, t_vars *vars);
 
 /*		builtin_export.c		*/
 int				builtin_export(char *cmd, char **args, t_vars *vars);
-int				check_env_arg(char *cmd, char *arg);
+int				check_env_arg(char *cmd, char **arg, int i);
 
 /*		builtin_env.c		*/
 int				builtin_env(t_proc *proc, t_list **head);

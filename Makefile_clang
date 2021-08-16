@@ -6,7 +6,8 @@ SRCS = minishell.c execute.c parse_spec_symbs.c pathfinder.c builtin_commands.c\
 	   env_utils.c builtin_env.c builtin_export.c builtin_cd.c\
 	   exit_shell.c preparser.c utilsforparser.c exec_piped.c\
 	   parse_redirect.c parse_args_arr.c deal_redir.c signal.c\
-	   free_mem.c exec_extern.c exec_builtin.c builtin_echo.c
+	   free_mem.c exec_extern.c exec_builtin.c builtin_echo.c\
+	   del_empty_args.c
 
 OBJSDIR = ./objs
 SRCSDIR = ./srcs
@@ -15,12 +16,12 @@ LIBFTDIR = ./libft
 
 LIBFT = $(LIBFTDIR)libft.a
 
-CC = gcc
+CC = clang
 
 
 RLFLAGS = -lreadline -L/Users/$(USER)/.brew/Cellar/readline/8.1/lib\
 		  -I/Users/$(USER)/.brew/Cellar/readline/8.1/include
-FLAGS = -Wall -Werror -Wextra -g
+FLAGS = -Wall -Werror -Wextra #-g -fsanitize=address -O1
 
 OBJS = $(addprefix $(OBJSDIR)/,$(SRCS:.c=.o))
 
@@ -33,7 +34,7 @@ lib:
 	@make bonus -C $(LIBFTDIR)
 
 $(NAME): $(OBJSDIR) $(OBJS)
-	$(CC) -L$(LIBFTDIR) -lft $(OBJS) $(RLFLAGS) -o $(NAME)
+	$(CC) -L$(LIBFTDIR) -lft $(OBJS) $(RLFLAGS) -g -fsanitize=address -o $(NAME)
 
 $(OBJSDIR):
 	@mkdir -p $(OBJSDIR)

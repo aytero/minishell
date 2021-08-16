@@ -6,7 +6,7 @@
 /*   By: lpeggy <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/16 20:36:45 by lpeggy            #+#    #+#             */
-/*   Updated: 2021/08/15 20:19:33 by lpeggy           ###   ########.fr       */
+/*   Updated: 2021/08/16 16:19:20 by lpeggy           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,20 +43,13 @@ int	builtin_cd(char **cmd, t_vars *vars)
 	char	*new_pwd;
 
 	g_exit_status = 0;
-	//if (cmd[1] && !ft_strcmp(cmd[1], "-"))
-	//	cmd[1] = deal_dash(cmd[1], vars);/ get full path, replace HOME part eith ~ and print
 	if (cmd[1] && cmd[1][0] == '~')
 		cmd[1] = deal_tilde_path(cmd[1], vars);
 	!cmd[1] && (dir = get_env_var(vars->env, "HOME"));
 	cmd[1] && (dir = cmd[1]);
 	old_pwd = getcwd(NULL, 0);
-	//printf(RED"%s"RESET, dir);
 	if (chdir(dir) < 0)
 	{
-		//write(2, "here\n", 5);
-		//new_pwd = getcwd(NULL, 0);
-		//change_pwd_envs(vars, old_pwd, new_pwd);
-		//free(new_pwd);
 		free(old_pwd);
 		return (builtin_error("cd", cmd[1], NULL, 0));
 	}
