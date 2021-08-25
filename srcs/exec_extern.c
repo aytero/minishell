@@ -6,7 +6,7 @@
 /*   By: lpeggy <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/08/02 18:48:21 by lpeggy            #+#    #+#             */
-/*   Updated: 2021/08/15 20:06:00 by lpeggy           ###   ########.fr       */
+/*   Updated: 2021/08/25 15:22:34 by lpeggy           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -70,8 +70,19 @@ int	exec_extern(t_proc *proc, t_vars *vars)
 {
 	pid_t	pid;
 
-	signal(SIGINT, parent_sig_handler);
-	signal(SIGQUIT, parent_sig_handler);
+	/*
+	if (!ft_strcmp(proc->cmd, "./minishell"))// || !ft_strcmp(proc->cmd, "minishell"))
+	{
+		signal(SIGINT, SIG_IGN);
+		signal(SIGQUIT, SIG_IGN);
+	}
+	else
+	{
+	*/
+		signal(SIGINT, parent_sig_handler);
+		signal(SIGQUIT, parent_sig_handler);
+	//}
+
 	pid = fork();
 	if (pid == -1)
 		return (report_failure(proc->cmd, NULL, 0));
