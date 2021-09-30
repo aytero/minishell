@@ -1,6 +1,7 @@
 # minishell
 A simple Shell implementation.
 \
+\
 **To launch:**
 ```
 make && ./minishll
@@ -20,9 +21,9 @@ make && ./minishll
 	* exit
 * Redirections
 	* <
-	* >
+	* \>
 	* <<
-	* >>
+	* \>>
 * Pipes |
 * Expanding environmental variables ($...)
 * $? expands to most recent exit status
